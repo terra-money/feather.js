@@ -3,16 +3,13 @@ import { DistributionAPI } from './DistributionAPI';
 import { Dec, Coins } from '../../../core';
 import { LCDClient } from '../LCDClient';
 
-const terra = new LCDClient({
-  chainID: 'pisco-1',
-  URL: 'https://pisco-lcd.terra.dev',
-});
-const distribution = new DistributionAPI(terra);
+const lcd = LCDClient.fromDefaultConfig('testnet');
+const distribution = new DistributionAPI(lcd);
 
 // distributionForTest()
 describe('DistributionAPI', () => {
   it('parameters', async () => {
-    await expect(distribution.parameters()).resolves.toMatchObject({
+    await expect(distribution.parameters('pisco-1')).resolves.toMatchObject({
       community_tax: expect.any(Dec),
       base_proposer_reward: expect.any(Dec),
       bonus_proposer_reward: expect.any(Dec),
@@ -42,7 +39,7 @@ describe('DistributionAPI', () => {
   });
 
   it('communityPool', async () => {
-    await expect(distribution.communityPool()).resolves.toEqual(
+    await expect(distribution.communityPool('pisco-1')).resolves.toEqual(
       expect.any(Coins)
     );
   });

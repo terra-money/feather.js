@@ -1,27 +1,13 @@
 import { LCDClient } from '../LCDClient';
 import { WasmAPI } from './WasmAPI';
 
-const terra = new LCDClient({
-  chainID: 'pisco-1',
-  URL: 'https://pisco-lcd.terra.dev',
-});
-const wasm = new WasmAPI(terra);
+const lcd = LCDClient.fromDefaultConfig('testnet');
+const wasm = new WasmAPI(lcd);
 
 describe('WasmAPI', () => {
-  it('parameters', async () => {
-    if (terra.config.isClassic) {
-      // only classic network has param query
-      await expect(wasm.parameters()).resolves.toMatchObject({
-        max_contract_size: expect.any(Number),
-        max_contract_gas: expect.any(Number),
-        max_contract_msg_size: expect.any(Number),
-      });
-    }
-  });
-
   it('code_info', async () => {
     // only classic network has param query
-    await expect(wasm.codeInfo(1)).resolves.toMatchObject({
+    await expect(wasm.codeInfo(1, 'pisco-1')).resolves.toMatchObject({
       code_id: 1,
       creator: 'terra1zpglp37eg85mtwa54ymgj0nzqe37awhsv42yxj',
       code_hash:

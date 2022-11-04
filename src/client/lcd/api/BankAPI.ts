@@ -28,7 +28,7 @@ export namespace BankParams {
 
 export class BankAPI extends BaseAPI {
   constructor(public lcd: LCDClient) {
-    super(lcd.apiRequester);
+    super(lcd.apiRequesters, lcd.config);
   }
 
   /**
@@ -39,7 +39,7 @@ export class BankAPI extends BaseAPI {
     address: AccAddress,
     params: Partial<PaginationOptions & APIParams> = {}
   ): Promise<[Coins, Pagination]> {
-    return this.c
+    return this.getReqFromAddress(address)
       .get<{
         balances: Coins.Data;
         pagination: Pagination;
@@ -49,11 +49,13 @@ export class BankAPI extends BaseAPI {
 
   /**
    * Get the total supply of tokens in circulation for all denominations.
+   * @param chainID chain id
    */
   public async total(
+    chainID: string,
     params: Partial<PaginationOptions & APIParams> = {}
   ): Promise<[Coins, Pagination]> {
-    return this.c
+    return this.getReqFromChainID(chainID)
       .get<{ supply: Coins.Data; pagination: Pagination }>(
         `/cosmos/bank/v1beta1/supply`,
         params
@@ -69,10 +71,7 @@ export class BankAPI extends BaseAPI {
     address: AccAddress,
     params: Partial<PaginationOptions & APIParams> = {}
   ): Promise<[Coins, Pagination]> {
-    if (this.lcd.config.isClassic) {
-      throw new Error('Not supported for the network');
-    }
-    return this.c
+    return this.getReqFromAddress(address)
       .get<{
         balances: Coins.Data;
         pagination: Pagination;
@@ -80,11 +79,11 @@ export class BankAPI extends BaseAPI {
       .then(d => [Coins.fromData(d.balances), d.pagination]);
   }
 
-  public async parameters(params: APIParams = {}): Promise<BankParams> {
-    if (this.lcd.config.isClassic) {
-      throw new Error('Not supported for the network');
-    }
-    return this.c
+  public async parameters(
+    chainID: string,
+    params: APIParams = {}
+  ): Promise<BankParams> {
+    return this.getReqFromChainID(chainID)
       .get<{ params: BankParams.Data }>(`/cosmos/bank/v1beta1/params`, params)
       .then(({ params: d }) => ({
         send_enabled: d.send_enabled,

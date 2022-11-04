@@ -5,14 +5,11 @@ import {
   DistributionAPI,
   FeeGrantAPI,
   GovAPI,
-  MarketAPI,
   MintAPI,
   AuthzAPI,
-  OracleAPI,
   SlashingAPI,
   StakingAPI,
   TendermintAPI,
-  TreasuryAPI,
   TxAPI,
   WasmAPI,
   IbcTransferAPI,
@@ -28,7 +25,7 @@ export interface LCDClientConfig {
   /**
    * The base URL to which LCD requests will be made.
    */
-  URL: string;
+  lcd: string;
 
   /**
    * Chain ID of the blockchain to connect to.
@@ -38,45 +35,42 @@ export interface LCDClientConfig {
   /**
    * Coins representing the default gas prices to use for fee estimation.
    */
-  gasPrices?: Coins.Input;
+  gasPrices: Coins.Input;
 
   /**
    * Number presenting the default gas adjustment value to use for fee estimation.
    */
-  gasAdjustment?: Numeric.Input;
+  gasAdjustment: Numeric.Input;
 
   /**
-   * is it connected to forked network?
+   * Bech32 prefix for wallet and contract addresses.
    */
-  isClassic?: boolean;
+  prefix: string;
 }
 
-const DEFAULT_LCD_OPTIONS: Partial<LCDClientConfig> = {
-  gasAdjustment: 1.75,
-};
-
-// isClassic network: true
-// forked network : false
-const DEFAULT_NETWORK_TYPE_BY_CHAIN_ID: { [key: string]: boolean } = {
-  default: false,
-  'columbus-5': true,
-  'bombay-12': true,
-  'pisco-1': false,
-};
-
-const DEFAULT_GAS_PRICES_BY_CHAIN_ID: { [key: string]: Coins.Input } = {
-  default: {
-    uluna: 0.15,
+const DEFAULT_NETWORK_CONFIG: Record<
+  'mainnet' | 'testnet' | 'local',
+  Record<string, LCDClientConfig>
+> = {
+  mainnet: {
+    'phoenix-1': {
+      chainID: 'phoenix-1',
+      lcd: 'https://phoenix-lcd.terra.dev',
+      gasAdjustment: 1.75,
+      gasPrices: { uluna: 0.015 },
+      prefix: 'terra1',
+    },
   },
-  'columbus-5': {
-    uusd: 0.15,
+  testnet: {
+    'pisco-1': {
+      chainID: 'pisco-1',
+      lcd: 'https://pisco-lcd.terra.dev',
+      gasAdjustment: 1.75,
+      gasPrices: { uluna: 0.15 },
+      prefix: 'terra1',
+    },
   },
-  'bombay-12': {
-    uusd: 0.15,
-  },
-  'pisco-1': {
-    uluna: 0.15,
-  },
+  local: {},
 };
 
 /**
@@ -86,20 +80,18 @@ const DEFAULT_GAS_PRICES_BY_CHAIN_ID: { [key: string]: Coins.Input } = {
  * ### Example
  *
  * ```ts
- * import { LCDClient, Coin } from 'terra.js';
+ * import { LCDClient } from '@terra-money/station.js';
  *
- * const terra = new LCDClient({
- *    URL: "https://lcd.terra.dev",
- *    chainID: "columbus-3"
- * });
+ * const terra = new LCDClient('mainnet');
  *
- * terra.market.swapRate(new Coin('uluna', 10000), 'ukrw').then(c => console.log(c.toString()));
+ * const balance = await lcd.bank.balance('terra1...'):
+ * console.log(balance);
  * ```
  */
 
 export class LCDClient {
-  public config: LCDClientConfig;
-  public apiRequester: APIRequester;
+  public config: Record<string, LCDClientConfig>;
+  public apiRequesters: Record<string, APIRequester>;
 
   // API access
   public auth: AuthAPI;
@@ -107,14 +99,11 @@ export class LCDClient {
   public distribution: DistributionAPI;
   public feeGrant: FeeGrantAPI;
   public gov: GovAPI;
-  public market: MarketAPI;
   public mint: MintAPI;
   public authz: AuthzAPI;
-  public oracle: OracleAPI;
   public slashing: SlashingAPI;
   public staking: StakingAPI;
   public tendermint: TendermintAPI;
-  public treasury: TreasuryAPI;
   public wasm: WasmAPI;
   public tx: TxAPI;
   public ibc: IbcAPI;
@@ -124,21 +113,21 @@ export class LCDClient {
   /**
    * Creates a new LCD client with the specified configuration.
    *
-   * @param config LCD configuration
+   * @param network select mainnet, testnet or local
+   *
+   * @param chains (optional) add other chains to the default configuration
+   *
    */
-  constructor(config: LCDClientConfig) {
-    this.config = {
-      ...DEFAULT_LCD_OPTIONS,
-      gasPrices:
-        DEFAULT_GAS_PRICES_BY_CHAIN_ID[config.chainID] ||
-        DEFAULT_GAS_PRICES_BY_CHAIN_ID['default'],
-      isClassic:
-        DEFAULT_NETWORK_TYPE_BY_CHAIN_ID[config.chainID] ||
-        DEFAULT_NETWORK_TYPE_BY_CHAIN_ID['default'],
-      ...config,
-    };
+  constructor(chains: Record<string, LCDClientConfig>) {
+    this.config = chains;
 
-    this.apiRequester = new APIRequester(this.config.URL);
+    this.apiRequesters = Object.keys(chains).reduce(
+      (result: Record<string, APIRequester>, chainID) => {
+        result[chainID] = new APIRequester(chains[chainID].lcd);
+        return result;
+      },
+      {}
+    );
 
     // instantiate APIs
     this.auth = new AuthAPI(this);
@@ -146,19 +135,21 @@ export class LCDClient {
     this.distribution = new DistributionAPI(this);
     this.feeGrant = new FeeGrantAPI(this);
     this.gov = new GovAPI(this);
-    this.market = new MarketAPI(this);
     this.mint = new MintAPI(this);
     this.authz = new AuthzAPI(this);
-    this.oracle = new OracleAPI(this);
     this.slashing = new SlashingAPI(this);
     this.staking = new StakingAPI(this);
     this.tendermint = new TendermintAPI(this);
-    this.treasury = new TreasuryAPI(this);
     this.wasm = new WasmAPI(this);
     this.ibc = new IbcAPI(this);
     this.ibcTransfer = new IbcTransferAPI(this);
     this.tx = new TxAPI(this);
     this.utils = new LCDUtils(this);
+  }
+
+  public static fromDefaultConfig(network: 'mainnet' | 'testnet') {
+    // TODO: fetch config from assets.terra.money
+    return new LCDClient(DEFAULT_NETWORK_CONFIG[network]);
   }
 
   /** Creates a new wallet with the Key. */

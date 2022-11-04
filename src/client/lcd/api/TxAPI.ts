@@ -120,6 +120,7 @@ export interface SignerData {
 }
 
 export interface CreateTxOptions {
+  chainID: string;
   msgs: Msg[];
   fee?: Fee;
   memo?: string;
@@ -195,17 +196,21 @@ export interface TxSearchOptions extends PaginationOptions {
 
 export class TxAPI extends BaseAPI {
   constructor(public lcd: LCDClient) {
-    super(lcd.apiRequester);
+    super(lcd.apiRequesters, lcd.config);
   }
 
   /**
    * Looks up a transaction on the blockchain, addressed by its hash
    * @param txHash transaction's hash
    */
-  public async txInfo(txHash: string, params: APIParams = {}): Promise<TxInfo> {
-    return this.c
+  public async txInfo(
+    chainID: string,
+    txHash: string,
+    params: APIParams = {}
+  ): Promise<TxInfo> {
+    return this.getReqFromChainID(chainID)
       .getRaw<TxResult.Data>(`/cosmos/tx/v1beta1/txs/${txHash}`, params)
-      .then(v => TxInfo.fromData(v.tx_response, this.lcd.config.isClassic));
+      .then(v => TxInfo.fromData(v.tx_response));
   }
 
   /**
@@ -261,10 +266,14 @@ export class TxAPI extends BaseAPI {
   /**
    * Looks up transactions on the blockchain for the block height. If height is undefined,
    * gets the transactions for the latest block.
+   * @param chainID chain ID
    * @param height block height
    */
-  public async txInfosByHeight(height: number | undefined): Promise<TxInfo[]> {
-    const blockInfo = await this.lcd.tendermint.blockInfo(height);
+  public async txInfosByHeight(
+    chainID: string,
+    height: number | undefined
+  ): Promise<TxInfo[]> {
+    const blockInfo = await this.lcd.tendermint.blockInfo(chainID, height);
     const { txs } = blockInfo.block.data;
     if (!txs) {
       return [];
@@ -273,7 +282,7 @@ export class TxAPI extends BaseAPI {
       const txInfos: TxInfo[] = [];
 
       for (const txhash of txhashes) {
-        txInfos.push(await this.txInfo(txhash));
+        txInfos.push(await this.txInfo(txhash, chainID));
       }
 
       return txInfos;
@@ -290,12 +299,11 @@ export class TxAPI extends BaseAPI {
     signers: SignerData[],
     options: CreateTxOptions
   ): Promise<Fee> {
-    const gasPrices = options.gasPrices || this.lcd.config.gasPrices;
+    const gasPrices =
+      options.gasPrices || this.lcd.config[options.chainID].gasPrices;
     const gasAdjustment =
-      options.gasAdjustment || this.lcd.config.gasAdjustment;
-    const feeDenoms = options.feeDenoms || [
-      this.lcd.config.isClassic ? 'uusd' : 'uluna',
-    ];
+      options.gasAdjustment || this.lcd.config[options.chainID].gasAdjustment;
+    const feeDenoms = options.feeDenoms;
     let gas = options.gas;
     let gasPricesCoins: Coins | undefined;
 
@@ -322,27 +330,28 @@ export class TxAPI extends BaseAPI {
 
     // simulate gas
     if (!gas || gas === 'auto' || gas === '0') {
-      gas = (await this.estimateGas(tx, { gasAdjustment })).toString();
+      gas = (
+        await this.estimateGas(tx, options.chainID, { gasAdjustment })
+      ).toString();
     }
 
     const feeAmount = gasPricesCoins
       ? gasPricesCoins.mul(gas).toIntCeilCoins()
-      : this.lcd.config.isClassic
-      ? '0uusd'
-      : '0uluna';
+      : `0${Object.keys(gasPrices)[0]}`;
 
     return new Fee(Number.parseInt(gas), feeAmount, '', '');
   }
 
   public async estimateGas(
     tx: Tx,
+    chainID: string,
     options?: {
       gasAdjustment?: Numeric.Input;
       signers?: SignerData[];
     }
   ): Promise<number> {
     const gasAdjustment =
-      options?.gasAdjustment || this.lcd.config.gasAdjustment;
+      options?.gasAdjustment || this.lcd.config[chainID].gasAdjustment;
 
     // append empty signatures if there's no signatures in tx
     let simTx: Tx = tx;
@@ -355,7 +364,7 @@ export class TxAPI extends BaseAPI {
       simTx.appendEmptySignatures(options.signers);
     }
 
-    const simulateRes = await this.c
+    const simulateRes = await this.getReqFromChainID(chainID)
       .post<SimulateResponse.Data>(`/cosmos/tx/v1beta1/simulate`, {
         tx_bytes: this.encode(simTx),
       })
@@ -373,9 +382,7 @@ export class TxAPI extends BaseAPI {
    * @param tx transaction to encode
    */
   public encode(tx: Tx): string {
-    return Buffer.from(tx.toBytes(this.lcd.config.isClassic)).toString(
-      'base64'
-    );
+    return Buffer.from(tx.toBytes()).toString('base64');
   }
 
   /**
@@ -383,10 +390,7 @@ export class TxAPI extends BaseAPI {
    * @param tx transaction string to decode
    */
   public decode(encodedTx: string): Tx {
-    return Tx.fromBuffer(
-      Buffer.from(encodedTx, 'base64'),
-      this.lcd.config.isClassic
-    );
+    return Tx.fromBuffer(Buffer.from(encodedTx, 'base64'));
   }
 
   /**
@@ -400,12 +404,16 @@ export class TxAPI extends BaseAPI {
 
   private async _broadcast<T>(
     tx: Tx,
-    mode: keyof typeof BroadcastModeV1 | BroadcastModeV2
+    mode: keyof typeof BroadcastModeV1 | BroadcastModeV2,
+    chainID: string
   ): Promise<T> {
-    return await this.c.post<any>(`/cosmos/tx/v1beta1/txs`, {
-      tx_bytes: this.encode(tx),
-      mode,
-    });
+    return await this.getReqFromChainID(chainID).post<any>(
+      `/cosmos/tx/v1beta1/txs`,
+      {
+        tx_bytes: this.encode(tx),
+        mode,
+      }
+    );
   }
 
   /**
@@ -414,17 +422,19 @@ export class TxAPI extends BaseAPI {
    * This method polls txInfo using the txHash to confirm the transaction's execution.
    *
    * @param tx      transaction to broadcast
+   * @param chainID chain ID
    * @param timeout time in milliseconds to wait for transaction to be included in a block. defaults to 30000
    */
   public async broadcast(
     tx: Tx,
+    chainID: string,
     timeout = 30000
   ): Promise<WaitTxBroadcastResult> {
     const POLL_INTERVAL = 500;
 
     const { tx_response: txResponse } = await this._broadcast<{
       tx_response: SyncTxBroadcastResult.Data;
-    }>(tx, 'BROADCAST_MODE_SYNC');
+    }>(tx, 'BROADCAST_MODE_SYNC', chainID);
 
     if (txResponse.code != undefined && txResponse.code != 0) {
       const result: WaitTxBroadcastResult = {
@@ -444,7 +454,7 @@ export class TxAPI extends BaseAPI {
     let txInfo: undefined | TxInfo;
     for (let i = 0; i <= timeout / POLL_INTERVAL; i++) {
       try {
-        txInfo = await this.txInfo(txResponse.txhash);
+        txInfo = await this.txInfo(txResponse.txhash, chainID);
       } catch (error) {
         // Errors when transaction is not found.
       }
@@ -478,11 +488,16 @@ export class TxAPI extends BaseAPI {
   /**
    * Broadcast the transaction using the "block" mode, waiting for its inclusion in the blockchain.
    * @param tx transaction to broadcast
+   * @param chainID chain ID
    */
-  public async broadcastBlock(tx: Tx): Promise<BlockTxBroadcastResult> {
+  public async broadcastBlock(
+    tx: Tx,
+    chainID: string
+  ): Promise<BlockTxBroadcastResult> {
     return this._broadcast<{ tx_response: BlockTxBroadcastResult.Data }>(
       tx,
-      'BROADCAST_MODE_BLOCK'
+      'BROADCAST_MODE_BLOCK',
+      chainID
     ).then(({ tx_response: d }) => {
       const blockResult: BlockTxBroadcastResult = {
         txhash: d.txhash,
@@ -508,11 +523,16 @@ export class TxAPI extends BaseAPI {
    *
    * Broadcast the transaction using the "sync" mode, returning after CheckTx() is performed.
    * @param tx transaction to broadcast
+   * @param chainID chain ID
    */
-  public async broadcastSync(tx: Tx): Promise<SyncTxBroadcastResult> {
+  public async broadcastSync(
+    tx: Tx,
+    chainID: string
+  ): Promise<SyncTxBroadcastResult> {
     return this._broadcast<{ tx_response: SyncTxBroadcastResult.Data }>(
       tx,
-      'BROADCAST_MODE_SYNC'
+      'BROADCAST_MODE_SYNC',
+      chainID
     ).then(({ tx_response: d }) => {
       const blockResult: any = {
         height: +d.height,
@@ -535,11 +555,16 @@ export class TxAPI extends BaseAPI {
   /**
    * Broadcast the transaction using the "async" mode, returns immediately (transaction might fail).
    * @param tx transaction to broadcast
+   * @param chainID chain ID
    */
-  public async broadcastAsync(tx: Tx): Promise<AsyncTxBroadcastResult> {
+  public async broadcastAsync(
+    tx: Tx,
+    chainID: string
+  ): Promise<AsyncTxBroadcastResult> {
     return this._broadcast<{ tx_response: AsyncTxBroadcastResult.Data }>(
       tx,
-      'BROADCAST_MODE_ASYNC'
+      'BROADCAST_MODE_ASYNC',
+      chainID
     ).then(({ tx_response: d }) => ({
       height: +d.height,
       txhash: d.txhash,
@@ -549,9 +574,11 @@ export class TxAPI extends BaseAPI {
   /**
    * Search for transactions based on event attributes.
    * @param options
+   * @param chainID chain ID
    */
   public async search(
-    options: Partial<TxSearchOptions>
+    options: Partial<TxSearchOptions>,
+    chainID: string
   ): Promise<TxSearchResult> {
     const params = new URLSearchParams();
 
@@ -569,13 +596,11 @@ export class TxAPI extends BaseAPI {
       params.append(v[0], v[1] as string);
     });
 
-    return this.c
+    return this.getReqFromChainID(chainID)
       .getRaw<TxSearchResult.Data>(`/cosmos/tx/v1beta1/txs`, params)
       .then(d => {
         return {
-          txs: d.tx_responses.map(tx_response =>
-            TxInfo.fromData(tx_response, this.lcd.config.isClassic)
-          ),
+          txs: d.tx_responses.map(tx_response => TxInfo.fromData(tx_response)),
           pagination: d.pagination,
         };
       });

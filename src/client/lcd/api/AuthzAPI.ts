@@ -6,7 +6,7 @@ import { LCDClient } from '../LCDClient';
 
 export class AuthzAPI extends BaseAPI {
   constructor(public lcd: LCDClient) {
-    super(lcd.apiRequester);
+    super(lcd.apiRequesters, lcd.config);
   }
 
   /**
@@ -18,7 +18,7 @@ export class AuthzAPI extends BaseAPI {
     msgTypeUrl?: string,
     params: APIParams = {}
   ): Promise<[AuthorizationGrant[], Pagination]> {
-    return this.c
+    return this.getReqFromAddress(granter)
       .get<{ grants: AuthorizationGrant.Data[]; pagination: Pagination }>(
         `/cosmos/authz/v1beta1/grants`,
         Object.assign(
@@ -31,9 +31,7 @@ export class AuthzAPI extends BaseAPI {
         )
       )
       .then(d => [
-        d.grants.map(grant =>
-          AuthorizationGrant.fromData(grant, this.lcd.config.isClassic)
-        ),
+        d.grants.map(grant => AuthorizationGrant.fromData(grant)),
         d.pagination,
       ]);
   }
@@ -48,15 +46,13 @@ export class AuthzAPI extends BaseAPI {
     if (this.lcd.config.isClassic) {
       throw new Error('Not supported for the network');
     }
-    return this.c
+    return this.getReqFromAddress(granter)
       .get<{ grants: AuthorizationGrant.Data[]; pagination: Pagination }>(
         `/cosmos/authz/v1beta1/grants/granter/${granter}`,
         params
       )
       .then(d => [
-        d.grants.map(g =>
-          AuthorizationGrant.fromData(g, this.lcd.config.isClassic)
-        ),
+        d.grants.map(g => AuthorizationGrant.fromData(g)),
         d.pagination,
       ]);
   }
@@ -71,15 +67,13 @@ export class AuthzAPI extends BaseAPI {
     if (this.lcd.config.isClassic) {
       throw new Error('Not supported for the network');
     }
-    return this.c
+    return this.getReqFromAddress(grantee)
       .get<{ grants: AuthorizationGrant.Data[]; pagination: Pagination }>(
         `/cosmos/authz/v1beta1/grants/grantee/${grantee}`,
         params
       )
       .then(d => [
-        d.grants.map(g =>
-          AuthorizationGrant.fromData(g, this.lcd.config.isClassic)
-        ),
+        d.grants.map(g => AuthorizationGrant.fromData(g)),
         d.pagination,
       ]);
   }

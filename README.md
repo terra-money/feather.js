@@ -4,7 +4,7 @@
 </p>
 
 <p align="center">
-The JavaScript SDK for Terra
+The JavaScript SDK for Station
 </p>
 
 ![diagram](https://raw.githubusercontent.com/terra-money/terra.js/master/img/terrajs-diagram.png)
@@ -54,33 +54,40 @@ npm install @terra-money/terra.js
 Terra.js can be used in Node.js, as well as inside the browser. Please check the [docs](https://docs.terra.money/docs/develop/sdks/terra-js/README.html) for notes on how to get up and running.
 
 ### Getting blockchain data
+
 :exclamation: terra.js can connect both terra-classic and terra network. If you want to communicate with classic chain, you have to set isClassic as `true`.
+
 ```ts
-import { LCDClient, Coin } from '@terra-money/terra.js';
+import { LCDClient, Coin } from '@terra-money/station.js';
 
-// connect to pisco testnet
-const terra = new LCDClient({
-  URL: 'https://pisco-lcd.terra.dev',
-  chainID: 'pisco-1',
-  isClassic: false  // if it is unset, LCDClient assumes the flag is false.
+// connect to testnet
+const lcd = LCDClient.fromDefaultConfig('testnet');
+
+// connect to mainnet
+const lcd = LCDClient.fromDefaultConfig('mainnet');
+
+// To use LocalTerra or a custom endpoint
+const lcd = new LCDClient({
+  localterra: {
+    lcd: 'http://localhost:1317',
+    chainID: 'localterra',
+    gasAdjustment: 1.75,
+    gasPrices: { uluna: 0.15 },
+    prefix: 'terra1',
+  },
 });
-
-// connect to columbus-5 terra classic network
-const terra = new LCDClient({
-  URL: 'https://columbus-lcd.terra.dev',
-  chainID: 'columbus-5',
-  isClassic: true  // *set to true to connect terra-classic chain*
-});
-
-// To use LocalTerra
-// const terra = new LCDClient({
-//   URL: 'http://localhost:1317',
-//   chainID: 'localterra'
-// });
 
 // get the current balance of `terra1x46rqay4d3cssq8gxxvqz8xt6nwlz4td20k38v`
-const balance = terra.bank.balance('terra1x46rqay4d3cssq8gxxvqz8xt6nwlz4td20k38v');
+// LCD understand automatically the chain to query using the bech32 prefix of the address
+const balance = lcd.bank.balance(
+  'terra1x46rqay4d3cssq8gxxvqz8xt6nwlz4td20k38v'
+);
 console.log(balance);
+
+// get the total circulation supply
+// LCD needs a chainID to understand the chain it should query
+const total = lcd.bank.total('phoenix-1');
+console.log(total);
 ```
 
 ### Broadcasting transactions
@@ -96,35 +103,27 @@ const mk = new MnemonicKey({
     'notice oak worry limit wrap speak medal online prefer cluster roof addict wrist behave treat actual wasp year salad speed social layer crew genius',
 });
 
-// connect to bombay testnet
-const terra = new LCDClient({
-  URL: 'https://pisco-lcd.terra.dev',
-  chainID: 'pisco-1',
-});
-
-// To use LocalTerra
-// const terra = new LCDClient({
-//   URL: 'http://localhost:1317',
-//   chainID: 'localterra'
-// });
+// connect to testnet
+const lcd = new LCDClient.fromDefaultConfig('testnet');
 
 // a wallet can be created out of any key
 // wallets abstract transaction building
-const wallet = terra.wallet(mk);
+const wallet = lcd.wallet(mk);
 
 // create a simple message that moves coin balances
 const send = new MsgSend(
   'terra1x46rqay4d3cssq8gxxvqz8xt6nwlz4td20k38v',
   'terra17lmam6zguazs5q5u6z5mmx76uj63gldnse2pdp',
-  { uluna: 1200000}
+  { uluna: 1200000 }
 );
 
 wallet
   .createAndSignTx({
     msgs: [send],
-    memo: 'test from terra.js!',
+    memo: 'test from station.js!',
+    chainID: 'pisco-1'
   })
-  .then(tx => terra.tx.broadcast(tx))
+  .then(tx => lcd.tx.broadcast(tx, 'pisco-1'))
   .then(result => {
     console.log(`TX hash: ${result.txhash}`);
   });

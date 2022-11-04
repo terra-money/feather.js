@@ -1,11 +1,8 @@
 import { LCDClient } from '../LCDClient';
 import { FeeGrantAPI } from './FeeGrantAPI';
 
-const terra = new LCDClient({
-  chainID: 'pisco-1',
-  URL: 'https://pisco-lcd.terra.dev',
-});
-const feeGrant = new FeeGrantAPI(terra);
+const lcd = LCDClient.fromDefaultConfig('testnet');
+const feeGrant = new FeeGrantAPI(lcd);
 
 describe('FeeGrantAPI', () => {
   it('allowances', async () => {

@@ -54,9 +54,8 @@ export namespace StakingPool {
 }
 
 export class StakingAPI extends BaseAPI {
-
   constructor(public lcd: LCDClient) {
-    super(lcd.apiRequester);
+    super(lcd.apiRequesters, lcd.config);
   }
 
   /**
@@ -72,7 +71,7 @@ export class StakingAPI extends BaseAPI {
     params: Partial<PaginationOptions & APIParams> = {}
   ): Promise<[Delegation[], Pagination]> {
     if (delegator !== undefined && validator !== undefined) {
-      return this.c
+      return this.getReqFromAddress(delegator)
         .get<{ delegation_response: Delegation.Data }>(
           `/cosmos/staking/v1beta1/validators/${validator}/delegations/${delegator}`,
           params
@@ -82,7 +81,7 @@ export class StakingAPI extends BaseAPI {
           { total: 1, next_key: '' },
         ]);
     } else if (delegator !== undefined) {
-      return this.c
+      return this.getReqFromAddress(delegator)
         .get<{
           delegation_responses: Delegation.Data[];
           pagination: Pagination;
@@ -92,7 +91,7 @@ export class StakingAPI extends BaseAPI {
           data.pagination,
         ]);
     } else if (validator !== undefined) {
-      return this.c
+      return this.getReqFromAddress(validator.replace('valoper', ''))
         .get<{
           delegation_responses: Delegation.Data[];
           pagination: Pagination;
@@ -136,7 +135,7 @@ export class StakingAPI extends BaseAPI {
     params: Partial<PaginationOptions & APIParams> = {}
   ): Promise<[UnbondingDelegation[], Pagination]> {
     if (delegator !== undefined && validator !== undefined) {
-      return this.c
+      return this.getReqFromAddress(delegator)
         .get<{ unbond: UnbondingDelegation.Data }>(
           `/cosmos/staking/v1beta1/validators/${validator}/delegations/${delegator}/unbonding_delegation`,
           params
@@ -146,7 +145,7 @@ export class StakingAPI extends BaseAPI {
           { next_key: '', total: 1 },
         ]);
     } else if (delegator !== undefined) {
-      return this.c
+      return this.getReqFromAddress(delegator)
         .get<{
           unbonding_responses: UnbondingDelegation.Data[];
           pagination: Pagination;
@@ -159,7 +158,7 @@ export class StakingAPI extends BaseAPI {
           data.pagination,
         ]);
     } else if (validator !== undefined) {
-      return this.c
+      return this.getReqFromAddress(validator.replace('valoper', ''))
         .get<{
           unbonding_responses: UnbondingDelegation.Data[];
           pagination: Pagination;
@@ -209,7 +208,7 @@ export class StakingAPI extends BaseAPI {
       src_validator_addr: validatorSrc,
       dst_validator_addr: validatorDst,
     };
-    return this.c
+    return this.getReqFromAddress(delegator)
       .get<{
         redelegation_responses: Redelegation.Data[];
         pagination: Pagination;
@@ -231,7 +230,7 @@ export class StakingAPI extends BaseAPI {
     delegator: AccAddress,
     params: Partial<PaginationOptions & APIParams> = {}
   ): Promise<[Validator[], Pagination]> {
-    return this.c
+    return this.getReqFromAddress(delegator)
       .get<{ validators: Validator.Data[]; pagination: Pagination }>(
         `/cosmos/staking/v1beta1/delegators/${delegator}/validators`,
         params
@@ -241,11 +240,13 @@ export class StakingAPI extends BaseAPI {
 
   /**
    * Get all current registered validators, including validators that are not currently in the validating set.
+   * @param chainID chain ID
    */
   public async validators(
+    chainID: string,
     params: Partial<PaginationOptions & APIParams> = {}
   ): Promise<[Validator[], Pagination]> {
-    return this.c
+    return this.getReqFromChainID(chainID)
       .get<{ validators: Validator.Data[]; pagination: Pagination }>(
         `/cosmos/staking/v1beta1/validators`,
         params
@@ -261,7 +262,7 @@ export class StakingAPI extends BaseAPI {
     validator: ValAddress,
     params: APIParams = {}
   ): Promise<Validator> {
-    return this.c
+    return this.getReqFromAddress(validator.replace('valoper', ''))
       .get<{ validator: Validator.Data }>(
         `/cosmos/staking/v1beta1/validators/${validator}`,
         params
@@ -271,9 +272,13 @@ export class StakingAPI extends BaseAPI {
 
   /**
    * Gets the current staking pool.
+   * @param chainID chain ID
    */
-  public async pool(params: APIParams = {}): Promise<StakingPool> {
-    return this.c
+  public async pool(
+    chainID: string,
+    params: APIParams = {}
+  ): Promise<StakingPool> {
+    return this.getReqFromChainID(chainID)
       .get<{ pool: StakingPool.Data }>(`/cosmos/staking/v1beta1/pool`, params)
       .then(({ pool: d }) => ({
         bonded_tokens: new Coin('uluna', d.bonded_tokens),
@@ -283,9 +288,13 @@ export class StakingAPI extends BaseAPI {
 
   /**
    * Gets the current Staking module's parameters.
+   * @param chainID chain ID
    */
-  public async parameters(params: APIParams = {}): Promise<StakingParams> {
-    return this.c
+  public async parameters(
+    chainID: string,
+    params: APIParams = {}
+  ): Promise<StakingParams> {
+    return this.getReqFromChainID(chainID)
       .get<{ params: StakingParams.Data }>(
         `/cosmos/staking/v1beta1/params`,
         params

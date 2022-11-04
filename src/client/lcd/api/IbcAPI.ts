@@ -43,16 +43,18 @@ export namespace Port {
 
 export class IbcAPI extends BaseAPI {
   constructor(public lcd: LCDClient) {
-    super(lcd.apiRequester);
+    super(lcd.apiRequesters, lcd.config);
   }
 
   /**
    * query all the IBC channels of a chain
+   * @param chainID chain id
    */
   public async channels(
+    chainID: string,
     params: APIParams = {}
   ): Promise<[Channel[], Pagination]> {
-    return this.c
+    return this.getReqFromChainID(chainID)
       .get<{
         channels: Channel.Data[];
         pagination: Pagination;
@@ -64,13 +66,15 @@ export class IbcAPI extends BaseAPI {
    * query the information of the port at given channel
    * @param channel_id channel identifier
    * @param port_id port name
+   * @param chainID chain id
    */
   public async port(
     channel_id: string,
     port_id: string,
+    chainID: string,
     params: APIParams = {}
   ): Promise<Port> {
-    return this.c
+    return this.getReqFromChainID(chainID)
       .get<{
         channel: Channel.Data;
         proof: string;
@@ -87,11 +91,13 @@ export class IbcAPI extends BaseAPI {
 
   /**
    *  query all the IBC connections of a chain
+   *  @param chainID chain id
    */
   public async connections(
+    chainID: string,
     params: APIParams = {}
   ): Promise<[IdentifiedConnection[], Pagination]> {
-    return this.c
+    return this.getReqFromChainID(chainID)
       .get<{
         connections: IdentifiedConnection.Data[];
         pagination: Pagination;
@@ -105,12 +111,14 @@ export class IbcAPI extends BaseAPI {
   /**
    * query an IBC connection end
    * @param connection_id connection unique identifier
+   * @param chainID chain id
    */
   public async connection(
     connection_id: string,
+    chainID: string,
     params: APIParams = {}
   ): Promise<IdentifiedConnection> {
-    return this.c
+    return this.getReqFromChainID(chainID)
       .get<{
         connection: IdentifiedConnection.Data;
       }>(`/ibc/core/connection/v1/connections/${connection_id}`, params)
@@ -120,12 +128,14 @@ export class IbcAPI extends BaseAPI {
   /**
    * query all the channels associated with a connection end
    * @param connection_id connection unique identifier
+   * @param chainID chain id
    */
   public async connectionChannels(
     connection_id: string,
+    chainID: string,
     params: APIParams = {}
   ): Promise<[Channel[], Height, Pagination]> {
-    return this.c
+    return this.getReqFromChainID(chainID)
       .get<{
         channels: Channel.Data[];
         pagination: Pagination;
@@ -140,9 +150,13 @@ export class IbcAPI extends BaseAPI {
 
   /**
    * Gets the current transfer application parameters.
+   * @param chainID chain id
    */
-  public async parameters(params: APIParams = {}): Promise<IbcClientParams> {
-    return this.c
+  public async parameters(
+    chainID: string,
+    params: APIParams = {}
+  ): Promise<IbcClientParams> {
+    return this.getReqFromChainID(chainID)
       .get<{ params: IbcClientParams.Data }>(`/ibc/client/v1/params`, params)
       .then(({ params: d }) => ({
         allowed_clients: d.allowed_clients,
@@ -151,11 +165,13 @@ export class IbcAPI extends BaseAPI {
 
   /**
    * query all the IBC light clients of a chain
+   * @param chainID chain id
    */
   public async clientStates(
+    chainID: string,
     params: Partial<PaginationOptions & APIParams> = {}
   ): Promise<[IdentifiedClientState[], Pagination]> {
-    return this.c
+    return this.getReqFromChainID(chainID)
       .get<{
         client_states: IdentifiedClientState.Data[];
         pagination: Pagination;
@@ -169,13 +185,15 @@ export class IbcAPI extends BaseAPI {
   /**
    * query an IBC light client
    * @param client_id client state unique identifier
+   * @param chainID chain id
    * @returns
    */
   public async clientState(
     client_id: string,
+    chainID: string,
     params: APIParams = {}
   ): Promise<IdentifiedClientState> {
-    return this.c
+    return this.getReqFromChainID(chainID)
       .get<{
         client_state: IdentifiedClientState.Data;
       }>(`/ibc/core/client/v1/client_states/${client_id}`, params)
@@ -185,13 +203,15 @@ export class IbcAPI extends BaseAPI {
   /**
    * query the status of an IBC light client
    * @param client_id client state unique identifier
+   * @param chainID chain id
    * @returns
    */
   public async clientStatus(
     client_id: string,
+    chainID: string,
     params: APIParams = {}
   ): Promise<Status> {
-    return this.c
+    return this.getReqFromChainID(chainID)
       .get<{
         status: Status.Data;
       }>(`/ibc/core/client/v1/client_status/${client_id}`, params)
@@ -201,13 +221,15 @@ export class IbcAPI extends BaseAPI {
   /**
    * query all the consensus state associated with a given client
    * @param client_id client identifier
+   * @param chainID chain id
    * @returns
    */
   public async consensusStates(
     client_id: string,
+    chainID: string,
     params: Partial<PaginationOptions & APIParams> = {}
   ): Promise<[ClientConsensusStates, Pagination]> {
-    return this.c
+    return this.getReqFromChainID(chainID)
       .get<{
         consensus_states: ClientConsensusStates.Data;
         pagination: Pagination;
@@ -233,11 +255,13 @@ export class IbcAPI extends BaseAPI {
 
   /**
    * Gets paramaters for interchain account host.
+   * @param chainID chain id
    */
   public async interchainAccountHostParameters(
+    chainID: string,
     params: APIParams = {}
   ): Promise<HostParams> {
-    return this.c
+    return this.getReqFromChainID(chainID)
       .get<{ params: HostParams.Data }>(
         `/ibc/apps/interchain_accounts/host/v1/params`,
         params

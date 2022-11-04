@@ -18,12 +18,12 @@ export namespace IbcTransferParams {
 
 export class IbcTransferAPI extends BaseAPI {
   constructor(public lcd: LCDClient) {
-    super(lcd.apiRequester);
+    super(lcd.apiRequesters, lcd.config);
   }
 
   /** Gets a denomTrace for the hash */
-  public async denomTrace(hash: string): Promise<DenomTrace> {
-    return this.c
+  public async denomTrace(hash: string, chainID: string): Promise<DenomTrace> {
+    return this.getReqFromChainID(chainID)
       .get<{ denom_trace: DenomTrace.Data }>(
         `/ibc/apps/transfer/v1/denom_traces/${hash}`
       )
@@ -32,9 +32,10 @@ export class IbcTransferAPI extends BaseAPI {
 
   /** Gets a list of denomTraces */
   public async denomTraces(
+    chainID: string,
     params: Partial<PaginationOptions & APIParams> = {}
   ): Promise<[DenomTrace[], Pagination]> {
-    return this.c
+    return this.getReqFromChainID(chainID)
       .get<{ denom_traces: DenomTrace[]; pagination: Pagination }>(
         `/ibc/apps/transfer/v1/denom_traces`,
         params
@@ -45,13 +46,10 @@ export class IbcTransferAPI extends BaseAPI {
   /** Gets a denomination hash information */
   public async denomHash(
     trace: string,
+    chainID: string,
     params: Partial<PaginationOptions & APIParams> = {}
   ): Promise<string> {
-    if (this.lcd.config.isClassic) {
-      throw new Error('Not supported for the network');
-    }
-
-    return await this.c.get<string>(
+    return await this.getReqFromChainID(chainID).get<string>(
       `/ibc/apps/transfer/v1/denom_hashes/${trace}`,
       params
     );
@@ -60,8 +58,11 @@ export class IbcTransferAPI extends BaseAPI {
   /**
    * Gets the current transfer application parameters.
    */
-  public async parameters(params: APIParams = {}): Promise<IbcTransferParams> {
-    return this.c
+  public async parameters(
+    chainID: string,
+    params: APIParams = {}
+  ): Promise<IbcTransferParams> {
+    return this.getReqFromChainID(chainID)
       .get<{ params: IbcTransferParams.Data }>(
         `/ibc/apps/transfer/v1/params`,
         params

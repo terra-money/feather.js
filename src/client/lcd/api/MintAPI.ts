@@ -24,16 +24,18 @@ export namespace MintingParams {
 }
 
 export class MintAPI extends BaseAPI {
-
   constructor(public lcd: LCDClient) {
-    super(lcd.apiRequester);
+    super(lcd.apiRequesters, lcd.config);
   }
 
   /**
    * Gets the current minting inflation value
    */
-  public async inflation(params: APIParams = {}): Promise<Dec> {
-    return this.c
+  public async inflation(
+    chainID: string,
+    params: APIParams = {}
+  ): Promise<Dec> {
+    return this.getReqFromChainID(chainID)
       .get<{ inflation: Numeric.Input }>(
         `/cosmos/mint/v1beta1/inflation`,
         params
@@ -44,8 +46,11 @@ export class MintAPI extends BaseAPI {
   /**
    * Gets the current minting annual provisions value
    */
-  public async annualProvisions(params: APIParams = {}): Promise<Dec> {
-    return this.c
+  public async annualProvisions(
+    chainID: string,
+    params: APIParams = {}
+  ): Promise<Dec> {
+    return this.getReqFromChainID(chainID)
       .get<{ annual_provisions: Numeric.Input }>(
         `cosmos/mint/v1beta1/annual_provisions`,
         params
@@ -56,8 +61,11 @@ export class MintAPI extends BaseAPI {
   /**
    * Gets the current minting module's parameters.
    */
-  public async parameters(params: APIParams = {}): Promise<MintingParams> {
-    return this.c
+  public async parameters(
+    chainID: string,
+    params: APIParams = {}
+  ): Promise<MintingParams> {
+    return this.getReqFromChainID(chainID)
       .get<{ params: MintingParams.Data }>(
         `/cosmos/mint/v1beta1/params`,
         params

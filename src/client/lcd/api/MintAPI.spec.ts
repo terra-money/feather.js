@@ -2,23 +2,20 @@ import { Dec } from '../../../core/numeric';
 import { LCDClient } from '../LCDClient';
 import { MintAPI } from './MintAPI';
 
-const terra = new LCDClient({
-  chainID: 'pisco-1',
-  URL: 'https://pisco-lcd.terra.dev',
-});
-const api = new MintAPI(terra);
+const lcd = LCDClient.fromDefaultConfig('testnet');
+const api = new MintAPI(lcd);
 
 describe('MintAPI', () => {
   it('inflation', async () => {
-    await expect(api.inflation()).resolves.toBeInstanceOf(Dec);
+    await expect(api.inflation('pisco-1')).resolves.toBeInstanceOf(Dec);
   });
 
   it('annual provisions', async () => {
-    await expect(api.annualProvisions()).resolves.toBeInstanceOf(Dec);
+    await expect(api.annualProvisions('pisco-1')).resolves.toBeInstanceOf(Dec);
   });
 
   it('parameters', async () => {
-    await expect(api.parameters()).resolves.toMatchObject({
+    await expect(api.parameters('pisco-1')).resolves.toMatchObject({
       mint_denom: expect.any(String),
       inflation_rate_change: expect.any(Dec),
       inflation_max: expect.any(Dec),

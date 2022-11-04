@@ -3,15 +3,12 @@ import { Tx } from '../../../core/Tx';
 import { Tx as Tx_pb } from '@terra-money/legacy.proto/cosmos/tx/v1beta1/tx';
 import { LCDClient } from '../LCDClient';
 
-const terra = new LCDClient({
-  chainID: 'pisco-1',
-  URL: 'https://pisco-lcd.terra.dev',
-});
-const tendermint = new TendermintAPI(terra);
+const lcd = LCDClient.fromDefaultConfig('testnet');
+const tendermint = new TendermintAPI(lcd);
 
 describe('TendermintAPI', () => {
   it('load block and decode txs', async () => {
-    const blockInfo = await tendermint.blockInfo(1);
+    const blockInfo = await tendermint.blockInfo('pisco-1', 1);
     if (blockInfo.block.data.txs != null) {
       blockInfo.block.data.txs.every(txBytes => {
         const txProto = Tx_pb.decode(Buffer.from(txBytes, 'base64'));
@@ -21,15 +18,17 @@ describe('TendermintAPI', () => {
   });
 
   it('node info', async () => {
-    await expect(tendermint.nodeInfo()).resolves.toBeInstanceOf(Object);
+    await expect(tendermint.nodeInfo('pisco-1')).resolves.toBeInstanceOf(
+      Object
+    );
   });
 
   it('syncing', async () => {
-    await expect(tendermint.syncing()).resolves;
+    await expect(tendermint.syncing('pisco-1')).resolves;
   });
 
   it('validator set (latest)', async () => {
-    const vals = await tendermint.validatorSet();
+    const vals = await tendermint.validatorSet('pisco-1');
 
     expect(vals[0]).toContainEqual({
       address: expect.any(String),
@@ -43,7 +42,7 @@ describe('TendermintAPI', () => {
   });
 
   it('validator set (1)', async () => {
-    const vals = await tendermint.validatorSet(1);
+    const vals = await tendermint.validatorSet('pisco-1', 1);
 
     expect(vals[0]).toContainEqual({
       address: expect.any(String),
@@ -57,7 +56,7 @@ describe('TendermintAPI', () => {
   });
 
   it('block info', async () => {
-    const block = await tendermint.blockInfo();
+    const block = await tendermint.blockInfo('pisco-1');
 
     expect(block).toMatchObject({
       block: expect.any(Object),

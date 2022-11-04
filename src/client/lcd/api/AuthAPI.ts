@@ -31,7 +31,7 @@ export namespace AuthParams {
 
 export class AuthAPI extends BaseAPI {
   constructor(public lcd: LCDClient) {
-    super(lcd.apiRequester);
+    super(lcd.apiRequesters, lcd.config);
   }
   /**
    * Looks up the account information using its Terra account address. If the account has
@@ -43,7 +43,7 @@ export class AuthAPI extends BaseAPI {
     address: AccAddress,
     params: APIParams = {}
   ): Promise<Account> {
-    const { account } = await this.c.get<{
+    const { account } = await this.getReqFromAddress(address).get<{
       account:
         | BaseAccount.Data
         | LazyGradedVestingAccount.Data
@@ -51,14 +51,15 @@ export class AuthAPI extends BaseAPI {
         | PeriodicVestingAccount.Data
         | ContinuousVestingAccount.Data;
     }>(`/cosmos/auth/v1beta1/accounts/${address}`, params);
-    return Account.fromData(account, this.lcd.config.isClassic);
+
+    return Account.fromData(account);
   }
 
-  public async parameters(params: APIParams = {}): Promise<AuthParams> {
-    if (this.lcd.config.isClassic) {
-      throw new Error('Not supported for the network');
-    }
-    return this.c
+  public async parameters(
+    chainID: string,
+    params: APIParams = {}
+  ): Promise<AuthParams> {
+    return this.getReqFromChainID(chainID)
       .get<{ params: AuthParams.Data }>(`/cosmos/auth/v1beta1/params`, params)
       .then(({ params: d }) => ({
         max_memo_characters: Number.parseInt(d.max_memo_characters),

@@ -6,7 +6,7 @@ import { LCDClient } from '../LCDClient';
 
 export class FeeGrantAPI extends BaseAPI {
   constructor(public lcd: LCDClient) {
-    super(lcd.apiRequester);
+    super(lcd.apiRequesters, lcd.config);
   }
 
   public async allowances(
@@ -20,7 +20,7 @@ export class FeeGrantAPI extends BaseAPI {
     }[];
     pagination: Pagination;
   }> {
-    return this.c
+    return this.getReqFromAddress(grantee)
       .get<{
         allowances: {
           granter: AccAddress;
@@ -43,7 +43,7 @@ export class FeeGrantAPI extends BaseAPI {
     granter: AccAddress,
     grantee: AccAddress
   ): Promise<Allowance> {
-    return this.c
+    return this.getReqFromAddress(grantee)
       .get<{
         allowance: {
           granter: AccAddress;
@@ -65,10 +65,7 @@ export class FeeGrantAPI extends BaseAPI {
     }[];
     pagination: Pagination;
   }> {
-    if (this.lcd.config.isClassic) {
-      throw new Error('Not supported for the network');
-    }
-    return this.c
+    return this.getReqFromAddress(granter)
       .get<{
         allowances: {
           granter: AccAddress;

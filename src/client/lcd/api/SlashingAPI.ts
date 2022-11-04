@@ -62,9 +62,8 @@ export namespace SigningInfo {
 }
 
 export class SlashingAPI extends BaseAPI {
-
   constructor(public lcd: LCDClient) {
-    super(lcd.apiRequester);
+    super(lcd.apiRequesters, lcd.config);
   }
 
   /**
@@ -76,7 +75,7 @@ export class SlashingAPI extends BaseAPI {
     valConsAddress: ValConsAddress,
     params: APIParams = {}
   ): Promise<SigningInfo> {
-    return this.c
+    return this.getReqFromAddress(valConsAddress.replace('valcons', ''))
       .get<{ val_signing_info: SigningInfo.Data }>(
         `/cosmos/slashing/v1beta1/signing_infos/${valConsAddress}`,
         params
@@ -91,8 +90,11 @@ export class SlashingAPI extends BaseAPI {
       }));
   }
 
-  public async signingInfos(params: APIParams = {}): Promise<SigningInfo[]> {
-    return this.c
+  public async signingInfos(
+    chainID: string,
+    params: APIParams = {}
+  ): Promise<SigningInfo[]> {
+    return this.getReqFromChainID(chainID)
       .get<{ info: SigningInfo.Data[]; pagination: Pagination }>(
         `/cosmos/slashing/v1beta1/signing_infos`,
         params
@@ -112,8 +114,11 @@ export class SlashingAPI extends BaseAPI {
   /**
    * Gets the current Slashing module's parameters.
    */
-  public async parameters(params: APIParams = {}): Promise<SlashingParams> {
-    return this.c
+  public async parameters(
+    chainID: string,
+    params: APIParams = {}
+  ): Promise<SlashingParams> {
+    return this.getReqFromChainID(chainID)
       .get<{ params: SlashingParams.Data }>(
         `/cosmos/slashing/v1beta1/params`,
         params

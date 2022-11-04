@@ -3,12 +3,8 @@ import { BaseAccount } from '../../../core';
 import { MnemonicKey } from '../../../key';
 import { LCDClient } from '../LCDClient';
 
-// TODO - restore to https://lcd.terra.dev
-const terra = new LCDClient({
-  chainID: 'pisco-1',
-  URL: 'https://pisco-lcd.terra.dev',
-});
-const auth = new AuthAPI(terra);
+const lcd = LCDClient.fromDefaultConfig('testnet');
+const auth = new AuthAPI(lcd);
 
 describe('AuthAPI', () => {
   describe('accounts', () => {
@@ -43,7 +39,7 @@ describe('AuthAPI', () => {
 
   describe('parameters', () => {
     it('parameters', async () => {
-      const param = await auth.parameters();
+      const param = await auth.parameters('pisco-1');
 
       expect(param.max_memo_characters).toBeGreaterThanOrEqual(0);
       expect(param.tx_sig_limit).toBeGreaterThanOrEqual(0);

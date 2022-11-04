@@ -104,24 +104,24 @@ export namespace Tally {
 
 export class GovAPI extends BaseAPI {
   constructor(public lcd: LCDClient) {
-    super(lcd.apiRequester);
+    super(lcd.apiRequesters, lcd.config);
   }
 
   /**
    * Gets all proposals.
+   * @param chainID chain id
    */
   public async proposals(
+    chainID: string,
     params: Partial<PaginationOptions & APIParams> = {}
   ): Promise<[Proposal[], Pagination]> {
-    return this.c
+    return this.getReqFromChainID(chainID)
       .get<{
         proposals: Proposal.Data[];
         pagination: Pagination;
       }>(`/cosmos/gov/v1beta1/proposals`, params)
       .then(d => [
-        d.proposals.map(prop =>
-          Proposal.fromData(prop, this.lcd.config.isClassic)
-        ),
+        d.proposals.map(prop => Proposal.fromData(prop)),
         d.pagination,
       ]);
   }
@@ -129,26 +129,32 @@ export class GovAPI extends BaseAPI {
   /**
    * Get a specific proposal by its ID
    * @param proposalId proposal's ID
+   * @param chainID chain id
    */
   public async proposal(
     proposalId: number,
+    chainID: string,
     params: APIParams = {}
   ): Promise<Proposal> {
-    return this.c
+    return this.getReqFromChainID(chainID)
       .get<{ proposal: Proposal.Data }>(
         `/cosmos/gov/v1beta1/proposals/${proposalId}`,
         params
       )
-      .then(d => Proposal.fromData(d.proposal, this.lcd.config.isClassic));
+      .then(d => Proposal.fromData(d.proposal));
   }
 
   /**
    * Get the proposal's proposer
    * @param proposalId proposal's ID
+   * @param chainID chain id
    */
-  public async proposer(proposalId: number): Promise<AccAddress> {
+  public async proposer(
+    proposalId: number,
+    chainID: string
+  ): Promise<AccAddress> {
     proposalId;
-    const creationTx = await this.searchProposalCreationTx(proposalId);
+    const creationTx = await this.searchProposalCreationTx(proposalId, chainID);
     const msg = creationTx.body.messages.find(
       msg => msg['@type'] === '/cosmos.gov.v1beta1.MsgSubmitProposal'
     );
@@ -163,10 +169,14 @@ export class GovAPI extends BaseAPI {
   /**
    * Get the proposal's initial deposit
    * @param proposalId proposal's ID
+   * @param chainID chain id
    */
-  public async initialDeposit(proposalId: number): Promise<Coins> {
+  public async initialDeposit(
+    proposalId: number,
+    chainID: string
+  ): Promise<Coins> {
     proposalId;
-    const creationTx = await this.searchProposalCreationTx(proposalId);
+    const creationTx = await this.searchProposalCreationTx(proposalId, chainID);
     const msg = creationTx.body.messages.find(
       msg => msg['@type'] === '/cosmos.gov.v1beta1.MsgSubmitProposal'
     );
@@ -181,19 +191,21 @@ export class GovAPI extends BaseAPI {
   /**
    * Get the deposits for a proposal
    * @param proposalId proposal's ID
+   * @param chainID chain id
    */
   public async deposits(
     proposalId: number,
+    chainID: string,
     _params: Partial<PaginationOptions & APIParams> = {}
   ): Promise<[Deposit[], Pagination]> {
     proposalId;
     _params;
-    const proposal = await this.proposal(proposalId);
+    const proposal = await this.proposal(proposalId, chainID);
     if (
       proposal.status === ProposalStatus.PROPOSAL_STATUS_DEPOSIT_PERIOD ||
       proposal.status === ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD
     ) {
-      return this.c
+      return this.getReqFromChainID(chainID)
         .get<{ deposits: Deposit.Data[]; pagination: Pagination }>(
           `/cosmos/gov/v1beta1/proposals/${proposalId}/deposits`,
           _params
@@ -213,7 +225,7 @@ export class GovAPI extends BaseAPI {
       params.append(v[0], v[1] as string);
     });
 
-    return this.c
+    return this.getReqFromChainID(chainID)
       .get<TxSearchResult.Data>(`/cosmos/tx/v1beta1/txs`, params)
       .then(d => {
         const deposits: Deposit[] = [];
@@ -237,7 +249,10 @@ export class GovAPI extends BaseAPI {
       });
   }
 
-  public async searchProposalCreationTx(proposalId: number): Promise<Tx.Data> {
+  public async searchProposalCreationTx(
+    proposalId: number,
+    chainID: string
+  ): Promise<Tx.Data> {
     // build search params
     const params = new URLSearchParams();
     params.append(
@@ -246,7 +261,7 @@ export class GovAPI extends BaseAPI {
     );
     params.append('events', `submit_proposal.proposal_id=${proposalId}`);
 
-    return this.c
+    return this.getReqFromChainID(chainID)
       .get<TxSearchResult.Data>(`/cosmos/tx/v1beta1/txs`, params)
       .then(d => {
         if (d.tx_responses.length === 0) {
@@ -259,16 +274,18 @@ export class GovAPI extends BaseAPI {
   /**
    * Get the current votes for a proposal
    * @param proposalId proposal's ID
+   * @param chainID chain id
    */
   public async votes(
     proposalId: number,
+    chainID: string,
     _params: Partial<PaginationOptions & APIParams> = {}
   ): Promise<[Vote[], Pagination]> {
     proposalId;
     _params;
-    const proposal = await this.proposal(proposalId);
+    const proposal = await this.proposal(proposalId, chainID);
     if (proposal.status === ProposalStatus.PROPOSAL_STATUS_DEPOSIT_PERIOD) {
-      return this.c
+      return this.getReqFromChainID(chainID)
         .get<{ votes: Vote.Data[]; pagination: Pagination }>(
           `/cosmos/gov/v1beta1/proposals/${proposalId}/votes`,
           _params
@@ -285,7 +302,7 @@ export class GovAPI extends BaseAPI {
       params.append(v[0], v[1] as string);
     });
 
-    return this.c
+    return this.getReqFromChainID(chainID)
       .get<TxSearchResult.Data>(`/cosmos/tx/v1beta1/txs`, params)
       .then(d => {
         const votes: Vote[] = [];
@@ -323,12 +340,14 @@ export class GovAPI extends BaseAPI {
   /**
    * Gets the current tally for a proposal.
    * @param proposalId proposal's ID
+   * @param chainID chain id
    */
   public async tally(
     proposalId: number,
+    chainID: string,
     params: APIParams = {}
   ): Promise<Tally> {
-    return this.c
+    return this.getReqFromChainID(chainID)
       .get<{ tally: Tally.Data }>(
         `/cosmos/gov/v1beta1/proposals/${proposalId}/tally`,
         params
@@ -343,9 +362,10 @@ export class GovAPI extends BaseAPI {
 
   /** Gets the Gov module's deposit parameters */
   public async depositParameters(
+    chainID: string,
     params: APIParams = {}
   ): Promise<DepositParams> {
-    return this.c
+    return this.getReqFromChainID(chainID)
       .get<{ deposit_params: DepositParams.Data }>(
         `/cosmos/gov/v1beta1/params/deposit`,
         params
@@ -357,8 +377,11 @@ export class GovAPI extends BaseAPI {
   }
 
   /** Gets the Gov module's voting parameters */
-  public async votingParameters(params: APIParams = {}): Promise<VotingParams> {
-    return this.c
+  public async votingParameters(
+    chainID: string,
+    params: APIParams = {}
+  ): Promise<VotingParams> {
+    return this.getReqFromChainID(chainID)
       .get<{ voting_params: VotingParams.Data }>(
         `/cosmos/gov/v1beta1/params/voting`,
         params
@@ -369,8 +392,11 @@ export class GovAPI extends BaseAPI {
   }
 
   /** Gets teh Gov module's tally parameters */
-  public async tallyParameters(params: APIParams = {}): Promise<TallyParams> {
-    return this.c
+  public async tallyParameters(
+    chainID: string,
+    params: APIParams = {}
+  ): Promise<TallyParams> {
+    return this.getReqFromChainID(chainID)
       .get<{ tally_params: TallyParams.Data }>(
         `/cosmos/gov/v1beta1/params/tallying`,
         params
@@ -383,11 +409,14 @@ export class GovAPI extends BaseAPI {
   }
 
   /** Gets the Gov module's current parameters  */
-  public async parameters(params: APIParams = {}): Promise<GovParams> {
+  public async parameters(
+    chainID: string,
+    params: APIParams = {}
+  ): Promise<GovParams> {
     const [deposit_params, voting_params, tally_params] = await Promise.all([
-      this.depositParameters(params),
-      this.votingParameters(params),
-      this.tallyParameters(params),
+      this.depositParameters(chainID, params),
+      this.votingParameters(chainID, params),
+      this.tallyParameters(chainID, params),
     ]);
     return {
       deposit_params,

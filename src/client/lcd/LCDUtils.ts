@@ -1,6 +1,4 @@
 import { LCDClient } from './LCDClient';
-import { Coin } from '../../core/Coin';
-import { Int, Dec } from '../../core/numeric';
 import { Validator } from '../../core/staking/Validator';
 
 interface ValidatorWithVotingPower {
@@ -11,29 +9,14 @@ interface ValidatorWithVotingPower {
 
 export class LCDUtils {
   constructor(public lcd: LCDClient) {}
-
-  /**
-   * Calculates the tax that would be applied for the Coin if sent.
-   * Tax = min(taxCap, taxRate * amount)
-   * @param coin
-   */
-  public async calculateTax(coin: Coin): Promise<Coin> {
-    const rate = await this.lcd.treasury.taxRate();
-    const cap = await this.lcd.treasury.taxCap(coin.denom);
-
-    return new Coin(
-      coin.denom,
-      Int.ceil(Dec.min(coin.amount.mul(rate), cap.amount))
-    );
-  }
-
   /**
    * Gets current validators and merges their voting power from the validator set query.
+   * @param chainID chain id
    */
-  public async validatorsWithVotingPower(): Promise<{
+  public async validatorsWithVotingPower(chainID: string): Promise<{
     [validatorAddress: string]: ValidatorWithVotingPower;
   }> {
-    const [validatorSet] = await this.lcd.tendermint.validatorSet();
+    const [validatorSet] = await this.lcd.tendermint.validatorSet(chainID);
     const validatorSetByPubKey = validatorSet.reduce((m: any, o) => {
       m[o.pub_key.key] = o;
       return m;
@@ -42,7 +25,7 @@ export class LCDUtils {
     const validators: Validator[] = [];
     let next_key: string | undefined;
     for (;;) {
-      const validatorsRes = await this.lcd.staking.validators({
+      const validatorsRes = await this.lcd.staking.validators(chainID, {
         'pagination.key': next_key,
       });
 

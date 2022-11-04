@@ -2,45 +2,42 @@ import { Height } from '../../../core/ibc/core/client/Height';
 import { LCDClient } from '../LCDClient';
 import { IbcAPI } from './IbcAPI';
 
-const terra = new LCDClient({
-  chainID: 'pisco-1',
-  URL: 'https://pisco-lcd.terra.dev',
-});
-const ibc = new IbcAPI(terra);
+const lcd = LCDClient.fromDefaultConfig('testnet');
+const ibc = new IbcAPI(lcd);
 
 describe('IbcClientAPI', () => {
   it('params', async () => {
-    const param = await ibc.parameters();
+    const param = await ibc.parameters('pisco-1');
     expect(param.allowed_clients).not.toBeNull();
     expect(param.allowed_clients).not.toBeUndefined();
   });
 
   it('client_states', async () => {
-    const res = await ibc.clientStates();
+    const res = await ibc.clientStates('pisco-1');
     expect(res).not.toBeNull();
     expect(res).not.toBeUndefined();
   });
 
   it('client_state', async () => {
-    const res = await ibc.clientState('07-tendermint-0');
+    const res = await ibc.clientState('07-tendermint-0', 'pisco-1');
     expect(res).not.toBeNull();
     expect(res).not.toBeUndefined();
   });
 
   it('client_status', async () => {
-    const res = await ibc.clientStatus('07-tendermint-0');
+    const res = await ibc.clientStatus('07-tendermint-0', 'pisco-1');
     expect(res).not.toBeNull();
     expect(res).not.toBeUndefined();
   });
 
   it('consensus_states', async () => {
-    const res = await ibc.consensusStates('07-tendermint-0');
+    const res = await ibc.consensusStates('07-tendermint-0', 'pisco-1');
     expect(res).not.toBeNull();
     expect(res).not.toBeUndefined();
   });
 
   it('ica host paramaters', async () => {
-    const res = await ibc.interchainAccountHostParameters();
+    const res = await ibc.interchainAccountHostParameters('pisco-1');
     expect(res).not.toBeNull();
     expect(res).not.toBeUndefined();
   });
@@ -54,14 +51,17 @@ describe('IbcClientAPI', () => {
   */
 
   it('channels', async () => {
-    const [res, _] = await ibc.channels();
+    const [res, _] = await ibc.channels('pisco-1');
     expect(res).not.toBeNull();
     expect(res).not.toBeUndefined();
     expect(res.length).toBeGreaterThan(0);
   });
 
   it('channels for a connection', async () => {
-    const [res, height, _] = await ibc.connectionChannels('connection-3');
+    const [res, height, _] = await ibc.connectionChannels(
+      'connection-3',
+      'pisco-1'
+    );
     expect(res).not.toBeNull();
     expect(res).not.toBeUndefined();
     expect(height).not.toBeNull();
@@ -70,7 +70,7 @@ describe('IbcClientAPI', () => {
   });
 
   it('port', async () => {
-    const res = await ibc.port('channel-0', 'transfer');
+    const res = await ibc.port('channel-0', 'transfer', 'pisco-1');
     expect(res).not.toBeNull();
     expect(res).not.toBeUndefined();
     expect(res).toHaveProperty('channel');
@@ -79,14 +79,14 @@ describe('IbcClientAPI', () => {
   });
 
   it('connections', async () => {
-    const [res, _] = await ibc.connections();
+    const [res, _] = await ibc.connections('pisco-1');
     expect(res).not.toBeNull();
     expect(res).not.toBeUndefined();
     expect(res.length).toBeGreaterThan(0);
   });
 
   it('a connection', async () => {
-    const res = await ibc.connection('connection-0');
+    const res = await ibc.connection('connection-0', 'pisco-1');
     expect(res).not.toBeNull();
     expect(res).not.toBeUndefined();
   });

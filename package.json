@@ -1,10 +1,11 @@
 {
-  "name": "@terra-money/terra.js",
-  "version": "3.1.7",
-  "description": "The JavaScript SDK for Terra",
+  "name": "@terra-money/station.js",
+  "version": "1.0.0-beta.0",
+  "description": "The JavaScript SDK for Station",
   "license": "MIT",
   "author": "Terraform Labs, PTE.",
   "keywords": [
+    "station",
     "terra",
     "stablecoin",
     "cryptocurrency",
@@ -17,7 +18,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/terra-money/terra.js.git"
+    "url": "git://github.com/terra-money/station.js.git"
   },
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",

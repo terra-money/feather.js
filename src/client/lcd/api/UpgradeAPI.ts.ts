@@ -1,8 +1,7 @@
 import { BaseAPI } from './BaseAPI';
-import { Coins, Plan } from '../../../core';
-import { APIParams, Pagination, PaginationOptions } from '../APIRequester';
+import { Plan } from '../../../core';
+import { APIParams, PaginationOptions } from '../APIRequester';
 import { LCDClient } from '../LCDClient';
-import { publicEncrypt } from 'crypto';
 
 export interface ModuleVersion {
   name: string;
@@ -18,7 +17,7 @@ export namespace ModuleVersion {
 
 export class UpgradeAPI extends BaseAPI {
   constructor(public lcd: LCDClient) {
-    super(lcd.apiRequester);
+    super(lcd.apiRequesters, lcd.config);
   }
 
   /**
@@ -27,9 +26,10 @@ export class UpgradeAPI extends BaseAPI {
    */
   public async appliedPlan(
     name: string,
+    chainID: string,
     params: Partial<PaginationOptions & APIParams> = {}
   ): Promise<number> {
-    return this.c
+    return this.getReqFromChainID(chainID)
       .get<{ height: string }>(
         `/cosmos/upgrade/v1beta1/applied_plan/${name}`,
         params
@@ -40,11 +40,11 @@ export class UpgradeAPI extends BaseAPI {
   /**
    * Look up the current plan
    */
-  public async currentPlan(params: APIParams = {}): Promise<Plan | null> {
-    if (this.lcd.config.isClassic) {
-      throw new Error('Not supported for the network');
-    }
-    return this.c
+  public async currentPlan(
+    chainID: string,
+    params: APIParams = {}
+  ): Promise<Plan | null> {
+    return this.getReqFromChainID(chainID)
       .get<{
         plan: Plan.Data | null;
       }>(`/cosmos/upgrade/v1beta1/current_plan`, params)
@@ -55,12 +55,13 @@ export class UpgradeAPI extends BaseAPI {
    * Look up the versions of the modules
    */
   public async moduleVersions(
+    chainID: string,
     params: APIParams = {}
   ): Promise<ModuleVersion[]> {
     if (this.lcd.config.isClassic) {
       throw new Error('Not supported for the network');
     }
-    return this.c
+    return this.getReqFromChainID(chainID)
       .get<{
         module_versions: ModuleVersion.Data[];
       }>(`/cosmos/upgrade/v1beta1/module_versions`, params)

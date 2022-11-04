@@ -10,28 +10,14 @@ const mk = new MnemonicKey({
     'sound hour era feature bacon code drift deal raw toward soldier nation winter consider tissue jewel script result mean faculty water exist lunch betray',
 });
 
-const terra = new LCDClient({
-  chainID: 'pisco-1',
-  URL: 'https://pisco-lcd.terra.dev',
-});
-
-const terraClassic = new LCDClient({
-  chainID: 'columbus-5',
-  URL: 'https://lcd.terra.dev',
-});
-
-const txAPI = new TxAPI(terra);
-const wallet = terra.wallet(mk);
+const lcd = LCDClient.fromDefaultConfig('testnet');
+const txAPI = new TxAPI(lcd);
+const wallet = lcd.wallet(mk);
 
 describe('TxAPI', () => {
   describe('decode', () => {
-    it('classic', async () => {
-      terraClassic.tx.decode(
-        'CpUHCsgFCjIvdGVycmEub3JhY2xlLnYxYmV0YTEuTXNnQWdncmVnYXRlRXhjaGFuZ2VSYXRlVm90ZRKRBQoEYTBiMRKlBDAuMDAwMDAwMDAwMDAwMDAwMDAwdXVzZCwwLjAwMDAwMDAwMDAwMDAwMDAwMHVrcncsMC4wMDAwMDAwMDAwMDAwMDAwMDB1c2RyLDAuMDAwMDAwMDAwMDAwMDAwMDAwdW1udCwwLjAwMDAwMDAwMDAwMDAwMDAwMHVldXIsMC4wMDAwMDAwMDAwMDAwMDAwMDB1Z2JwLDAuMDAwMDAwMDAwMDAwMDAwMDAwdWNueSwwLjAwMDAwMDAwMDAwMDAwMDAwMHVqcHksMC4wMDAwMDAwMDAwMDAwMDAwMDB1aW5yLDAuMDAwMDAwMDAwMDAwMDAwMDAwdWNhZCwwLjAwMDAwMDAwMDAwMDAwMDAwMHVjaGYsMC4wMDAwMDAwMDAwMDAwMDAwMDB1aGtkLDAuMDAwMDAwMDAwMDAwMDAwMDAwdWF1ZCwwLjAwMDAwMDAwMDAwMDAwMDAwMHVzZ2QsMC4wMDAwMDAwMDAwMDAwMDAwMDB1dGhiLDAuMDAwMDAwMDAwMDAwMDAwMDAwdXNlaywwLjAwMDAwMDAwMDAwMDAwMDAwMHVka2ssMC4wMDAwMDAwMDAwMDAwMDAwMDB1aWRyLDAuMDAwMDAwMDAwMDAwMDAwMDAwdXBocCwwLjAwMDAwMDAwMDAwMDAwMDAwMHVteXIsMC4wMDAwMDAwMDAwMDAwMDAwMDB1dHdkLDAuMDAwMDAwMDAwMDAwMDAwMDAwdW5vaxosdGVycmExdDByOHVnejNrZGc0dWN3dXJwcHg5dnltd2tsZGxleGRmdnpseXQiM3RlcnJhdmFsb3BlcjFrcHJjZTZrYzA4YTZsMDNnenpoOTloZnBhemZqZWN6ZnB6a2thdQrHAQo1L3RlcnJhLm9yYWNsZS52MWJldGExLk1zZ0FnZ3JlZ2F0ZUV4Y2hhbmdlUmF0ZVByZXZvdGUSjQEKKDc0MzM3NmY4ZTFjMzVlMTU5ZjEzOWQ5M2I2NDU5N2NiYjVlZWVkOTgSLHRlcnJhMXQwcjh1Z3oza2RnNHVjd3VycHB4OXZ5bXdrbGRsZXhkZnZ6bHl0GjN0ZXJyYXZhbG9wZXIxa3ByY2U2a2MwOGE2bDAzZ3p6aDk5aGZwYXpmamVjemZwemtrYXUSZQpSCkYKHy9jb3Ntb3MuY3J5cHRvLnNlY3AyNTZrMS5QdWJLZXkSIwohA4RDdgjQPNWfgJswEBNY59qEk6HUFGw17J9h7t/HhUCWEgQKAggBGLPjahIPCgkKBHVrcncSATAQwJoMGkCiRN4ILzAF9JV6Cvc7qfluHeJPjeLWU3IAUGjEAYZt6SJR5KVLwytZQ6UsNp58ciDPrYD5GeLJfo7Js2vFZLnT'
-      );
-    });
     it('pisco', async () => {
-      terra.tx.decode(
+      lcd.tx.decode(
         'CsIBCp4BCiMvY29zbW9zLnN0YWtpbmcudjFiZXRhMS5Nc2dEZWxlZ2F0ZRJ3Cix0ZXJyYTF6ZHBnajhhbTVucXF2aHQ5MjdrM2V0bGp5bDZhNTJrd3F1cDBqZRIzdGVycmF2YWxvcGVyMXpkcGdqOGFtNW5xcXZodDkyN2szZXRsanlsNmE1Mmt3cW5kanoyGhIKBXVsdW5hEgkxMDQ3ODQwMDYSH2J5LiBodHRwczovL2dpdGh1Yi5jb20vZW1pZGV2OTgSagpSCkYKHy9jb3Ntb3MuY3J5cHRvLnNlY3AyNTZrMS5QdWJLZXkSIwohA+Q1ZNHkGfabYf1wRUdLcaJHlqDC62Llxam8fKgoH6mZEgQKAggBGJPWChIUCg4KBXVsdW5hEgUzNTk4MxCJ0g4aQOQgfKscECIN6Z6NtfWwEiZ2nxnnjdfZEVq4f2ypIm1QLY8Oo60Rfbe6Y10leA4bL5fPRHp8GC7d9hmrhtDVlXc='
       );
     });
@@ -125,8 +111,11 @@ describe('TxAPI', () => {
         { uluna: '1000000' }
       );
 
-      const tx = await wallet.createAndSignTx({ msgs: [send] });
-      const txInfo = await txAPI.broadcast(tx);
+      const tx = await wallet.createAndSignTx({
+        msgs: [send],
+        chainID: 'pisco-1',
+      });
+      const txInfo = await txAPI.broadcast(tx, 'pisco-1');
 
       expect(isTxError(txInfo)).toBeFalsy();
     });
@@ -147,10 +136,13 @@ describe('TxAPI', () => {
         { uluna: '1' }
       );
 
-      const tx = await wallet.createAndSignTx({ msgs: [send] });
+      const tx = await wallet.createAndSignTx({
+        msgs: [send],
+        chainID: 'pisco-1',
+      });
 
       await expect(async () => {
-        const res = await txAPI.broadcast(tx, 1);
+        const res = await txAPI.broadcast(tx, 'pisco-1', 1);
         console.log(res);
       }).rejects.toThrow('Transaction was not included in a block');
     });

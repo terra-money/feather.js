@@ -62,9 +62,8 @@ export namespace Rewards {
 }
 
 export class DistributionAPI extends BaseAPI {
-
   constructor(public lcd: LCDClient) {
-    super(lcd.apiRequester);
+    super(lcd.apiRequesters, lcd.config);
   }
 
   /**
@@ -75,7 +74,7 @@ export class DistributionAPI extends BaseAPI {
     delegator: AccAddress,
     params: APIParams = {}
   ): Promise<Rewards> {
-    const rewardsData = await this.c
+    const rewardsData = await this.getReqFromAddress(delegator)
       .get<Rewards.Data>(
         `/cosmos/distribution/v1beta1/delegators/${delegator}/rewards`,
         params
@@ -100,7 +99,8 @@ export class DistributionAPI extends BaseAPI {
     validator: ValAddress,
     params: APIParams = {}
   ): Promise<Coins> {
-    return this.c
+    // remove valoper from valAddress to match the wallet bech32 prefix
+    return this.getReqFromAddress(validator.replace('valoper', ''))
       .get<{
         commission: {
           commission: Coins.Data;
@@ -121,7 +121,7 @@ export class DistributionAPI extends BaseAPI {
     delegator: AccAddress,
     params: APIParams = {}
   ): Promise<AccAddress> {
-    return this.c
+    return this.getReqFromAddress(delegator)
       .get<{ withdraw_address: AccAddress }>(
         `/cosmos/distribution/v1beta1/delegators/${delegator}/withdraw_address`,
         params
@@ -131,9 +131,13 @@ export class DistributionAPI extends BaseAPI {
 
   /**
    * Gets the current value of the community pool.
+   * @param chainID chain id
    */
-  public async communityPool(params: APIParams = {}): Promise<Coins> {
-    return this.c
+  public async communityPool(
+    chainID: string,
+    params: APIParams = {}
+  ): Promise<Coins> {
+    return this.getReqFromChainID(chainID)
       .get<{ pool: Coins.Data }>(
         `/cosmos/distribution/v1beta1/community_pool`,
         params
@@ -143,9 +147,13 @@ export class DistributionAPI extends BaseAPI {
 
   /**
    * Gets the current distribution parameters.
+   * @param chainID chain id
    */
-  public async parameters(params: APIParams = {}): Promise<DistributionParams> {
-    return this.c
+  public async parameters(
+    chainID: string,
+    params: APIParams = {}
+  ): Promise<DistributionParams> {
+    return this.getReqFromChainID(chainID)
       .get<{ params: DistributionParams.Data }>(
         `/cosmos/distribution/v1beta1/params`,
         params

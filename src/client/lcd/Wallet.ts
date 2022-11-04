@@ -54,6 +54,7 @@ export class Wallet {
       sequence?: number;
       accountNumber?: number;
       signMode?: SignModeV1 | SignModeV2;
+      chainID: string;
     }
   ): Promise<Tx> {
     let accountNumber = options.accountNumber;
@@ -73,20 +74,16 @@ export class Wallet {
     options.sequence = sequence;
     options.accountNumber = accountNumber;
 
-    const tx = await this.createTx(options); // don't need isClassic because lcd already have it
-    return this.key.signTx(
-      tx,
-      {
-        accountNumber,
-        sequence,
-        chainID: this.lcd.config.chainID,
-        signMode:
-          options.signMode ||
-          (this.lcd.config.isClassic
-            ? SignModeV1.SIGN_MODE_DIRECT
-            : SignModeV2.SIGN_MODE_DIRECT),
-      },
-      this.lcd.config.isClassic
-    );
+    const tx = await this.createTx(options);
+    return this.key.signTx(tx, {
+      accountNumber,
+      sequence,
+      chainID: options.chainID,
+      signMode:
+        options.signMode ||
+        (this.lcd.config.isClassic
+          ? SignModeV1.SIGN_MODE_DIRECT
+          : SignModeV2.SIGN_MODE_DIRECT),
+    });
   }
 }

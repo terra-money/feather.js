@@ -5,15 +5,12 @@ import { ValConsPublicKey, Delegation } from '../../../core';
 import { LCDClient } from '../LCDClient';
 import { MnemonicKey } from '../../../key';
 
-const terra = new LCDClient({
-  chainID: 'pisco-1',
-  URL: 'https://pisco-lcd.terra.dev',
-});
+const lcd = LCDClient.fromDefaultConfig('testnet');
 const test1 = new MnemonicKey({
   mnemonic:
     'notice oak worry limit wrap speak medal online prefer cluster roof addict wrist behave treat actual wasp year salad speed social layer crew genius',
 });
-const staking = new StakingAPI(terra);
+const staking = new StakingAPI(lcd);
 
 const checkDelegations = (delegations: Delegation[]) => {
   expect(delegations).toContainEqual({
@@ -44,7 +41,7 @@ const validator = 'terravaloper1gtw2uxdkdt3tvq790ckjz8jm8qgwkdw3uptstn';
 
 describe('StakingAPI', () => {
   it('parameters', async () => {
-    await expect(staking.parameters()).resolves.toMatchObject({
+    await expect(staking.parameters('pisco-1')).resolves.toMatchObject({
       unbonding_time: expect.any(Number),
       max_validators: expect.any(Number),
       max_entries: expect.any(Number),
@@ -139,7 +136,7 @@ describe('StakingAPI', () => {
   });
 
   it('validators', async () => {
-    const validators = await staking.validators().then(v => v[0]);
+    const validators = await staking.validators('pisco-1').then(v => v[0]);
 
     expect(validators).toContainEqual({
       operator_address: expect.any(String),
@@ -170,7 +167,7 @@ describe('StakingAPI', () => {
   });
 
   it('pool', async () => {
-    await expect(staking.pool()).resolves.toMatchObject({
+    await expect(staking.pool('pisco-1')).resolves.toMatchObject({
       bonded_tokens: expect.any(Coin),
       not_bonded_tokens: expect.any(Coin),
     });
