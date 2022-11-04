@@ -40,17 +40,9 @@ export * from './gov/proposals';
 export * from './gov/Proposal';
 export * from './gov/Vote';
 
-// Market
-export * from './market/msgs';
-
 // MsgAuth
 export * from './authz/msgs';
 export * from './authz/authorizations';
-
-// Oracle
-export * from './oracle/msgs';
-export * from './oracle/AggregateExchangeRatePrevote';
-export * from './oracle/AggregateExchangeRateVote';
 
 // Parameters
 export * from './params/proposals';
@@ -65,9 +57,6 @@ export * from './staking/Delegation';
 export * from './staking/Redelegation';
 export * from './staking/UnbondingDelegation';
 export * from './staking/Validator';
-
-// Treasury
-export * from './treasury/PolicyConstraints';
 
 // Vesting
 export * from './vesting';
