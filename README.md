@@ -66,12 +66,12 @@ const lcd = LCDClient.fromDefaultConfig('mainnet');
 
 // To use LocalTerra or a custom endpoint
 const lcd = new LCDClient({
-  localterra: {
+  localterra: {  // key must be the chainID
     lcd: 'http://localhost:1317',
     chainID: 'localterra',
     gasAdjustment: 1.75,
     gasPrices: { uluna: 0.15 },
-    prefix: 'terra1',
+    prefix: 'terra1',  // bech32 prefix, used by the LCD to understand which is the right chain to query
   },
 });
 
@@ -93,7 +93,7 @@ console.log(total);
 First, [get](https://faucet.terra.money/) some testnet tokens for `terra1x46rqay4d3cssq8gxxvqz8xt6nwlz4td20k38v`, or use [LocalTerra](https://www.github.com/terra-money/LocalTerra).
 
 ```ts
-import { LCDClient, MsgSend, MnemonicKey } from '@terra-money/terra.js';
+import { LCDClient, MsgSend, MnemonicKey } from '@terra-money/station.js';
 
 // create a key out of a mnemonic
 const mk = new MnemonicKey({
@@ -102,7 +102,7 @@ const mk = new MnemonicKey({
 });
 
 // connect to testnet
-const lcd = new LCDClient.fromDefaultConfig('testnet');
+const lcd = LCDClient.fromDefaultConfig('testnet');
 
 // a wallet can be created out of any key
 // wallets abstract transaction building
@@ -119,9 +119,9 @@ wallet
   .createAndSignTx({
     msgs: [send],
     memo: 'test from station.js!',
-    chainID: 'pisco-1'
+    chainID: 'pisco-1'  // now here a chainID must be specified
   })
-  .then(tx => lcd.tx.broadcast(tx, 'pisco-1'))
+  .then(tx => lcd.tx.broadcast(tx, 'pisco-1'))  // same here
   .then(result => {
     console.log(`TX hash: ${result.txhash}`);
   });
