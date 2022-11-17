@@ -71,7 +71,7 @@ const lcd = new LCDClient({
     chainID: 'localterra',
     gasAdjustment: 1.75,
     gasPrices: { uluna: 0.15 },
-    prefix: 'terra1',  // bech32 prefix, used by the LCD to understand which is the right chain to query
+    prefix: 'terra',  // bech32 prefix, used by the LCD to understand which is the right chain to query
   },
 });
 
