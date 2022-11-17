@@ -8,28 +8,34 @@ import { SignMode as SignModeV2 } from '@terra-money/terra.proto/cosmos/tx/signi
 export class Wallet {
   constructor(public lcd: LCDClient, public key: Key) {}
 
-  public accountNumberAndSequence(): Promise<{
+  public accountNumberAndSequence(chainID: string): Promise<{
     account_number: number;
     sequence: number;
   }> {
-    return this.lcd.auth.accountInfo(this.key.accAddress).then(d => {
-      return {
-        account_number: d.getAccountNumber(),
-        sequence: d.getSequenceNumber(),
-      };
-    });
+    return this.lcd.auth
+      .accountInfo(this.key.accAddress(this.lcd.config[chainID].prefix))
+      .then(d => {
+        return {
+          account_number: d.getAccountNumber(),
+          sequence: d.getSequenceNumber(),
+        };
+      });
   }
 
-  public accountNumber(): Promise<number> {
-    return this.lcd.auth.accountInfo(this.key.accAddress).then(d => {
-      return d.getAccountNumber();
-    });
+  public accountNumber(chainID: string): Promise<number> {
+    return this.lcd.auth
+      .accountInfo(this.key.accAddress(this.lcd.config[chainID].prefix))
+      .then(d => {
+        return d.getAccountNumber();
+      });
   }
 
-  public sequence(): Promise<number> {
-    return this.lcd.auth.accountInfo(this.key.accAddress).then(d => {
-      return d.getSequenceNumber();
-    });
+  public sequence(chainID: string): Promise<number> {
+    return this.lcd.auth
+      .accountInfo(this.key.accAddress(this.lcd.config[chainID].prefix))
+      .then(d => {
+        return d.getSequenceNumber();
+      });
   }
 
   public async createTx(
@@ -40,7 +46,7 @@ export class Wallet {
     return this.lcd.tx.create(
       [
         {
-          address: this.key.accAddress,
+          address: this.key.accAddress(this.lcd.config[options.chainID].prefix),
           sequenceNumber: options.sequence,
           publicKey: this.key.publicKey,
         },
@@ -61,7 +67,9 @@ export class Wallet {
     let sequence = options.sequence;
 
     if (accountNumber === undefined || sequence === undefined) {
-      const res = await this.accountNumberAndSequence();
+      const res = await this.accountNumberAndSequence(
+        this.lcd.config[options.chainID].prefix
+      );
       if (accountNumber === undefined) {
         accountNumber = res.account_number;
       }

@@ -57,12 +57,12 @@ export class CLIKey extends Key {
   }
 
   /**
-   * Terra account address. `terra-` prefixed.
+   * Account address.
    */
-  public get accAddress(): AccAddress {
+  public accAddress(prefix: string): AccAddress {
     if (!this._accAddress) {
       this.loadAccountDetails();
-      return this.accAddress;
+      return this.accAddress(prefix);
     }
     return this._accAddress;
   }
@@ -70,12 +70,12 @@ export class CLIKey extends Key {
   /**
    * Terra validator address. `terravaloper-` prefixed.
    */
-  public get valAddress(): ValAddress {
+  public valAddress(prefix: string): ValAddress {
     if (!this._accAddress) {
       this.loadAccountDetails();
-      return this.valAddress;
+      return this.valAddress(prefix);
     }
-    return ValAddress.fromAccAddress(this._accAddress);
+    return ValAddress.fromAccAddress(this._accAddress, prefix);
   }
 
   public async sign(): Promise<Buffer> {

@@ -29,28 +29,25 @@ export abstract class Key {
   public abstract sign(payload: Buffer): Promise<Buffer>;
 
   /**
-   * Terra account address. `terra-` prefixed.
+   * Account address.
    */
-  public get accAddress(): AccAddress {
+  public accAddress(prefix: string): AccAddress {
     if (!this.publicKey) {
       throw new Error('Could not compute accAddress: missing rawAddress');
     }
 
-    return this.publicKey.address();
+    return this.publicKey.address(prefix);
   }
 
   /**
-   * Terra validator address. `terravaloper-` prefixed.
+   * Validator address.
    */
-  public get valAddress(): ValAddress {
+  public valAddress(prefix: string): ValAddress {
     if (!this.publicKey) {
       throw new Error('Could not compute valAddress: missing rawAddress');
     }
 
-    return bech32.encode(
-      'terravaloper',
-      bech32.toWords(this.publicKey.rawAddress())
-    );
+    return this.publicKey.address(`${prefix}valoper`);
   }
 
   /**

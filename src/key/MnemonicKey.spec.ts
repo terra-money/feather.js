@@ -52,7 +52,7 @@ describe('MnemonicKey', () => {
     const { accAddress } = mk;
 
     const msgSend = new MsgSend(
-      accAddress,
+      accAddress('terra'),
       'terra1wg2mlrxdmnnkkykgqg4znky86nyrtc45q336yv',
       new Coins({ uluna: '100000000' })
     );
@@ -146,7 +146,7 @@ describe('MnemonicKey', () => {
         [
           new MsgMultiSend(
             [
-              new MsgMultiSend.Input(key.accAddress, {
+              new MsgMultiSend.Input(key.accAddress('terra'), {
                 uluna: 1000000,
                 usdr: 1000000,
               }),

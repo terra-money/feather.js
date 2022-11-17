@@ -149,12 +149,15 @@ export class SimplePublicKey extends JSONSerializable<
     return ripemd160(sha256(pubkeyData));
   }
 
-  public address(): string {
-    return bech32.encode('terra', bech32.toWords(this.rawAddress()));
+  public address(prefix: string): string {
+    return bech32.encode(prefix, bech32.toWords(this.rawAddress()));
   }
 
-  public pubkeyAddress(): string {
-    return bech32.encode('terrapub', bech32.toWords(this.encodeAminoPubkey()));
+  public pubkeyAddress(prefix: string): string {
+    return bech32.encode(
+      `${prefix}pub`,
+      bech32.toWords(this.encodeAminoPubkey())
+    );
   }
 }
 

@@ -58,7 +58,7 @@ const DEFAULT_NETWORK_CONFIG: Record<
       lcd: 'https://phoenix-lcd.terra.dev',
       gasAdjustment: 1.75,
       gasPrices: { uluna: 0.015 },
-      prefix: 'terra1',
+      prefix: 'terra',
     },
   },
   testnet: {
@@ -67,7 +67,7 @@ const DEFAULT_NETWORK_CONFIG: Record<
       lcd: 'https://pisco-lcd.terra.dev',
       gasAdjustment: 1.75,
       gasPrices: { uluna: 0.15 },
-      prefix: 'terra1',
+      prefix: 'terra',
     },
   },
   local: {},
