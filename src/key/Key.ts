@@ -1,4 +1,3 @@
-import { bech32 } from 'bech32';
 import {
   AccAddress,
   ValAddress,

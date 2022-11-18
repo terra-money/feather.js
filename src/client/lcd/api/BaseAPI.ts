@@ -1,4 +1,4 @@
-import { AccAddress } from 'core';
+import { AccAddress } from '../../../core';
 import { APIRequester } from '../APIRequester';
 import { LCDClientConfig } from '../LCDClient';
 
