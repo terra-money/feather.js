@@ -202,12 +202,15 @@ export class LegacyAminoMultisigPublicKey extends JSONSerializable<
     return sha256(pubkeyData).slice(0, 20);
   }
 
-  public address(): string {
-    return bech32.encode('terra', bech32.toWords(this.rawAddress()));
+  public address(prefix: string): string {
+    return bech32.encode(prefix, bech32.toWords(this.rawAddress()));
   }
 
-  public pubkeyAddress(): string {
-    return bech32.encode('terrapub', bech32.toWords(this.encodeAminoPubkey()));
+  public pubkeyAddress(prefix: string): string {
+    return bech32.encode(
+      `${prefix}pub`,
+      bech32.toWords(this.encodeAminoPubkey())
+    );
   }
 
   public static fromAmino(
@@ -362,13 +365,13 @@ export class ValConsPublicKey extends JSONSerializable<
     return sha256(pubkeyData).slice(0, 20);
   }
 
-  public address(): string {
-    return bech32.encode('terravalcons', bech32.toWords(this.rawAddress()));
+  public address(prefix: string): string {
+    return bech32.encode(`${prefix}valcons`, bech32.toWords(this.rawAddress()));
   }
 
-  public pubkeyAddress(): string {
+  public pubkeyAddress(prefix: string): string {
     return bech32.encode(
-      'terravalconspub',
+      `${prefix}valconspub`,
       bech32.toWords(this.encodeAminoPubkey())
     );
   }

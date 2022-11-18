@@ -83,21 +83,21 @@ describe('MnemonicKey', () => {
       mnemonic:
         'swamp increase solar renew twelve easily possible pig ostrich harvest more indicate lion denial kind target small dumb mercy under proud arrive gentle field',
     });
-    expect(a1Key.accAddress).toEqual(
+    expect(a1Key.accAddress('terra')).toEqual(
       'terra12dazwl3yq6nwrce052ah3fudkarglsgvacyvl9'
     );
     const a2Key = new MnemonicKey({
       mnemonic:
         'service frozen keen unveil luggage initial surge name conduct mesh soup escape weather gas clown brand holiday result protect chat plug false pitch little',
     });
-    expect(a2Key.accAddress).toEqual(
+    expect(a2Key.accAddress('terra')).toEqual(
       'terra1jqw25580qljucyy2xkpp7j02kd4mwx69wvfgf9'
     );
     const a3Key = new MnemonicKey({
       mnemonic:
         'corn peasant blue sight spy three stove confirm night brother vote dish reduce sick observe outside vacant arena laugh devote exotic wasp supply rally',
     });
-    expect(a3Key.accAddress).toEqual(
+    expect(a3Key.accAddress('terra')).toEqual(
       'terra13hrg8ul0p7sh85jwalh3leysdrw9swh44dql2h'
     );
 

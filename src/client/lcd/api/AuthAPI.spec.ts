@@ -31,7 +31,7 @@ describe('AuthAPI', () => {
 
     it("account doesn't exist (valid but new account)", async () => {
       const mk = new MnemonicKey();
-      await expect(auth.accountInfo(mk.accAddress)).rejects.toThrow(
+      await expect(auth.accountInfo(mk.accAddress('terra'))).rejects.toThrow(
         'status code 404'
       );
     });

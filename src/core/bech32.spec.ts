@@ -30,13 +30,6 @@ describe('AccAddress', () => {
       )
     ).toBe(false);
 
-    expect(
-      AccAddress.validate(
-        'cosmos176m2p8l3fps3dal7h8gf9jvrv98tu3rqfdht86',
-        'cosmos'
-      )
-    ).toBe(true);
-
     const words = bech32.toWords(Buffer.from('foobar', 'utf8'));
     const badAddress = bech32.encode('terra', words);
 
