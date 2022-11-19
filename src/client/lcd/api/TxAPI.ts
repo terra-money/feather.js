@@ -202,10 +202,11 @@ export class TxAPI extends BaseAPI {
   /**
    * Looks up a transaction on the blockchain, addressed by its hash
    * @param txHash transaction's hash
+   * @param chainID chainID
    */
   public async txInfo(
-    chainID: string,
     txHash: string,
+    chainID: string,
     params: APIParams = {}
   ): Promise<TxInfo> {
     return this.getReqFromChainID(chainID)
