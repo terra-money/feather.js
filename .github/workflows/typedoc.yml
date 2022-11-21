@@ -29,10 +29,10 @@ jobs:
         run: npm run doc
 
       - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@releases/v3
+        uses: cloudflare/pages-action@1
         with:
-          ACCESS_TOKEN: ${{ secrets.GH_TOKEN }}
-          BRANCH: gh-pages
-          FOLDER: docs
-          GIT_CONFIG_NAME: Github Actions
-          GIT_CONFIG_EMAIL: noreply@github.com
+          accountId: 620ff29bbd515d2848f5306578bd1d1d
+          apiToken: ${{ secrets.CLOUDFLARE_PAGES_TOKEN }}
+          projectName: station-js
+          directory: docs
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
