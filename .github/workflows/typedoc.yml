@@ -3,7 +3,7 @@ name: TypeDoc
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   deploy:
