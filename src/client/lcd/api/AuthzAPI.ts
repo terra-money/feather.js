@@ -43,9 +43,6 @@ export class AuthzAPI extends BaseAPI {
     granter: AccAddress,
     params: APIParams = {}
   ): Promise<[AuthorizationGrant[], Pagination]> {
-    if (this.lcd.config.isClassic) {
-      throw new Error('Not supported for the network');
-    }
     return this.getReqFromAddress(granter)
       .get<{ grants: AuthorizationGrant.Data[]; pagination: Pagination }>(
         `/cosmos/authz/v1beta1/grants/granter/${granter}`,
@@ -64,9 +61,6 @@ export class AuthzAPI extends BaseAPI {
     grantee: AccAddress,
     params: APIParams = {}
   ): Promise<[AuthorizationGrant[], Pagination]> {
-    if (this.lcd.config.isClassic) {
-      throw new Error('Not supported for the network');
-    }
     return this.getReqFromAddress(grantee)
       .get<{ grants: AuthorizationGrant.Data[]; pagination: Pagination }>(
         `/cosmos/authz/v1beta1/grants/grantee/${grantee}`,

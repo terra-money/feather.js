@@ -24,9 +24,9 @@ The JavaScript SDK for Station
   ·
   <a href="https://terra-money.github.io/terra.js/">API Reference</a>
   ·
-  <a href="https://www.npmjs.com/package/@terra-money/terra.js">NPM Package</a>
+  <a href="https://www.npmjs.com/package/@terra-money/station.js">NPM Package</a>
   ·
-  <a href="https://github.com/terra-money/terra.js">GitHub</a>
+  <a href="https://github.com/terra-money/station.js">GitHub</a>
 </p>
 
 Terra.js is a JavaScript SDK for writing applications that interact with the Terra blockchain from either Node.js, browser, or React Native environments and provides simple abstractions over core data structures, serialization, key management, and API request generation.
@@ -43,10 +43,10 @@ We highly suggest using Terra.js with TypeScript, or JavaScript in a code editor
 
 ## Installation
 
-Grab the latest version off [NPM](https://www.npmjs.com/package/@terra-money/terra.js):
+Grab the latest version off [NPM](https://www.npmjs.com/package/@terra-money/station.js):
 
 ```sh
-npm install @terra-money/terra.js
+npm install @terra-money/station.js
 ```
 
 ## Usage
@@ -110,7 +110,7 @@ const wallet = lcd.wallet(mk);
 
 // create a simple message that moves coin balances
 const send = new MsgSend(
-  'terra1x46rqay4d3cssq8gxxvqz8xt6nwlz4td20k38v',
+  mk.accAddress('terra'), // .accAddress is now a function which require the prefix as parameter
   'terra17lmam6zguazs5q5u6z5mmx76uj63gldnse2pdp',
   { uluna: 1200000 }
 );

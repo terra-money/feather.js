@@ -4,7 +4,7 @@
   "excludeExternals": true,
   "exclude": "**/*+(index|.spec|.e2e).ts",
   "theme": "default",
-  "name": "Terra.js",
+  "name": "Station.js",
   "excludePrivate": true,
   "excludeProtected": true,
   "media": "img",

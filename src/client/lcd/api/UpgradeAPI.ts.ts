@@ -58,9 +58,6 @@ export class UpgradeAPI extends BaseAPI {
     chainID: string,
     params: APIParams = {}
   ): Promise<ModuleVersion[]> {
-    if (this.lcd.config.isClassic) {
-      throw new Error('Not supported for the network');
-    }
     return this.getReqFromChainID(chainID)
       .get<{
         module_versions: ModuleVersion.Data[];
