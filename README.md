@@ -15,10 +15,10 @@ The JavaScript SDK for Terra and Feather chains
 </p>
 
 <p align="center">
-  <a href="https://docs.terra.money/develop/terra-js/"><strong>Explore the Docs »</strong></a>
+  <a href="https://docs.terra.money/develop/feather-js/"><strong>Explore the Docs »</strong></a>
   <br />
   <br/>
-  <a href="https://docs.terra.money/develop/terra-js/common-examples">Examples</a>
+  <a href="https://docs.terra.money/develop/feather-js/common-examples">Examples</a>
   ·
   <a href="https://featherjs.pages.dev">API Reference</a>
   ·
@@ -32,9 +32,9 @@ Feather.js is a JavaScript SDK for writing applications that interact with the T
 ## Features
 
 - **Written in TypeScript**, with type definitions
-- Versatile support for [key management](https://docs.terra.money/docs/develop/sdks/terra-js/keys.html) solutions
+- Versatile support for [key management](https://docs.terra.money/docs/develop/sdks/feather-js/keys.html) solutions
 - Works in Node.js, in the browser, and React Native
-- Exposes the Terra API through [`LCDClient`](https://docs.terra.money/docs/develop/sdks/terra-js/query-data.html)
+- Exposes the Terra API through [`LCDClient`](https://docs.terra.money/docs/develop/sdks/feather-js/query-data.html)
 - Parses responses into native JavaScript types
 
 We highly suggest using Feather.js with TypeScript, or JavaScript in a code editor that has support for type declarations, so you can take advantage of the helpful type hints that are included with the package.
@@ -49,7 +49,7 @@ npm install @terra-money/feather.js
 
 ## Usage
 
-Feather.js can be used in Node.js, as well as inside the browser. Please check the [docs](https://docs.terra.money/docs/develop/sdks/terra-js/README.html) for notes on how to get up and running.
+Feather.js can be used in Node.js, as well as inside the browser. Please check the [docs](https://docs.terra.money/docs/develop/sdks/feather-js/README.html) for notes on how to get up and running.
 
 ### Getting blockchain data
 
