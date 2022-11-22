@@ -37,7 +37,7 @@ const webConfig = {
   output: {
     filename: 'bundle.js',
     libraryTarget: 'umd',
-    library: 'Terra',
+    library: 'Feather',
   },
   resolve: {
     ...commonConfig.resolve,

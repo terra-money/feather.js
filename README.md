@@ -1,35 +1,33 @@
 <p>&nbsp;</p>
 <p align="center">
-<img src="https://raw.githubusercontent.com/terra-money/terra.js/master/img/terrajs.svg" width=500>
+<img src="https://raw.githubusercontent.com/terra-money/feather.js/master/img/featherjs.svg" width=500>
 </p>
 
 <p align="center">
-The JavaScript SDK for Station
+The JavaScript SDK for Terra and Feather chains
 </p>
-
-![diagram](https://raw.githubusercontent.com/terra-money/terra.js/master/img/terrajs-diagram.png)
 
 <br/>
 
 <p align="center">
-  <img alt="GitHub" src="https://img.shields.io/github/license/terra-money/terra.js">
-  <img alt="npm (scoped)" src="https://img.shields.io/npm/v/@terra-money/terra.js">
+  <img alt="GitHub" src="https://img.shields.io/github/license/terra-money/feather.js">
+  <img alt="npm (scoped)" src="https://img.shields.io/npm/v/@terra-money/feather.js">
 </p>
 
 <p align="center">
-  <a href="https://docs.terra.money/docs/develop/sdks/terra-js/README.html"><strong>Explore the Docs »</strong></a>
+  <a href="https://docs.terra.money/develop/terra-js/"><strong>Explore the Docs »</strong></a>
   <br />
   <br/>
-  <a href="https://docs.terra.money/docs/develop/sdks/terra-js/common-examples.html">Examples</a>
+  <a href="https://docs.terra.money/develop/terra-js/common-examples">Examples</a>
   ·
-  <a href="https://terra-money.github.io/terra.js/">API Reference</a>
+  <a href="https://featherjs.pages.dev">API Reference</a>
   ·
-  <a href="https://www.npmjs.com/package/@terra-money/station.js">NPM Package</a>
+  <a href="https://www.npmjs.com/package/@terra-money/feather.js">NPM Package</a>
   ·
-  <a href="https://github.com/terra-money/station.js">GitHub</a>
+  <a href="https://github.com/terra-money/feather.js">GitHub</a>
 </p>
 
-Terra.js is a JavaScript SDK for writing applications that interact with the Terra blockchain from either Node.js, browser, or React Native environments and provides simple abstractions over core data structures, serialization, key management, and API request generation.
+Feather.js is a JavaScript SDK for writing applications that interact with the Terra blockchain from either Node.js, browser, or React Native environments and provides simple abstractions over core data structures, serialization, key management, and API request generation.
 
 ## Features
 
@@ -39,24 +37,24 @@ Terra.js is a JavaScript SDK for writing applications that interact with the Ter
 - Exposes the Terra API through [`LCDClient`](https://docs.terra.money/docs/develop/sdks/terra-js/query-data.html)
 - Parses responses into native JavaScript types
 
-We highly suggest using Terra.js with TypeScript, or JavaScript in a code editor that has support for type declarations, so you can take advantage of the helpful type hints that are included with the package.
+We highly suggest using Feather.js with TypeScript, or JavaScript in a code editor that has support for type declarations, so you can take advantage of the helpful type hints that are included with the package.
 
 ## Installation
 
-Grab the latest version off [NPM](https://www.npmjs.com/package/@terra-money/station.js):
+Grab the latest version off [NPM](https://www.npmjs.com/package/@terra-money/feather.js):
 
 ```sh
-npm install @terra-money/station.js
+npm install @terra-money/feather.js
 ```
 
 ## Usage
 
-Terra.js can be used in Node.js, as well as inside the browser. Please check the [docs](https://docs.terra.money/docs/develop/sdks/terra-js/README.html) for notes on how to get up and running.
+Feather.js can be used in Node.js, as well as inside the browser. Please check the [docs](https://docs.terra.money/docs/develop/sdks/terra-js/README.html) for notes on how to get up and running.
 
 ### Getting blockchain data
 
 ```ts
-import { LCDClient, Coin } from '@terra-money/station.js';
+import { LCDClient, Coin } from '@terra-money/feather.js';
 
 // connect to testnet
 const lcd = LCDClient.fromDefaultConfig('testnet');
@@ -93,7 +91,7 @@ console.log(total);
 First, [get](https://faucet.terra.money/) some testnet tokens for `terra1x46rqay4d3cssq8gxxvqz8xt6nwlz4td20k38v`, or use [LocalTerra](https://www.github.com/terra-money/LocalTerra).
 
 ```ts
-import { LCDClient, MsgSend, MnemonicKey } from '@terra-money/station.js';
+import { LCDClient, MsgSend, MnemonicKey } from '@terra-money/feather.js';
 
 // create a key out of a mnemonic
 const mk = new MnemonicKey({
@@ -118,7 +116,7 @@ const send = new MsgSend(
 wallet
   .createAndSignTx({
     msgs: [send],
-    memo: 'test from station.js!',
+    memo: 'test from feather.js!',
     chainID: 'pisco-1'  // now here a chainID must be specified
   })
   .then(tx => lcd.tx.broadcast(tx, 'pisco-1'))  // same here
@@ -127,24 +125,24 @@ wallet
   });
 ```
 
-## Terra.js in the browser
+## Feather.js in the browser
 
-You can access all the objects of the `@terra-money/terra.js` from the global `Terra` object if you load Terra.js with a `<script>` tag.
+You can access all the objects of the `@terra-money/feather.js` from the global `Feather` object if you load Feather.js with a `<script>` tag.
 
 Include the following in your browser:
 
 ```html
 <script
   crossorigin
-  src="https://unpkg.com/@terra-money/terra.js/dist/bundle.js"
+  src="https://unpkg.com/@terra-money/feather.js/dist/bundle.js"
 ></script>
 ```
 
 You can find a small JSFiddle example that refreshes current Oracle votes [here](https://jsfiddle.net/tLm1b527/1/).
 
-## Terra.js in React Native
+## Feather.js in React Native
 
-In order to use Terra.js inside React Native, you need to add the [`node-libs-react-native`](https://github.com/parshap/node-libs-react-native) package and [`react-native-get-random-values`](https://github.com/LinusU/react-native-get-random-values) package to your React Native app's `package.json`.
+In order to use Feather.js inside React Native, you need to add the [`node-libs-react-native`](https://github.com/parshap/node-libs-react-native) package and [`react-native-get-random-values`](https://github.com/LinusU/react-native-get-random-values) package to your React Native app's `package.json`.
 
 ```sh
 yarn add node-libs-react-native react-native-get-random-values
@@ -174,11 +172,11 @@ module.exports {
 
 This software is licensed under the MIT license. See [LICENSE](./LICENSE) for full disclosure.
 
-© 2020 Terraform Labs, PTE.
+© 2022 Terraform Labs, PTE.
 
 <hr/>
 
 <p>&nbsp;</p>
 <p align="center">
-    <a href="https://terra.money/"><img src="https://assets.website-files.com/611153e7af981472d8da199c/61794f2b6b1c7a1cb9444489_symbol-terra-blue.svg" align="center" width=200/></a>
+    <a href="https://terra.money/"><img src="https://assets.website-files.com/611153e7af981472d8da199c/61794f2b6b1c7a1cb9444489_symbol-terra-blue.svg" align="center" width=180/></a>
 </p>
