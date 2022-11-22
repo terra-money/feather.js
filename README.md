@@ -1,6 +1,6 @@
 <p>&nbsp;</p>
 <p align="center">
-<img src="https://raw.githubusercontent.com/terra-money/feather.js/master/img/featherjs.svg" width=500>
+<img src="https://github.com/terra-money/feather.js/blob/main/img/featherjs.svg" width=500>
 </p>
 
 <p align="center">
