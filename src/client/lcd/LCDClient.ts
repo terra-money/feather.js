@@ -49,7 +49,7 @@ export interface LCDClientConfig {
 }
 
 const DEFAULT_NETWORK_CONFIG: Record<
-  'mainnet' | 'testnet' | 'local',
+  'mainnet' | 'testnet',
   Record<string, LCDClientConfig>
 > = {
   mainnet: {
@@ -70,7 +70,6 @@ const DEFAULT_NETWORK_CONFIG: Record<
       prefix: 'terra',
     },
   },
-  local: {},
 };
 
 /**
@@ -80,9 +79,9 @@ const DEFAULT_NETWORK_CONFIG: Record<
  * ### Example
  *
  * ```ts
- * import { LCDClient } from '@terra-money/station.js';
+ * import { LCDClient } from '@terra-money/feather.js';
  *
- * const terra = new LCDClient('mainnet');
+ * const lcd = LCDClient.fromDefaultConfig('mainnet');
  *
  * const balance = await lcd.bank.balance('terra1...'):
  * console.log(balance);
@@ -113,12 +112,16 @@ export class LCDClient {
   /**
    * Creates a new LCD client with the specified configuration.
    *
-   * @param network select mainnet, testnet or local
-   *
-   * @param chains (optional) add other chains to the default configuration
+   * @param chains network configuration
    *
    */
   constructor(chains: Record<string, LCDClientConfig>) {
+    // check for duplicate prefixes
+    const prefixes = Object.values(chains).map(c => c.prefix);
+    if (new Set(prefixes).size !== prefixes.length) {
+      throw new Error('Every chain must have an unique bech32 prefix');
+    }
+
     this.config = chains;
 
     this.apiRequesters = Object.keys(chains).reduce(

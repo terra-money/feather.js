@@ -4,7 +4,7 @@
   "excludeExternals": true,
   "exclude": "**/*+(index|.spec|.e2e).ts",
   "theme": "default",
-  "name": "Station.js",
+  "name": "Feather.js",
   "excludePrivate": true,
   "excludeProtected": true,
   "media": "img",

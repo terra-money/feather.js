@@ -15,23 +15,10 @@ export type AccPubKey = string;
 /** `terravaloperpub-` prefixed validator public key */
 export type ValPubKey = string;
 
-function checkPrefixAndLength(
-  prefix: string,
-  data: string,
-  length: number
-): boolean {
+function checkLength(data: string, length: number): false | string {
   try {
     const vals = bech32.decode(data);
-    return vals.prefix === prefix && vals.words.length === length;
-  } catch (e) {
-    return false;
-  }
-}
-
-function checkLength(data: string, length: number): boolean {
-  try {
-    const vals = bech32.decode(data);
-    return vals.words.length === length;
+    return vals.words.length === length && vals.prefix;
   } catch (e) {
     return false;
   }
@@ -47,9 +34,8 @@ export namespace AccAddress {
   export function validate(data: string, prefix?: string): boolean {
     // 44 for normal account and 64 for contract account
     return prefix
-      ? checkPrefixAndLength(prefix, data, 32) ||
-          checkPrefixAndLength(prefix, data, 52)
-      : checkLength(data, 32) || checkLength(data, 52);
+      ? (checkLength(data, 32) || checkLength(data, 52)) === prefix
+      : !!(checkLength(data, 32) || checkLength(data, 52));
   }
 
   /**
@@ -66,7 +52,7 @@ export namespace AccAddress {
   }
 
   /**
-   * Get the prfix of an account address
+   * Get the prefix of an account address
    *
    * @param address accont address
    */
@@ -83,8 +69,10 @@ export namespace AccPubKey {
    * @param prefix expected chain prefix
    */
 
-  export function validate(data: string, prefix: string): boolean {
-    return checkPrefixAndLength(`${prefix}pub`, data, 32);
+  export function validate(data: string, prefix?: string): boolean {
+    return prefix
+      ? checkLength(data, 32) === `${prefix}pub`
+      : /([a-z]{2,20}pub)/g.test(checkLength(data, 32) || '');
   }
 
   /**
@@ -118,8 +106,10 @@ export namespace ValAddress {
    * @param data string to check
    * @param prefix expected chain prefix
    */
-  export function validate(data: string, prefix: string): boolean {
-    return checkPrefixAndLength(`${prefix}valoper`, data, 32);
+  export function validate(data: string, prefix?: string): boolean {
+    return prefix
+      ? checkLength(data, 32) === `${prefix}valoper`
+      : /([a-z]{2,20}valoper)/g.test(checkLength(data, 32) || '');
   }
 
   /**
@@ -152,8 +142,10 @@ export namespace ValPubKey {
    * @param data string to check
    * @param prefix expected chain prefix
    */
-  export function validate(data: string, prefix: string): boolean {
-    return checkPrefixAndLength(`${prefix}valoperpub`, data, 32);
+  export function validate(data: string, prefix?: string): boolean {
+    return prefix
+      ? checkLength(data, 32) === `${prefix}valoperpub`
+      : /([a-z]{2,20}valoperpub)/g.test(checkLength(data, 32) || '');
   }
 
   /**
@@ -187,8 +179,10 @@ export namespace ValConsAddress {
    * @param prefix expected chain prefix
    */
 
-  export function validate(data: string, prefix: string): boolean {
-    return checkPrefixAndLength(`${prefix}valcons`, data, 32);
+  export function validate(data: string, prefix?: string): boolean {
+    return prefix
+      ? checkLength(data, 32) === `${prefix}valcons`
+      : /([a-z]{2,20}valcons)/g.test(checkLength(data, 32) || '');
   }
 
   /**

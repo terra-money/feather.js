@@ -99,8 +99,7 @@ export class DistributionAPI extends BaseAPI {
     validator: ValAddress,
     params: APIParams = {}
   ): Promise<Coins> {
-    // remove valoper from valAddress to match the wallet bech32 prefix
-    return this.getReqFromAddress(validator.replace('valoper', ''))
+    return this.getReqFromAddress(validator)
       .get<{
         commission: {
           commission: Coins.Data;

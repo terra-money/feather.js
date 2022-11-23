@@ -91,7 +91,7 @@ export class StakingAPI extends BaseAPI {
           data.pagination,
         ]);
     } else if (validator !== undefined) {
-      return this.getReqFromAddress(validator.replace('valoper', ''))
+      return this.getReqFromAddress(validator)
         .get<{
           delegation_responses: Delegation.Data[];
           pagination: Pagination;
@@ -158,7 +158,7 @@ export class StakingAPI extends BaseAPI {
           data.pagination,
         ]);
     } else if (validator !== undefined) {
-      return this.getReqFromAddress(validator.replace('valoper', ''))
+      return this.getReqFromAddress(validator)
         .get<{
           unbonding_responses: UnbondingDelegation.Data[];
           pagination: Pagination;
@@ -262,7 +262,7 @@ export class StakingAPI extends BaseAPI {
     validator: ValAddress,
     params: APIParams = {}
   ): Promise<Validator> {
-    return this.getReqFromAddress(validator.replace('valoper', ''))
+    return this.getReqFromAddress(validator)
       .get<{ validator: Validator.Data }>(
         `/cosmos/staking/v1beta1/validators/${validator}`,
         params

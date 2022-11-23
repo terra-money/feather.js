@@ -75,7 +75,7 @@ export class SlashingAPI extends BaseAPI {
     valConsAddress: ValConsAddress,
     params: APIParams = {}
   ): Promise<SigningInfo> {
-    return this.getReqFromAddress(valConsAddress.replace('valcons', ''))
+    return this.getReqFromAddress(valConsAddress)
       .get<{ val_signing_info: SigningInfo.Data }>(
         `/cosmos/slashing/v1beta1/signing_infos/${valConsAddress}`,
         params
