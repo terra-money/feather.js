@@ -1,6 +1,6 @@
 import { BaseAPI } from './BaseAPI';
 import { Coins, AccAddress, Dec, ValAddress } from '../../../core';
-import { APIParams } from '../APIRequester';
+import { APIParams, Pagination } from '../APIRequester';
 import { LCDClient } from '../LCDClient';
 
 export interface DistributionParams {
@@ -110,6 +110,23 @@ export class DistributionAPI extends BaseAPI {
       )
       .then(d => d.commission)
       .then(d => Coins.fromData(d.commission));
+  }
+
+  /**
+   * Gets a validator's slashing events.
+   * @param validator validator's operator address
+   */
+  public async validatorSlashingEvents(
+    validator: ValAddress,
+    params: APIParams = {}
+    // TODO: slashes type
+  ): Promise<[any[], Pagination]> {
+    return this.getReqFromAddress(validator)
+      .get<{
+        slashes: [];
+        pagination: Pagination;
+      }>(`/cosmos/distribution/v1beta1/validators/${validator}/slashes`, params)
+      .then(d => [d.slashes, d.pagination]);
   }
 
   /**
