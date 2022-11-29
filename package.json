@@ -1,11 +1,11 @@
 {
   "name": "@terra-money/feather.js",
-  "version": "1.0.0-beta.2",
+  "version": "1.0.0-beta.3",
   "description": "The JavaScript SDK for Terra and Feather chains",
   "license": "MIT",
   "author": "Terraform Labs, PTE.",
   "keywords": [
-    "station",
+    "feather",
     "terra",
     "stablecoin",
     "cryptocurrency",
@@ -18,7 +18,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/terra-money/station.js.git"
+    "url": "git://github.com/terra-money/feather.js.git"
   },
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",

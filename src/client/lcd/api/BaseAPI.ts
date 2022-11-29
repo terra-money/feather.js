@@ -25,11 +25,12 @@ export abstract class BaseAPI {
 
   private getPrefix(address: string): string {
     const addressTypes = [
-      AccAddress,
       AccPubKey,
       ValAddress,
       ValConsAddress,
       ValPubKey,
+      // this must be the last one
+      AccAddress,
     ];
     for (const addressType of addressTypes) {
       if (addressType.validate(address)) {
