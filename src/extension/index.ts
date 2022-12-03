@@ -6,7 +6,6 @@ export interface ExtensionOptions extends CreateTxOptions {
   purgeQueue?: boolean; // default true
   sequence?: number;
   accountNumber?: number;
-  isClassic?: boolean; // default false. set to true when you intract with terra Classic
 }
 
 interface ResponseData {
@@ -14,7 +13,7 @@ interface ResponseData {
   payload: object;
 }
 
-type SendDataType = 'connect' | 'post' | 'sign' | 'info';
+type SendDataType = 'connect' | 'post' | 'sign' | 'interchain-info';
 
 interface SendData {
   [key: string]: any;
@@ -28,7 +27,7 @@ interface SignBytesOption {
 declare global {
   interface Window {
     // add you custom properties and methods
-    isTerraExtensionAvailable: boolean;
+    isStationExtensionAvailable: boolean;
   }
 }
 
@@ -54,10 +53,10 @@ export class Extension {
   }
 
   /**
-   * Indicates the Station Extension is installed and availble (requires extension v1.1 or later)
+   * Indicates the Station Extension is installed and availble (requires extension v2 (interchain) or later)
    */
   get isAvailable(): boolean {
-    return !!window.isTerraExtensionAvailable;
+    return !!window.isStationExtensionAvailable;
   }
 
   /**
@@ -134,7 +133,7 @@ export class Extension {
    * Request to Station Extension for connecting a wallet
    *
    * @return {string}     name      'onConnect'
-   * @return {AccAddress} payload   Terra account address
+   * @return {Record<string, AccAddress>} payload   AccAddresses for each of the supported networks
    */
   connect(): number {
     return this.send('connect');
@@ -143,15 +142,11 @@ export class Extension {
   /**
    * Request for Station Extension information
    *
-   * @return {object}  payload.network
-   * @return {string}  payload.network.name    Name of the network
-   * @return {string}  payload.network.chainId Chain ID
-   * @return {string}  payload.network.lcd     LCD address
-   * @return {string}  payload.network.fcd     FCD address
-   * @return {string}  payload.network.ws      Websocket address
+   * @return {string}  name               'onInterchainInfo'
+   * @return {object}  payload.networks   Record<string, Object> with the network configuration used by Interchain Extension
    */
   info(): number {
-    return this.send('info');
+    return this.send('interchain-info');
   }
 
   /**
@@ -171,7 +166,7 @@ export class Extension {
   sign(options: ExtensionOptions): number {
     return this.send('sign', {
       ...options,
-      msgs: options.msgs.map(msg => msg.toJSON(options.isClassic)),
+      msgs: options.msgs.map(msg => msg.toJSON()),
       fee: options.fee?.toJSON(),
       memo: options.memo,
       gasPrices: options.gasPrices?.toString(),
@@ -180,6 +175,7 @@ export class Extension {
       sequence: options.sequence,
       waitForConfirmation: options.waitForConfirmation,
       purgeQueue: options.purgeQueue,
+      chainID: options.chainID,
     });
   }
 
@@ -219,7 +215,7 @@ export class Extension {
    */
   post(options: ExtensionOptions): number {
     return this.send('post', {
-      msgs: options.msgs.map(msg => msg.toJSON(options.isClassic)),
+      msgs: options.msgs.map(msg => msg.toJSON()),
       fee: options.fee?.toJSON(),
       memo: options.memo,
       gasPrices: options.gasPrices?.toString(),
@@ -228,6 +224,7 @@ export class Extension {
       sequence: options.sequence,
       waitForConfirmation: options.waitForConfirmation,
       purgeQueue: options.purgeQueue,
+      chainID: options.chainID,
     });
   }
 }
