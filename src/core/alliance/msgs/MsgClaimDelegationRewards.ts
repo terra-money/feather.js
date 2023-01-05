@@ -40,7 +40,7 @@ export class MsgClaimDelegationRewards extends JSONSerializable<
     _?: boolean
   ): MsgClaimDelegationRewards {
     _;
-    const { delegatorAddress, validatorAddress } = proto;
+    const { delegatorAddress, validatorAddress, denom } = proto;
     return new MsgClaimDelegationRewards(
       delegatorAddress,
       validatorAddress,
