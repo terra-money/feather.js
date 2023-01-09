@@ -2,12 +2,11 @@ import { Coin } from '../../Coin';
 import { JSONSerializable } from '../../../util/json';
 import { AccAddress, ValAddress } from '../../bech32';
 import { Any } from '@terra-money/terra.proto/google/protobuf/any';
-// TODO: Replace with the correct protobuf
-import { MsgDelegate as MsgDelegate_pb } from '@terra-money/terra.proto/cosmos/staking/v1beta1/tx';
+import { MsgDelegate as MsgDelegate_pb } from '@terra-money/terra.proto/alliance/tx';
 
 /**
- * A delegator can submit this message to send more Luna to be staked through a
- * validator delegate.
+ * A delegator can submit this message to send more alliance assets
+ * to be staked through the alliance module in a validator.
  */
 export class MsgDelegate extends JSONSerializable<
   {},
@@ -18,7 +17,7 @@ export class MsgDelegate extends JSONSerializable<
    *
    * @param delegatorAddress delegator's account address
    * @param validatorAddress validator's operator address
-   * @param amount amount of alliance coin to be sent for delegation
+   * @param amount amount of alliance assets to be sent for delegation
    */
   constructor(
     public delegatorAddress: AccAddress,

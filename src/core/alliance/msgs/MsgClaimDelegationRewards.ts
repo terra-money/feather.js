@@ -1,12 +1,12 @@
 import { JSONSerializable } from '../../../util/json';
 import { AccAddress, ValAddress } from '../../bech32';
 import { Any } from '@terra-money/terra.proto/google/protobuf/any';
-// TODO: Replace with the correct protobuf
-import { MsgClaimDelegationRewards as MsgClaimDelegationRewards_pb } from '@terra-money/terra.proto/cosmos/distribution/v1beta1/tx';
+import { MsgClaimDelegationRewards as MsgClaimDelegationRewards_pb } from '@terra-money/terra.proto/alliance/tx';
 
 /**
- * A delegator can withdraw currently outstanding rewards accrued from their delegation
- * toward a validator by submitting the following message.
+ * A delegator can withdraw currently outstanding rewards accrued
+ * from their delegation toward a validator by submitting the following message
+ * to te x/alliance module.
  *
  * The rewards will be deposited to their Withdraw Address.
  */
@@ -19,6 +19,7 @@ export class MsgClaimDelegationRewards extends JSONSerializable<
    *
    * @param delegatorAddress delegator's account address
    * @param validatorAddress validator's operator address
+   * @param denom alliance denom to claim rewards for (e.g. ibc/AAE7E4 or uluna...)
    */
   constructor(
     public delegatorAddress: AccAddress,

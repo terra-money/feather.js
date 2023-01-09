@@ -2,13 +2,13 @@ import { Coin } from '../../Coin';
 import { JSONSerializable } from '../../../util/json';
 import { AccAddress, ValAddress } from '../../bech32';
 import { Any } from '@terra-money/terra.proto/google/protobuf/any';
-// TODO: Replace with the correct protobuf
-import { MsgUndelegate as MsgUndelegate_pb } from '@terra-money/terra.proto/cosmos/staking/v1beta1/tx';
+import { MsgUndelegate as MsgUndelegate_pb } from '@terra-money/terra.proto/alliance/tx';
 
 /**
- * A delegator can undelegate an amount of bonded Luna, and will begin the unbonding
- * process for those funds. The unbonding process takes 21 days to complete, during
- * which the Luna cannot be transacted or swapped.
+ * A delegator can undelegate an amount of bonded alliance tokens
+ * form the x/alliance module, and will begin the unbonding process
+ * for those funds. The unbonding process takes 21 days to complete,
+ * during which the Luna cannot be transacted or swapped.
  */
 export class MsgUndelegate extends JSONSerializable<
   {},
@@ -18,7 +18,7 @@ export class MsgUndelegate extends JSONSerializable<
   /**
    * @param delegatorAddress delegator's account address
    * @param validatorAddress validator's operator address
-   * @param amount Luna to be undelegated
+   * @param amount alliance assets to be undelegated
    */
   constructor(
     public delegatorAddress: AccAddress,
