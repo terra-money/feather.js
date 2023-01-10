@@ -46,6 +46,8 @@ export interface LCDClientConfig {
    * Bech32 prefix for wallet and contract addresses.
    */
   prefix: string;
+
+  isClassic?: boolean;
 }
 
 const DEFAULT_NETWORK_CONFIG: Record<

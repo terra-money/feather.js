@@ -81,11 +81,19 @@ export class Wallet {
     options.accountNumber = accountNumber;
 
     const tx = await this.createTx(options);
-    return this.key.signTx(tx, {
-      accountNumber,
-      sequence,
-      chainID: options.chainID,
-      signMode: options.signMode || SignModeV2.SIGN_MODE_DIRECT,
-    });
+    return this.key.signTx(
+      tx,
+      {
+        accountNumber,
+        sequence,
+        chainID: options.chainID,
+        signMode:
+          options.signMode ||
+          (this.lcd.config[options.chainID].isClassic
+            ? SignModeV1.SIGN_MODE_DIRECT
+            : SignModeV2.SIGN_MODE_DIRECT),
+      },
+      this.lcd.config[options.chainID].isClassic
+    );
   }
 }
