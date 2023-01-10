@@ -19,6 +19,7 @@ export { MsgDelegate as MsgAllianceDelegate } from './alliance/msgs/MsgDelegate'
 export { MsgUndelegate as MsgAllianceUndelegate } from './alliance/msgs/MsgUndelegate';
 export { MsgRedelegate as MsgAllianceRedelegate } from './alliance/msgs/MsgRedelegate';
 export { MsgClaimDelegationRewards as MsgClaimDelegationRewards } from './alliance/msgs/MsgClaimDelegationRewards';
+export * from './alliance/proposals';
 
 // Auth
 export * from './auth/Account';
