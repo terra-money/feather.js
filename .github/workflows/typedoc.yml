@@ -33,6 +33,6 @@ jobs:
         with:
           accountId: 620ff29bbd515d2848f5306578bd1d1d
           apiToken: ${{ secrets.CLOUDFLARE_PAGES_TOKEN }}
-          projectName: stationjs
+          projectName: featherjs
           directory: docs
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
