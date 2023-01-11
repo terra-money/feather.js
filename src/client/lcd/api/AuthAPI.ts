@@ -52,7 +52,7 @@ export class AuthAPI extends BaseAPI {
         | ContinuousVestingAccount.Data;
     }>(`/cosmos/auth/v1beta1/accounts/${address}`, params);
 
-    return Account.fromData(account, true);
+    return Account.fromData(account);
   }
 
   public async parameters(
