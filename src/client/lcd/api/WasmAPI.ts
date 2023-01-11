@@ -131,7 +131,7 @@ export class WasmAPI extends BaseAPI {
     params: APIParams = {}
   ): Promise<ContractInfo> {
     // new endpoint doesn't return init_msg so have to retrieve it from history
-    const [historyEntry, _] = await this.contractHistory(contractAddress);
+    const [historyEntry] = await this.contractHistory(contractAddress);
 
     const endpoint = `/cosmwasm/wasm/v1/contract/${contractAddress}`;
     return this.getReqFromAddress(contractAddress)
