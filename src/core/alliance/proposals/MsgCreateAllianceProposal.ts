@@ -143,6 +143,7 @@ export class MsgCreateAllianceProposal extends JSONSerializable<
   }
 
   public static unpackAny(msgAny: Any, _?: boolean): MsgCreateAllianceProposal {
+    _;
     return MsgCreateAllianceProposal.fromProto(
       MsgCreateAllianceProposal_pb.decode(msgAny.value)
     );

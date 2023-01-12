@@ -90,6 +90,7 @@ export class MsgDeleteAllianceProposal extends JSONSerializable<
   }
 
   public static unpackAny(msgAny: Any, _?: boolean): MsgDeleteAllianceProposal {
+    _;
     return MsgDeleteAllianceProposal.fromProto(
       MsgDeleteAllianceProposal_pb.decode(msgAny.value)
     );

@@ -1,5 +1,5 @@
 import { BaseAPI } from './BaseAPI';
-import { Coins, AccAddress } from '../../../core';
+import { Coins } from '../../../core';
 import { APIParams, Pagination, PaginationOptions } from '../APIRequester';
 import { LCDClient } from '../LCDClient';
 
