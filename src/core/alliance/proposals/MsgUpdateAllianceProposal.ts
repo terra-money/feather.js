@@ -143,6 +143,7 @@ export class MsgUpdateAllianceProposal extends JSONSerializable<
   }
 
   public static unpackAny(msgAny: Any, _?: boolean): MsgUpdateAllianceProposal {
+    _;
     return MsgUpdateAllianceProposal.fromProto(
       MsgUpdateAllianceProposal_pb.decode(msgAny.value)
     );
