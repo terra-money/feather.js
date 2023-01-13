@@ -30,6 +30,11 @@ import {
 } from '@terra-money/terra.proto/cosmos/gov/v1beta1/gov';
 import { Any } from '@terra-money/terra.proto/google/protobuf/any';
 import * as Long from 'long';
+import {
+  MsgCreateAllianceProposal,
+  MsgDeleteAllianceProposal,
+  MsgUpdateAllianceProposal,
+} from '../../core/alliance/proposals';
 
 /**
  * Stores information pertaining to a submitted proposal, such as its status and time of
@@ -243,6 +248,9 @@ export namespace Proposal {
     | ParameterChangeProposal
     | SoftwareUpgradeProposal
     | CancelSoftwareUpgradeProposal
+    | MsgCreateAllianceProposal
+    | MsgUpdateAllianceProposal
+    | MsgDeleteAllianceProposal
     | ClientUpdateProposal
     | ClearAdminProposal
     | ExecuteContractProposal
@@ -262,6 +270,9 @@ export namespace Proposal {
       | ParameterChangeProposal.Amino
       | SoftwareUpgradeProposal.Amino
       | CancelSoftwareUpgradeProposal.Amino
+      | MsgCreateAllianceProposal.Amino
+      | MsgUpdateAllianceProposal.Amino
+      | MsgDeleteAllianceProposal.Amino
       | ClientUpdateProposal.Amino
       | ClearAdminProposal.Amino
       | ExecuteContractProposal.Amino
@@ -280,6 +291,9 @@ export namespace Proposal {
       | ParameterChangeProposal.Data
       | SoftwareUpgradeProposal.Data
       | CancelSoftwareUpgradeProposal.Data
+      | MsgCreateAllianceProposal.Data
+      | MsgUpdateAllianceProposal.Data
+      | MsgDeleteAllianceProposal.Data
       | ClientUpdateProposal.Data
       | ClearAdminProposal.Data
       | ExecuteContractProposal.Data
@@ -298,6 +312,9 @@ export namespace Proposal {
       | ParameterChangeProposal.Proto
       | SoftwareUpgradeProposal.Proto
       | CancelSoftwareUpgradeProposal.Proto
+      | MsgCreateAllianceProposal.Proto
+      | MsgUpdateAllianceProposal.Proto
+      | MsgDeleteAllianceProposal.Proto
       | ClientUpdateProposal.Proto
       | ClearAdminProposal.Proto
       | ExecuteContractProposal.Proto
@@ -352,6 +369,12 @@ export namespace Proposal {
           return UpdateAdminProposal.fromAmino(amino, isClassic);
         case 'wasm/UpdateInstantiateConfigProposal':
           return UpdateInstantiateConfigProposal.fromAmino(amino, isClassic);
+        case 'alliance/MsgCreateAllianceProposal':
+          return MsgCreateAllianceProposal.fromAmino(amino, isClassic);
+        case 'alliance/MsgUpdateAllianceProposal':
+          return MsgUpdateAllianceProposal.fromAmino(amino, isClassic);
+        case 'alliance/MsgDeleteAllianceProposal':
+          return MsgDeleteAllianceProposal.fromAmino(amino, isClassic);
       }
     }
 
@@ -392,6 +415,12 @@ export namespace Proposal {
           return UpdateAdminProposal.fromData(data, isClassic);
         case '/cosmwasm.wasm.v1.UpdateInstantiateConfigProposal':
           return UpdateInstantiateConfigProposal.fromData(data, isClassic);
+        case '/alliance.alliance.MsgCreateAllianceProposal':
+          return MsgCreateAllianceProposal.fromData(data, isClassic);
+        case '/alliance.alliance.MsgUpdateAllianceProposal':
+          return MsgUpdateAllianceProposal.fromData(data, isClassic);
+        case '/alliance.alliance.MsgDeleteAllianceProposal':
+          return MsgDeleteAllianceProposal.fromData(data, isClassic);
       }
     }
 
@@ -433,6 +462,12 @@ export namespace Proposal {
           return UpdateAdminProposal.unpackAny(anyProto, isClassic);
         case '/cosmwasm.wasm.v1.UpdateInstantiateConfigProposal':
           return UpdateInstantiateConfigProposal.unpackAny(anyProto, isClassic);
+        case '/alliance.alliance.MsgCreateAllianceProposal':
+          return MsgCreateAllianceProposal.unpackAny(anyProto, isClassic);
+        case '/alliance.alliance.MsgUpdateAllianceProposal':
+          return MsgUpdateAllianceProposal.unpackAny(anyProto, isClassic);
+        case '/alliance.alliance.MsgDeleteAllianceProposal':
+          return MsgDeleteAllianceProposal.unpackAny(anyProto, isClassic);
       }
 
       throw `Proposal content ${typeUrl} not recognized`;

@@ -20,6 +20,7 @@ import { Wallet } from './Wallet';
 import { Numeric } from '../../core/numeric';
 import { Coins } from '../../core/Coins';
 import { Key } from '../../key';
+import { AllianceAPI } from './api/AllianceAPI';
 
 export interface LCDClientConfig {
   /**
@@ -95,6 +96,7 @@ export class LCDClient {
   public apiRequesters: Record<string, APIRequester>;
 
   // API access
+  public alliance: AllianceAPI;
   public auth: AuthAPI;
   public bank: BankAPI;
   public distribution: DistributionAPI;
@@ -135,6 +137,7 @@ export class LCDClient {
     );
 
     // instantiate APIs
+    this.alliance = new AllianceAPI(this);
     this.auth = new AuthAPI(this);
     this.bank = new BankAPI(this);
     this.distribution = new DistributionAPI(this);
