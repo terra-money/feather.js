@@ -367,7 +367,7 @@ export class TxAPI extends BaseAPI {
 
     const simulateRes = await this.getReqFromChainID(chainID)
       .post<SimulateResponse.Data>(`/cosmos/tx/v1beta1/simulate`, {
-        tx_bytes: this.encode(simTx),
+        tx_bytes: this.encode(simTx, this.lcd.config[chainID].isClassic),
       })
       .then(d => SimulateResponse.fromData(d));
 
@@ -382,8 +382,8 @@ export class TxAPI extends BaseAPI {
    * Encode a transaction to base64-encoded protobuf
    * @param tx transaction to encode
    */
-  public encode(tx: Tx): string {
-    return Buffer.from(tx.toBytes()).toString('base64');
+  public encode(tx: Tx, isClassic?: boolean): string {
+    return Buffer.from(tx.toBytes(isClassic)).toString('base64');
   }
 
   /**
@@ -411,7 +411,7 @@ export class TxAPI extends BaseAPI {
     return await this.getReqFromChainID(chainID).post<any>(
       `/cosmos/tx/v1beta1/txs`,
       {
-        tx_bytes: this.encode(tx),
+        tx_bytes: this.encode(tx, this.lcd.config[chainID].isClassic),
         mode,
       }
     );
