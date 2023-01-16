@@ -1,10 +1,4 @@
-import {
-  AccAddress,
-  AccPubKey,
-  ValAddress,
-  ValConsAddress,
-  ValPubKey,
-} from '../../../core';
+import { getChainIDFromAddress, getAddressPrefix } from '../../../util/bech32';
 import { APIRequester } from '../APIRequester';
 import { LCDClientConfig } from '../LCDClient';
 
@@ -23,35 +17,16 @@ export abstract class BaseAPI {
     return this.req[chainID];
   }
 
-  private getPrefix(address: string): string {
-    const addressTypes = [
-      AccPubKey,
-      ValAddress,
-      ValConsAddress,
-      ValPubKey,
-      // this must be the last one
-      AccAddress,
-    ];
-    for (const addressType of addressTypes) {
-      if (addressType.validate(address)) {
-        return addressType.getPrefix(address);
-      }
-    }
-    throw new Error(`The provided address (${address}) is not valid.`);
-  }
-
   public getReqFromAddress(address: string): APIRequester {
-    const prefix = this.getPrefix(address);
+    const chainID = getChainIDFromAddress(address, this.chains);
 
-    const chain = Object.values(this.chains).filter(
-      chain => prefix === chain.prefix
-    )[0];
-
-    if (!chain)
+    if (!chainID)
       throw new Error(
-        `There is no chain configured with the '${prefix}' prefix.`
+        `There is no chain configured with the '${getAddressPrefix(
+          address
+        )}' prefix.`
       );
 
-    return this.req[chain.chainID];
+    return this.req[chainID];
   }
 }
