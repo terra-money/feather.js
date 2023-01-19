@@ -37,6 +37,7 @@ export class MsgSubmitProposal extends JSONSerializable<
       value: { content, initial_deposit, proposer },
     } = data;
     return new MsgSubmitProposal(
+      // @ts-expect-error
       Proposal.Content.fromAmino(content, isClassic),
       Coins.fromAmino(initial_deposit),
       proposer
@@ -63,6 +64,7 @@ export class MsgSubmitProposal extends JSONSerializable<
   ): MsgSubmitProposal {
     const { content, initial_deposit, proposer } = data;
     return new MsgSubmitProposal(
+      // @ts-expect-error
       Proposal.Content.fromData(content, isClassic),
       Coins.fromData(initial_deposit),
       proposer

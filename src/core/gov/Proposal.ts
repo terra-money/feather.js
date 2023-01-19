@@ -59,7 +59,7 @@ export class Proposal extends JSONSerializable<
    */
   constructor(
     public id: number,
-    public content: Proposal.Content,
+    public content: Proposal.Content | undefined,
     public status: ProposalStatus,
     public final_tally_result: Proposal.FinalTallyResult,
     public submit_time: Date,
@@ -107,7 +107,7 @@ export class Proposal extends JSONSerializable<
 
     return {
       id: this.id.toFixed(),
-      content: this.content.toAmino(isClassic),
+      content: this.content?.toAmino(isClassic),
       status: status,
       final_tally_result: {
         yes: final_tally_result.yes.toFixed(),
@@ -159,7 +159,7 @@ export class Proposal extends JSONSerializable<
 
     return {
       proposal_id: this.id.toFixed(),
-      content: this.content.toData(isClassic),
+      content: this.content?.toData(isClassic),
       status: proposalStatusToJSON(status),
       final_tally_result: {
         yes: final_tally_result.yes.toString(),
@@ -219,7 +219,7 @@ export class Proposal extends JSONSerializable<
 
     return Proposal_pb.fromPartial({
       proposalId: Long.fromNumber(this.id),
-      content: this.content.packAny(isClassic),
+      content: this.content?.packAny(isClassic),
       status,
       finalTallyResult: ftr,
       submitTime: this.submit_time,
@@ -283,7 +283,8 @@ export namespace Proposal {
       | SudoContractProposal.Amino
       | UnpinCodesProposal.Amino
       | UpdateAdminProposal.Amino
-      | UpdateInstantiateConfigProposal.Amino;
+      | UpdateInstantiateConfigProposal.Amino
+      | undefined;
 
     export type Data =
       | TextProposal.Data
@@ -304,7 +305,8 @@ export namespace Proposal {
       | SudoContractProposal.Data
       | UnpinCodesProposal.Data
       | UpdateAdminProposal.Data
-      | UpdateInstantiateConfigProposal.Data;
+      | UpdateInstantiateConfigProposal.Data
+      | undefined;
 
     export type Proto =
       | TextProposal.Proto
@@ -325,12 +327,14 @@ export namespace Proposal {
       | SudoContractProposal.Proto
       | UnpinCodesProposal.Proto
       | UpdateAdminProposal.Proto
-      | UpdateInstantiateConfigProposal.Proto;
+      | UpdateInstantiateConfigProposal.Proto
+      | undefined;
 
     export function fromAmino(
       amino: Proposal.Content.Amino,
       isClassic?: boolean
-    ): Proposal.Content {
+    ): Proposal.Content | undefined {
+      if (!amino) return;
       switch (amino.type) {
         case 'gov/TextProposal':
         case 'cosmos-sdk/TextProposal':
@@ -381,7 +385,8 @@ export namespace Proposal {
     export function fromData(
       data: Proposal.Content.Data,
       isClassic?: boolean
-    ): Proposal.Content {
+    ): Proposal.Content | undefined {
+      if (!data) return;
       switch (data['@type']) {
         case '/cosmos.gov.v1beta1.TextProposal':
           return TextProposal.fromData(data, isClassic);
