@@ -114,7 +114,7 @@ export class AllianceAPI extends BaseAPI {
   ) {
     return this.getReqFromChainID(chainID).get<{
       pagination: Pagination;
-      alliances: AllianceAsset;
+      alliances: AllianceAsset[];
     }>(`/terra/alliances`, params);
   }
 
