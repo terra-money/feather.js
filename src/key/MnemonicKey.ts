@@ -6,7 +6,7 @@ import { RawKey } from './RawKey';
 
 export const LUNA_COIN_TYPE = 330;
 
-interface MnemonicKeyOptions {
+export interface MnemonicKeyOptions {
   /**
    * Space-separated list of words for the mnemonic key.
    */
