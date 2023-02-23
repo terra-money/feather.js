@@ -14,6 +14,10 @@ export * from './Deposit';
 export * from './SignatureV2';
 export * from './MultiSignature';
 
+// Stride
+export { MsgLiquidStake } from './stride/msgs';
+export { MsgRedeemStake } from './stride/msgs';
+
 // Alliance
 export { MsgDelegate as MsgAllianceDelegate } from './alliance/msgs/MsgDelegate';
 export { MsgUndelegate as MsgAllianceUndelegate } from './alliance/msgs/MsgUndelegate';
