@@ -89,7 +89,9 @@ export class Wallet {
         chainID: options.chainID,
         signMode:
           options.signMode ||
-          (this.lcd.config[options.chainID].isClassic
+          (options.msgs.find(m => 'aminoOnly' in m && m.aminoOnly)
+            ? SignModeV2.SIGN_MODE_LEGACY_AMINO_JSON
+            : this.lcd.config[options.chainID].isClassic
             ? SignModeV1.SIGN_MODE_DIRECT
             : SignModeV2.SIGN_MODE_DIRECT),
       },

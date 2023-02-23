@@ -46,6 +46,7 @@ import {
   MsgRedelegate as AMsgRedelegate,
   MsgUndelegate as AMsgUndelegate,
 } from './alliance/msgs';
+import { CustomMsg, MsgAminoCustom } from './custom/msgs';
 import {
   MsgStoreCode,
   MsgMigrateCode,
@@ -102,6 +103,7 @@ export type Msg =
   | IbcConnectionMsg
   | IbcChannelMsg
   | AllianceMsg
+  | CustomMsg
   | CrisisMsg;
 
 export namespace Msg {
@@ -116,6 +118,7 @@ export namespace Msg {
     | VestingMsg.Amino
     | WasmMsg.Amino
     | IbcTransferMsg.Amino
+    | CustomMsg.Amino
     | CrisisMsg.Amino;
 
   export type Data =
@@ -136,6 +139,7 @@ export namespace Msg {
     | AMsgDelegate.Data
     | AMsgRedelegate.Data
     | AMsgUndelegate.Data
+    | CustomMsg.Data
     | CrisisMsg.Data;
 
   export type Proto =
@@ -163,111 +167,187 @@ export namespace Msg {
       // bank
       case 'bank/MsgSend':
       case 'cosmos-sdk/MsgSend':
-        return MsgSend.fromAmino(data, isClassic);
+        return MsgSend.fromAmino(data as MsgSend.Amino, isClassic);
       case 'bank/MsgMultiSend':
       case 'cosmos-sdk/MsgMultiSend':
-        return MsgMultiSend.fromAmino(data, isClassic);
+        return MsgMultiSend.fromAmino(data as MsgMultiSend.Amino, isClassic);
 
       // distribution
       case 'distribution/MsgModifyWithdrawAddress':
       case 'cosmos-sdk/MsgModifyWithdrawAddress':
-        return MsgSetWithdrawAddress.fromAmino(data, isClassic);
+        return MsgSetWithdrawAddress.fromAmino(
+          data as MsgSetWithdrawAddress.Amino,
+          isClassic
+        );
       case 'distribution/MsgWithdrawDelegationReward':
       case 'cosmos-sdk/MsgWithdrawDelegationReward':
-        return MsgWithdrawDelegatorReward.fromAmino(data, isClassic);
+        return MsgWithdrawDelegatorReward.fromAmino(
+          data as MsgWithdrawDelegatorReward.Amino,
+          isClassic
+        );
       case 'distribution/MsgWithdrawValidatorCommission':
       case 'cosmos-sdk/MsgWithdrawValidatorCommission':
-        return MsgWithdrawValidatorCommission.fromAmino(data, isClassic);
+        return MsgWithdrawValidatorCommission.fromAmino(
+          data as MsgWithdrawValidatorCommission.Amino,
+          isClassic
+        );
       case 'distribution/MsgFundCommunityPool':
       case 'cosmos-sdk/MsgFundCommunityPool':
-        return MsgFundCommunityPool.fromAmino(data, isClassic);
+        return MsgFundCommunityPool.fromAmino(
+          data as MsgFundCommunityPool.Amino,
+          isClassic
+        );
 
       // feegrant
       case 'feegrant/MsgGrantAllowance':
       case 'cosmos-sdk/MsgGrantAllowance':
-        return MsgGrantAllowance.fromAmino(data, isClassic);
+        return MsgGrantAllowance.fromAmino(
+          data as MsgGrantAllowance.Amino,
+          isClassic
+        );
       case 'feegrant/MsgRevokeAllowance':
       case 'cosmos-sdk/MsgRevokeAllowance':
-        return MsgRevokeAllowance.fromAmino(data, isClassic);
+        return MsgRevokeAllowance.fromAmino(
+          data as MsgRevokeAllowance.Amino,
+          isClassic
+        );
       // gov
       case 'gov/MsgDeposit':
       case 'cosmos-sdk/MsgDeposit':
-        return MsgDeposit.fromAmino(data, isClassic);
+        return MsgDeposit.fromAmino(data as MsgDeposit.Amino, isClassic);
       case 'gov/MsgSubmitProposal':
       case 'cosmos-sdk/MsgSubmitProposal':
-        return MsgSubmitProposal.fromAmino(data, isClassic);
+        return MsgSubmitProposal.fromAmino(
+          data as MsgSubmitProposal.Amino,
+          isClassic
+        );
       case 'gov/MsgVote':
       case 'cosmos-sdk/MsgVote':
-        return MsgVote.fromAmino(data, isClassic);
+        return MsgVote.fromAmino(data as MsgVote.Amino, isClassic);
       case 'gov/MsgVoteWeighted':
       case 'cosmos-sdk/MsgVoteWeighted':
-        return MsgVoteWeighted.fromAmino(data, isClassic);
+        return MsgVoteWeighted.fromAmino(
+          data as MsgVoteWeighted.Amino,
+          isClassic
+        );
 
       // msgauth
       case 'msgauth/MsgGrantAuthorization':
       case 'cosmos-sdk/MsgGrant':
-        return MsgGrantAuthorization.fromAmino(data, isClassic);
+        return MsgGrantAuthorization.fromAmino(
+          data as MsgGrantAuthorization.Amino,
+          isClassic
+        );
       case 'msgauth/MsgRevokeAuthorization':
       case 'cosmos-sdk/MsgRevoke':
-        return MsgRevokeAuthorization.fromAmino(data, isClassic);
+        return MsgRevokeAuthorization.fromAmino(
+          data as MsgRevokeAuthorization.Amino,
+          isClassic
+        );
       case 'msgauth/MsgExecAuthorized':
       case 'cosmos-sdk/MsgExec':
-        return MsgExecAuthorized.fromAmino(data, isClassic);
+        return MsgExecAuthorized.fromAmino(
+          data as MsgExecAuthorized.Amino,
+          isClassic
+        );
 
       // slashing
       case 'slashing/MsgUnjail':
       case 'cosmos-sdk/MsgUnjail':
-        return MsgUnjail.fromAmino(data, isClassic);
+        return MsgUnjail.fromAmino(data as MsgUnjail.Amino, isClassic);
 
       // staking
       case 'staking/MsgDelegate':
       case 'cosmos-sdk/MsgDelegate':
-        return MsgDelegate.fromAmino(data, isClassic);
+        return MsgDelegate.fromAmino(data as MsgDelegate.Amino, isClassic);
       case 'staking/MsgUndelegate':
       case 'cosmos-sdk/MsgUndelegate':
-        return MsgUndelegate.fromAmino(data, isClassic);
+        return MsgUndelegate.fromAmino(data as MsgUndelegate.Amino, isClassic);
       case 'staking/MsgBeginRedelegate':
       case 'cosmos-sdk/MsgBeginRedelegate':
-        return MsgBeginRedelegate.fromAmino(data, isClassic);
+        return MsgBeginRedelegate.fromAmino(
+          data as MsgBeginRedelegate.Amino,
+          isClassic
+        );
       case 'staking/MsgCreateValidator':
       case 'cosmos-sdk/MsgCreateValidator':
-        return MsgCreateValidator.fromAmino(data, isClassic);
+        return MsgCreateValidator.fromAmino(
+          data as MsgCreateValidator.Amino,
+          isClassic
+        );
       case 'staking/MsgEditValidator':
       case 'cosmos-sdk/MsgEditValidator':
-        return MsgEditValidator.fromAmino(data, isClassic);
+        return MsgEditValidator.fromAmino(
+          data as MsgEditValidator.Amino,
+          isClassic
+        );
 
       // vesting
       case 'cosmos-sdk/MsgCreatePeriodicVestingAccount':
-        return MsgCreatePeriodicVestingAccount.fromAmino(data, isClassic);
+        return MsgCreatePeriodicVestingAccount.fromAmino(
+          data as MsgCreatePeriodicVestingAccount.Amino,
+          isClassic
+        );
       case 'cosmos-sdk/MsgCreateVestingAccount':
-        return MsgCreateVestingAccount.fromAmino(data, isClassic);
+        return MsgCreateVestingAccount.fromAmino(
+          data as MsgCreateVestingAccount.Amino,
+          isClassic
+        );
       case 'cosmos-sdk/MsgDonateAllVestingTokens':
-        return MsgDonateAllVestingTokens.fromAmino(data, isClassic);
+        return MsgDonateAllVestingTokens.fromAmino(
+          data as MsgDonateAllVestingTokens.Amino,
+          isClassic
+        );
 
       // wasm
       case 'wasm/MsgStoreCode':
-        return MsgStoreCode.fromAmino(data, isClassic);
+        return MsgStoreCode.fromAmino(data as MsgStoreCode.Amino, isClassic);
       case 'wasm/MsgMigrateCode':
-        return MsgMigrateCode.fromAmino(data, isClassic);
+        return MsgMigrateCode.fromAmino(
+          data as MsgMigrateCode.Amino,
+          isClassic
+        );
       case 'wasm/MsgInstantiateContract':
-        return MsgInstantiateContract.fromAmino(data, isClassic);
+        return MsgInstantiateContract.fromAmino(
+          data as MsgInstantiateContract.Amino,
+          isClassic
+        );
       case 'wasm/MsgExecuteContract':
-        return MsgExecuteContract.fromAmino(data, isClassic);
+        return MsgExecuteContract.fromAmino(
+          data as MsgExecuteContract.Amino,
+          isClassic
+        );
       case 'wasm/MsgMigrateContract':
-        return MsgMigrateContract.fromAmino(data, isClassic);
+        return MsgMigrateContract.fromAmino(
+          data as MsgMigrateContract.Amino,
+          isClassic
+        );
       case 'wasm/MsgUpdateContractAdmin':
       case 'wasm/MsgUpdateAdmin':
-        return MsgUpdateContractAdmin.fromAmino(data, isClassic);
+        return MsgUpdateContractAdmin.fromAmino(
+          data as MsgUpdateContractAdmin.Amino,
+          isClassic
+        );
       case 'wasm/MsgClearContractAdmin':
       case 'wasm/MsgClearAdmin':
-        return MsgClearContractAdmin.fromAmino(data, isClassic);
+        return MsgClearContractAdmin.fromAmino(
+          data as MsgClearContractAdmin.Amino,
+          isClassic
+        );
       // ibc-transfer
       case 'cosmos-sdk/MsgTransfer':
-        return MsgTransfer.fromAmino(data, isClassic);
+        return MsgTransfer.fromAmino(data as MsgTransfer.Amino, isClassic);
       // crisis
       case 'crisis/MsgVerifyInvariant':
       case 'cosmos-sdk/MsgVerifyInvariant':
-        return MsgVerifyInvariant.fromAmino(data, isClassic);
+        return MsgVerifyInvariant.fromAmino(
+          data as MsgVerifyInvariant.Amino,
+          isClassic
+        );
+
+      // custom
+      default:
+        return MsgAminoCustom.fromAmino(data, isClassic);
     }
   }
   export function fromData(data: Msg.Data, isClassic?: boolean): Msg {
@@ -417,8 +497,10 @@ export namespace Msg {
       // crisis
       case '/cosmos.crisis.v1beta1.MsgVerifyInvariant':
         return MsgVerifyInvariant.fromData(data, isClassic);
+
+      // custom
       default:
-        throw Error(`not supported msg ${data['@type']}`);
+        return MsgAminoCustom.fromData(data, isClassic);
     }
   }
 

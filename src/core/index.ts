@@ -14,6 +14,9 @@ export * from './Deposit';
 export * from './SignatureV2';
 export * from './MultiSignature';
 
+// Custom
+export * from './custom/msgs';
+
 // Alliance
 export { MsgDelegate as MsgAllianceDelegate } from './alliance/msgs/MsgDelegate';
 export { MsgUndelegate as MsgAllianceUndelegate } from './alliance/msgs/MsgUndelegate';
