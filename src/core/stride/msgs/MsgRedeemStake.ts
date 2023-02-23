@@ -1,6 +1,6 @@
 import { JSONSerializable } from '../../../util/json';
 import { Any } from '@terra-money/terra.proto/google/protobuf/any';
-import { MsgRedeemStake as MsgRedeemStake_pb } from '@terra-money/terra.proto/build/stride/stakeibc/tx';
+import { MsgRedeemStake as MsgRedeemStake_pb } from '@terra-money/terra.proto/stride/stakeibc/tx';
 
 // Used on Stride to redeem the staked assets
 export class MsgRedeemStake extends JSONSerializable<

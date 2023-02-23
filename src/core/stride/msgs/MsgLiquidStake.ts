@@ -1,6 +1,6 @@
 import { JSONSerializable } from '../../../util/json';
 import { Any } from '@terra-money/terra.proto/google/protobuf/any';
-import { MsgLiquidStake as MsgLiquidStake_pb } from '@terra-money/terra.proto/build/stride/stakeibc/tx';
+import { MsgLiquidStake as MsgLiquidStake_pb } from '@terra-money/terra.proto/stride/stakeibc/tx';
 
 // Used on Stride to create liquid staked asset from a native asset
 export class MsgLiquidStake extends JSONSerializable<
