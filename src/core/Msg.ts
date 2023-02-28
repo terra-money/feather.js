@@ -87,6 +87,7 @@ import {
 } from './ibc/msgs/channel';
 import { MsgVerifyInvariant, CrisisMsg } from './crisis';
 import { Any } from '@terra-money/terra.proto/google/protobuf/any';
+import { MsgLiquidStake, MsgRedeemStake } from './stride/msgs';
 
 export type Msg =
   | BankMsg
@@ -104,6 +105,8 @@ export type Msg =
   | IbcChannelMsg
   | AllianceMsg
   | CustomMsg
+  | MsgLiquidStake
+  | MsgRedeemStake
   | CrisisMsg;
 
 export namespace Msg {
@@ -140,6 +143,8 @@ export namespace Msg {
     | AMsgRedelegate.Data
     | AMsgUndelegate.Data
     | CustomMsg.Data
+    | MsgLiquidStake.Data
+    | MsgRedeemStake.Data
     | CrisisMsg.Data;
 
   export type Proto =
@@ -160,6 +165,8 @@ export namespace Msg {
     | AMsgDelegate.Proto
     | AMsgRedelegate.Proto
     | AMsgUndelegate.Proto
+    | MsgLiquidStake.Proto
+    | MsgRedeemStake.Proto
     | CrisisMsg.Proto;
 
   export function fromAmino(data: Msg.Amino, isClassic?: boolean): Msg {
@@ -352,6 +359,10 @@ export namespace Msg {
   }
   export function fromData(data: Msg.Data, isClassic?: boolean): Msg {
     switch (data['@type']) {
+      case '/stride.stakeibc.MsgLiquidStake':
+        return MsgLiquidStake.fromData(data, isClassic);
+      case '/stride.stakeibc.MsgRedeemStake':
+        return MsgRedeemStake.fromData(data, isClassic);
       // alliance
       case '/alliance.alliance.MsgDelegate':
         return AMsgDelegate.fromData(data, isClassic);
@@ -506,6 +517,10 @@ export namespace Msg {
 
   export function fromProto(proto: Any, isClassic?: boolean): Msg {
     switch (proto.typeUrl) {
+      case '/stride.stakeibc.MsgLiquidStake':
+        return MsgLiquidStake.unpackAny(proto, isClassic);
+      case '/stride.stakeibc.MsgRedeemStake':
+        return MsgRedeemStake.unpackAny(proto, isClassic);
       // alliance
       case '/alliance.alliance.MsgDelegate':
         return AMsgDelegate.unpackAny(proto, isClassic);
