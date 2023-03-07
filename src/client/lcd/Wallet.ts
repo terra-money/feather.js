@@ -4,6 +4,7 @@ import { CreateTxOptions } from '../lcd/api/TxAPI';
 import { Tx } from '../../core/Tx';
 import { SignMode as SignModeV1 } from '@terra-money/legacy.proto/cosmos/tx/signing/v1beta1/signing';
 import { SignMode as SignModeV2 } from '@terra-money/terra.proto/cosmos/tx/signing/v1beta1/signing';
+import { MsgAminoCustom } from 'core';
 
 export class Wallet {
   constructor(public lcd: LCDClient, public key: Key) {}
@@ -89,7 +90,9 @@ export class Wallet {
         chainID: options.chainID,
         signMode:
           options.signMode ||
-          (this.lcd.config[options.chainID].isClassic
+          (options.msgs.find(m => m instanceof MsgAminoCustom)
+            ? SignModeV2.SIGN_MODE_LEGACY_AMINO_JSON
+            : this.lcd.config[options.chainID].isClassic
             ? SignModeV1.SIGN_MODE_DIRECT
             : SignModeV2.SIGN_MODE_DIRECT),
       },

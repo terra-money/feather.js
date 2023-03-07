@@ -64,12 +64,13 @@ const lcd = LCDClient.fromDefaultConfig('mainnet');
 
 // To use LocalTerra or a custom endpoint
 const lcd = new LCDClient({
-  localterra: {  // key must be the chainID
+  localterra: {
+    // key must be the chainID
     lcd: 'http://localhost:1317',
     chainID: 'localterra',
     gasAdjustment: 1.75,
     gasPrices: { uluna: 0.15 },
-    prefix: 'terra',  // bech32 prefix, used by the LCD to understand which is the right chain to query
+    prefix: 'terra', // bech32 prefix, used by the LCD to understand which is the right chain to query
   },
 });
 
@@ -117,9 +118,44 @@ wallet
   .createAndSignTx({
     msgs: [send],
     memo: 'test from feather.js!',
-    chainID: 'pisco-1'  // now here a chainID must be specified
+    chainID: 'pisco-1', // now here a chainID must be specified
   })
-  .then(tx => lcd.tx.broadcast(tx, 'pisco-1'))  // same here
+  .then(tx => lcd.tx.broadcast(tx, 'pisco-1')) // same here
+  .then(result => {
+    console.log(`TX hash: ${result.txhash}`);
+  });
+```
+
+### Tx with messages from custom modules
+
+```ts
+wallet
+  // feather js detect that the tx contains a MsgAminoCustom and will use SIGN_MODE_AMINO_JSON instead of SIGN_MODE_DIRECT
+  .createAndSignTx({
+    msgs: [
+      new MsgAminoCustom({
+        type: 'osmosis/gamm/swap-exact-amount-in',
+        value: {
+          sender: 'osmo1...',
+          routes: [
+            {
+              pool_id: '2',
+              token_out_denom: 'uion',
+            },
+          ],
+          token_in: {
+            denom: 'uosmo',
+            amount: '10000000',
+          },
+          token_out_min_amount: '8538',
+        },
+      }),
+      // you can add more messages here if needed
+    ],
+    memo: 'test from feather.js!',
+    chainID: 'osmosis-1',
+  })
+  .then(tx => lcd.tx.broadcast(tx, 'osmosis-1'))
   .then(result => {
     console.log(`TX hash: ${result.txhash}`);
   });

@@ -14,6 +14,8 @@ export * from './Deposit';
 export * from './SignatureV2';
 export * from './MultiSignature';
 
+// Custom
+export * from './custom/msgs';
 // Stride
 export { MsgLiquidStake } from './stride/msgs';
 export { MsgRedeemStake } from './stride/msgs';
