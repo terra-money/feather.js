@@ -9,7 +9,6 @@ export class MsgAminoCustom extends JSONSerializable<
   MsgAminoCustom.Data,
   {}
 > {
-  public aminoOnly = true;
   /**
    *
    * @param delegatorAddress delegator's account address
