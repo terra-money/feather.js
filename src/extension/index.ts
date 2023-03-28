@@ -13,7 +13,12 @@ interface ResponseData {
   payload: object;
 }
 
-type SendDataType = 'connect' | 'post' | 'sign' | 'interchain-info';
+type SendDataType =
+  | 'connect'
+  | 'post'
+  | 'sign'
+  | 'interchain-info'
+  | 'get-pubkey';
 
 interface SendData {
   [key: string]: any;
@@ -147,6 +152,16 @@ export class Extension {
    */
   info(): number {
     return this.send('interchain-info');
+  }
+
+  /**
+   * Request for Station Extension public key
+   *
+   * @return {string}  name               'onGetPubkey'
+   * @return {object}  payload            Record<string, string> with the public key for each of the supported networks
+   */
+  pubkey(): number {
+    return this.send('get-pubkey');
   }
 
   /**
