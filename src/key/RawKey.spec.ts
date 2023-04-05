@@ -51,10 +51,9 @@ describe('RawKey', () => {
         'island relax shop such yellow opinion find know caught erode blue dolphin behind coach tattoo light focus snake common size analyst imitate employ walnut',
     });
     const rk = new RawKey(mk.privateKey);
-    const { accAddress } = rk;
 
     const msgSend = new MsgSend(
-      accAddress('terra'),
+      rk.accAddress('terra'),
       'terra1wg2mlrxdmnnkkykgqg4znky86nyrtc45q336yv',
       new Coins({ uluna: '100000000' })
     );

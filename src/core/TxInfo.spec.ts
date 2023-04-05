@@ -115,7 +115,7 @@ describe('TxInfo', () => {
   });
 
   it('parses events correctly', () => {
-    const tx = TxInfo.fromData(instantiateContractTxAmino as TxInfo.Data, true);
+    const tx = TxInfo.fromData(instantiateContractTxAmino as any, true);
 
     if (!tx.logs) {
       throw new Error('logs undefined');
