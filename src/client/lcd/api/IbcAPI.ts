@@ -156,8 +156,12 @@ export class IbcAPI extends BaseAPI {
     chainID: string,
     params: APIParams = {}
   ): Promise<IbcClientParams> {
+    const url = this.lcd.config.isClassic
+      ? `/ibc/client/v1/params`
+      : `/ibc/core/client/v1/params`;
+
     return this.getReqFromChainID(chainID)
-      .get<{ params: IbcClientParams.Data }>(`/ibc/client/v1/params`, params)
+      .get<{ params: IbcClientParams.Data }>(url, params)
       .then(({ params: d }) => ({
         allowed_clients: d.allowed_clients,
       }));

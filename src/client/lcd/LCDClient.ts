@@ -44,11 +44,47 @@ export interface LCDClientConfig {
   gasAdjustment: Numeric.Input;
 
   /**
+   * Url to chain icon image.
+   */
+  icon?: string;
+  /**
+   * Name of chain.
+   */
+  name?: string;
+
+  /**
    * Bech32 prefix for wallet and contract addresses.
    */
   prefix: string;
 
+  /**
+   * Block explorer Url for given chain.
+   */
+  explorer?: Explorer;
+
   isClassic?: boolean;
+}
+
+export interface Explorer {
+  /**
+   * URL to query account information.
+   */
+  address: string;
+
+  /**
+   * URL to query block information.
+   */
+  block: string;
+
+  /**
+   * URL to query transaction information.
+   */
+  tx: string;
+
+  /**
+   * URL to query validator information.
+   */
+  validator: string;
 }
 
 const DEFAULT_NETWORK_CONFIG: Record<
