@@ -97,7 +97,15 @@ const DEFAULT_NETWORK_CONFIG: Record<
       lcd: 'https://phoenix-lcd.terra.dev',
       gasAdjustment: 1.75,
       gasPrices: { uluna: 0.015 },
+      icon: 'https://station-assets.terra.money/img/chains/Terra.svg',
+      name: 'Terra',
       prefix: 'terra',
+      explorer: {
+        address: 'https://terrasco.pe/mainnet/address/{}',
+        block: 'https://terrasco.pe/mainnet/block/{}',
+        tx: 'https://terrasco.pe/mainnet/tx/{}',
+        validator: 'https://terrasco.pe/mainnet/validator/{}',
+      },
     },
   },
   testnet: {
@@ -107,6 +115,14 @@ const DEFAULT_NETWORK_CONFIG: Record<
       gasAdjustment: 1.75,
       gasPrices: { uluna: 0.015 },
       prefix: 'terra',
+      explorer: {
+        address: 'https://terrasco.pe/testnet/address/{}',
+        block: 'https://terrasco.pe/testnet/block/{}',
+        tx: 'https://terrasco.pe/testnet/tx/{}',
+        validator: 'https://terrasco.pe/testnet/validator/{}',
+      },
+      icon: 'https://station-assets.terra.money/img/chains/Terra.svg',
+      name: 'Terra',
     },
   },
 };
