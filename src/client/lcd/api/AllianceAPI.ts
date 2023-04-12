@@ -253,7 +253,7 @@ export class AllianceAPI extends BaseAPI {
     denom: string,
     params: Partial<PaginationOptions & APIParams> = {}
   ) {
-    return this.getReqFromChainID(delegatorAddr).get<{ rewards?: Coins }>(
+    return this.getReqFromAddress(delegatorAddr).get<{ rewards?: Coins }>(
       `/terra/alliances/rewards/${delegatorAddr}/${validatorAddr}/${denom}`,
       params
     );
