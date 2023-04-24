@@ -3,7 +3,7 @@ import { APIParams, Pagination, PaginationOptions } from '../APIRequester';
 import { IdentifiedClientState } from '../../../core/ibc/core/client/IdentifiedClient';
 import { ClientConsensusStates } from '../../../core/ibc/core/client/ClientConsensusStates';
 import { LCDClient } from '../LCDClient';
-//import { Params as ControllerParams } from '../../../core/ibc/applications/interchain-account/controller/Params';
+import { Params as ControllerParams } from '../../../core/ibc/applications/interchain-account/controller/Params';
 import { Params as HostParams } from '../../../core/ibc/applications/interchain-account/host/Params';
 import { Channel } from '../../../core/ibc/core/channel';
 import { IdentifiedConnection } from '../../../core/ibc/core/connection';
@@ -239,19 +239,19 @@ export class IbcAPI extends BaseAPI {
 
   /**
    * Gets paramaters for interchain account controller.
-   * NOTE: CURRENTLY LCD DOESN'T SERVE THE ENDPOINT
-  /*
+   * @param chainID chain id
+   */
   public async interchainAccountControllerParameters(
+    chainID: string,
     params: APIParams = {}
   ): Promise<ControllerParams> {
-    return this.c
+    return this.getReqFromChainID(chainID)
       .get<{ params: ControllerParams.Data }>(
         `/ibc/apps/interchain_accounts/controller/v1/params`,
         params
       )
       .then(({ params: d }) => ControllerParams.fromData(d));
   }
-  */
 
   /**
    * Gets paramaters for interchain account host.

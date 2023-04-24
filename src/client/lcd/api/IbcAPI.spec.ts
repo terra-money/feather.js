@@ -42,13 +42,11 @@ describe('IbcClientAPI', () => {
     expect(res).not.toBeUndefined();
   });
 
-  /*
   it('ica controller paramaters', async () => {
-    const res = await ibc.interchainAccountControllerParameters();
+    const res = await ibc.interchainAccountControllerParameters('pisco-1');
     expect(res).not.toBeNull();
     expect(res).not.toBeUndefined();
   });
-  */
 
   it('channels', async () => {
     const [res] = await ibc.channels('pisco-1');

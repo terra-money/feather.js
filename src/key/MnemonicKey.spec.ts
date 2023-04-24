@@ -49,10 +49,9 @@ describe('MnemonicKey', () => {
       mnemonic:
         'island relax shop such yellow opinion find know caught erode blue dolphin behind coach tattoo light focus snake common size analyst imitate employ walnut',
     });
-    const { accAddress } = mk;
 
     const msgSend = new MsgSend(
-      accAddress('terra'),
+      mk.accAddress('terra'),
       'terra1wg2mlrxdmnnkkykgqg4znky86nyrtc45q336yv',
       new Coins({ uluna: '100000000' })
     );

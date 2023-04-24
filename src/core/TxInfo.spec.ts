@@ -59,21 +59,28 @@ const instantiateContractTxAmino = {
     body: {
       messages: [
         {
-          '@type': '/terra.oracle.v1beta1.MsgAggregateExchangeRateVote',
-          salt: '7b4c',
-          exchange_rates:
-            '41.753679997386404699uaud,38.152897754805427746ucad,27.674031355218179072uchf,196.026837309362459253ucny,191.737686262835618671udkk,25.782554425634391941ueur,22.070815310496596573ugbp,235.918907556073354996uhkd,2245.955815077995150686uinr,3326.162377566256916073ujpy,35308.691895711128492846ukrw,86357.377776669110190178umnt,267.642031750061676333unok,21.345339717339129734usdr,263.288481492217392139usek,41.027386540303457627usgd,997.082326305691696722uthb,30.291256499267926454uusd',
-          feeder: 'terra1fa0trn2nqjc2n6mmz9txta7ky5h5nnp9m6cra3',
-          validator: 'terravaloper1vk20anceu6h9s00d27pjlvslz3avetkvnwmr35',
+          '@type': '/cosmos.bank.v1beta1.MsgSend',
+          from_address: 'terra1t72mplryz3n2y953w44fc3rj0yp4m82qvkhrz3',
+          to_address: 'terra1t72mplryz3n2y953w44fc3rj0yp4m82qvkhrz3',
+          amount: [
+            {
+              denom: 'uluna',
+              amount: '100',
+            },
+          ],
         },
         {
-          '@type': '/terra.oracle.v1beta1.MsgAggregateExchangeRatePrevote',
-          hash: '65789f9286d21370e3c0c6eaaba1eb7bd54acb6e',
-          feeder: 'terra1fa0trn2nqjc2n6mmz9txta7ky5h5nnp9m6cra3',
-          validator: 'terravaloper1vk20anceu6h9s00d27pjlvslz3avetkvnwmr35',
+          '@type': '/cosmos.staking.v1beta1.MsgDelegate',
+          delegator_address: 'terra1t72mplryz3n2y953w44fc3rj0yp4m82qvkhrz3',
+          validator_address:
+            'terravaloper1vk20anceu6h9s00d27pjlvslz3avetkvnwmr35',
+          amount: {
+            denom: 'uluna',
+            amount: '100',
+          },
         },
       ],
-      memo: '@terra-money/oracle-feeder@1.4.6',
+      memo: '',
       timeout_height: '0',
       extension_options: [],
       non_critical_extension_options: [],
@@ -115,7 +122,10 @@ describe('TxInfo', () => {
   });
 
   it('parses events correctly', () => {
-    const tx = TxInfo.fromData(instantiateContractTxAmino as TxInfo.Data, true);
+    const tx = TxInfo.fromData(
+      instantiateContractTxAmino as TxInfo.Data,
+      false
+    );
 
     if (!tx.logs) {
       throw new Error('logs undefined');
