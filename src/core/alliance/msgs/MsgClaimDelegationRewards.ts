@@ -11,7 +11,7 @@ import { MsgClaimDelegationRewards as MsgClaimDelegationRewards_pb } from '@terr
  * The rewards will be deposited to their Withdraw Address.
  */
 export class MsgClaimDelegationRewards extends JSONSerializable<
-  {},
+  MsgClaimDelegationRewards.Amino,
   MsgClaimDelegationRewards.Data,
   MsgClaimDelegationRewards.Proto
 > {
@@ -29,11 +29,34 @@ export class MsgClaimDelegationRewards extends JSONSerializable<
     super();
   }
 
-  public toAmino(_?: boolean): {} {
+  public static fromAmino(
+    data: MsgClaimDelegationRewards.Amino,
+    _?: boolean
+  ): MsgClaimDelegationRewards {
     _;
-    throw Error(
-      'Legacy Amino not supported for MsgDelegate from x/alliance module'
+    const {
+      value: { delegatorAddress, validatorAddress, denom },
+    } = data;
+
+    return new MsgClaimDelegationRewards(
+      delegatorAddress,
+      validatorAddress,
+      denom
     );
+  }
+
+  public toAmino(_?: boolean): MsgClaimDelegationRewards.Amino {
+    _;
+    const { delegatorAddress, validatorAddress, denom } = this;
+
+    return {
+      type: 'alliance/MsgClaimDelegationRewards',
+      value: {
+        delegatorAddress,
+        validatorAddress,
+        denom,
+      },
+    };
   }
 
   public static fromData(
@@ -99,6 +122,15 @@ export class MsgClaimDelegationRewards extends JSONSerializable<
 }
 
 export namespace MsgClaimDelegationRewards {
+  export interface Amino {
+    type: 'alliance/MsgClaimDelegationRewards';
+    value: {
+      delegatorAddress: AccAddress;
+      validatorAddress: ValAddress;
+      denom: string;
+    };
+  }
+
   export interface Data {
     '@type': '/alliance.alliance.MsgClaimDelegationRewards';
     delegatorAddress: AccAddress;

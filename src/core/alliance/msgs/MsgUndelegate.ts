@@ -11,7 +11,7 @@ import { MsgUndelegate as MsgUndelegate_pb } from '@terra-money/terra.proto/alli
  * during which the Luna cannot be transacted or swapped.
  */
 export class MsgUndelegate extends JSONSerializable<
-  {},
+  MsgUndelegate.Amino,
   MsgUndelegate.Data,
   MsgUndelegate.Proto
 > {
@@ -28,11 +28,33 @@ export class MsgUndelegate extends JSONSerializable<
     super();
   }
 
-  public toAmino(_?: boolean): {} {
+  public static fromAmino(
+    data: MsgUndelegate.Amino,
+    _?: boolean
+  ): MsgUndelegate {
     _;
-    throw Error(
-      'Legacy Amino not supported for MsgUndelegate from x/alliance module'
+    const {
+      value: { delegatorAddress, validatorAddress, amount },
+    } = data;
+
+    return new MsgUndelegate(
+      delegatorAddress,
+      validatorAddress,
+      Coin.fromAmino(amount)
     );
+  }
+
+  public toAmino(_?: boolean): MsgUndelegate.Amino {
+    _;
+    const { delegatorAddress, validatorAddress, amount } = this;
+    return {
+      type: 'alliance/MsgUndelegate',
+      value: {
+        delegatorAddress,
+        validatorAddress,
+        amount: amount.toAmino(),
+      },
+    };
   }
 
   public static fromProto(
@@ -93,6 +115,15 @@ export class MsgUndelegate extends JSONSerializable<
 }
 
 export namespace MsgUndelegate {
+  export interface Amino {
+    type: 'alliance/MsgUndelegate';
+    value: {
+      delegatorAddress: AccAddress;
+      validatorAddress: ValAddress;
+      amount: Coin.Amino;
+    };
+  }
+
   export interface Data {
     '@type': '/alliance.alliance.MsgUndelegate';
     delegatorAddress: AccAddress;

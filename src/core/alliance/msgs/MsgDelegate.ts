@@ -9,7 +9,7 @@ import { MsgDelegate as MsgDelegate_pb } from '@terra-money/terra.proto/alliance
  * to be staked through the alliance module in a validator.
  */
 export class MsgDelegate extends JSONSerializable<
-  {},
+  MsgDelegate.Amino,
   MsgDelegate.Data,
   MsgDelegate.Proto
 > {
@@ -27,11 +27,30 @@ export class MsgDelegate extends JSONSerializable<
     super();
   }
 
-  public toAmino(_?: boolean): {} {
+  public static fromAmino(data: MsgDelegate.Amino, _?: boolean): MsgDelegate {
     _;
-    throw Error(
-      'Legacy Amino not supported for MsgDelegate from x/alliance module'
+    const {
+      value: { delegatorAddress, validatorAddress, amount },
+    } = data;
+
+    return new MsgDelegate(
+      delegatorAddress,
+      validatorAddress,
+      Coin.fromAmino(amount)
     );
+  }
+
+  public toAmino(_?: boolean): MsgDelegate.Amino {
+    _;
+    const { delegatorAddress, validatorAddress, amount } = this;
+    return {
+      type: 'alliance/MsgDelegate',
+      value: {
+        delegatorAddress,
+        validatorAddress,
+        amount: amount.toAmino(),
+      },
+    };
   }
 
   public static fromProto(proto: MsgDelegate.Proto, _?: boolean): MsgDelegate {
@@ -89,6 +108,15 @@ export class MsgDelegate extends JSONSerializable<
 }
 
 export namespace MsgDelegate {
+  export interface Amino {
+    type: 'alliance/MsgDelegate';
+    value: {
+      delegatorAddress: AccAddress;
+      validatorAddress: ValAddress;
+      amount: Coin.Amino;
+    };
+  }
+
   export interface Data {
     '@type': '/alliance.alliance.MsgDelegate';
     delegatorAddress: AccAddress;
