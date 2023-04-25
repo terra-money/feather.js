@@ -1,6 +1,6 @@
 {
   "name": "@terra-money/feather.js",
-  "version": "1.0.0-beta.15",
+  "version": "1.0.1",
   "description": "The JavaScript SDK for Terra and Feather chains",
   "license": "MIT",
   "author": "Terraform Labs, PTE.",
@@ -30,7 +30,7 @@
   },
   "scripts": {
     "build": "tsc --module commonjs && webpack --mode production",
-    "test": "jest",
+    "test": "jest --runInBand",
     "format": "prettier --check ./src/**/*.ts",
     "format:fix": "prettier --write ./src/**/*.ts",
     "lint": "eslint src --ext .js,.ts",
