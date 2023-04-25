@@ -37,7 +37,7 @@ const checkDelegations = (delegations: Delegation[]) => {
 // };
 
 const delegator = test1.accAddress('terra');
-const validator = 'terravaloper1gtw2uxdkdt3tvq790ckjz8jm8qgwkdw3uptstn';
+const validator = 'terravaloper1zdpgj8am5nqqvht927k3etljyl6a52kwqndjz2';
 
 describe('StakingAPI', () => {
   it('parameters', async () => {
