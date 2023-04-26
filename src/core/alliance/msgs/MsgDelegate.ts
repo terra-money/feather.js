@@ -15,13 +15,13 @@ export class MsgDelegate extends JSONSerializable<
 > {
   /**
    *
-   * @param delegatorAddress delegator's account address
-   * @param validatorAddress validator's operator address
+   * @param delegator_address delegator's account address
+   * @param validator_address validator's operator address
    * @param amount amount of alliance assets to be sent for delegation
    */
   constructor(
-    public delegatorAddress: AccAddress,
-    public validatorAddress: ValAddress,
+    public delegator_address: AccAddress,
+    public validator_address: ValAddress,
     public amount: Coin
   ) {
     super();
@@ -30,24 +30,24 @@ export class MsgDelegate extends JSONSerializable<
   public static fromAmino(data: MsgDelegate.Amino, _?: boolean): MsgDelegate {
     _;
     const {
-      value: { delegatorAddress, validatorAddress, amount },
+      value: { delegator_address, validator_address, amount },
     } = data;
 
     return new MsgDelegate(
-      delegatorAddress,
-      validatorAddress,
+      delegator_address,
+      validator_address,
       Coin.fromAmino(amount)
     );
   }
 
   public toAmino(_?: boolean): MsgDelegate.Amino {
     _;
-    const { delegatorAddress, validatorAddress, amount } = this;
+    const { delegator_address, validator_address, amount } = this;
     return {
       type: 'alliance/MsgDelegate',
       value: {
-        delegatorAddress,
-        validatorAddress,
+        delegator_address: delegator_address,
+        validator_address: validator_address,
         amount: amount.toAmino(),
       },
     };
@@ -64,11 +64,11 @@ export class MsgDelegate extends JSONSerializable<
 
   public toProto(_?: boolean): MsgDelegate.Proto {
     _;
-    const { delegatorAddress, validatorAddress, amount } = this;
+    const { delegator_address, validator_address, amount } = this;
     return MsgDelegate_pb.fromPartial({
       amount: amount.toProto(),
-      delegatorAddress: delegatorAddress,
-      validatorAddress: validatorAddress,
+      delegatorAddress: delegator_address,
+      validatorAddress: validator_address,
     });
   }
 
@@ -87,21 +87,21 @@ export class MsgDelegate extends JSONSerializable<
 
   public static fromData(data: MsgDelegate.Data, _?: boolean): MsgDelegate {
     _;
-    const { delegatorAddress, validatorAddress, amount } = data;
+    const { delegator_address, validator_address, amount } = data;
     return new MsgDelegate(
-      delegatorAddress,
-      validatorAddress,
+      delegator_address,
+      validator_address,
       Coin.fromData(amount)
     );
   }
 
   public toData(_?: boolean): MsgDelegate.Data {
     _;
-    const { delegatorAddress, validatorAddress, amount } = this;
+    const { delegator_address, validator_address, amount } = this;
     return {
       '@type': '/alliance.alliance.MsgDelegate',
-      delegatorAddress,
-      validatorAddress,
+      delegator_address,
+      validator_address,
       amount: amount.toData(),
     };
   }
@@ -111,16 +111,16 @@ export namespace MsgDelegate {
   export interface Amino {
     type: 'alliance/MsgDelegate';
     value: {
-      delegatorAddress: AccAddress;
-      validatorAddress: ValAddress;
+      delegator_address: AccAddress;
+      validator_address: ValAddress;
       amount: Coin.Amino;
     };
   }
 
   export interface Data {
     '@type': '/alliance.alliance.MsgDelegate';
-    delegatorAddress: AccAddress;
-    validatorAddress: ValAddress;
+    delegator_address: AccAddress;
+    validator_address: ValAddress;
     amount: Coin.Data;
   }
 

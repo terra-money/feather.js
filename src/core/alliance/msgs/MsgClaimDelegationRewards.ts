@@ -17,13 +17,13 @@ export class MsgClaimDelegationRewards extends JSONSerializable<
 > {
   /**
    *
-   * @param delegatorAddress delegator's account address
-   * @param validatorAddress validator's operator address
+   * @param delegator_address delegator's account address
+   * @param validator_address validator's operator address
    * @param denom alliance denom to claim rewards for (e.g. ibc/AAE7E4 or uluna...)
    */
   constructor(
-    public delegatorAddress: AccAddress,
-    public validatorAddress: ValAddress,
+    public delegator_address: AccAddress,
+    public validator_address: ValAddress,
     public denom: string
   ) {
     super();
@@ -35,25 +35,25 @@ export class MsgClaimDelegationRewards extends JSONSerializable<
   ): MsgClaimDelegationRewards {
     _;
     const {
-      value: { delegatorAddress, validatorAddress, denom },
+      value: { delegator_address, validator_address, denom },
     } = data;
 
     return new MsgClaimDelegationRewards(
-      delegatorAddress,
-      validatorAddress,
+      delegator_address,
+      validator_address,
       denom
     );
   }
 
   public toAmino(_?: boolean): MsgClaimDelegationRewards.Amino {
     _;
-    const { delegatorAddress, validatorAddress, denom } = this;
+    const { delegator_address, validator_address, denom } = this;
 
     return {
       type: 'alliance/MsgClaimDelegationRewards',
       value: {
-        delegatorAddress,
-        validatorAddress,
+        delegator_address,
+        validator_address,
         denom,
       },
     };
@@ -64,21 +64,21 @@ export class MsgClaimDelegationRewards extends JSONSerializable<
     _?: boolean
   ): MsgClaimDelegationRewards {
     _;
-    const { delegatorAddress, validatorAddress, denom } = proto;
+    const { delegator_address, validator_address, denom } = proto;
     return new MsgClaimDelegationRewards(
-      delegatorAddress,
-      validatorAddress,
+      delegator_address,
+      validator_address,
       denom
     );
   }
 
   public toData(_?: boolean): MsgClaimDelegationRewards.Data {
     _;
-    const { delegatorAddress, validatorAddress, denom } = this;
+    const { delegator_address, validator_address, denom } = this;
     return {
       '@type': '/alliance.alliance.MsgClaimDelegationRewards',
-      delegatorAddress,
-      validatorAddress,
+      delegator_address,
+      validator_address,
       denom,
     };
   }
@@ -97,10 +97,10 @@ export class MsgClaimDelegationRewards extends JSONSerializable<
 
   public toProto(_?: boolean): MsgClaimDelegationRewards.Proto {
     _;
-    const { delegatorAddress, validatorAddress, denom } = this;
+    const { delegator_address, validator_address, denom } = this;
     return MsgClaimDelegationRewards_pb.fromPartial({
-      delegatorAddress: delegatorAddress,
-      validatorAddress: validatorAddress,
+      delegatorAddress: delegator_address,
+      validatorAddress: validator_address,
       denom: denom,
     });
   }
@@ -125,16 +125,16 @@ export namespace MsgClaimDelegationRewards {
   export interface Amino {
     type: 'alliance/MsgClaimDelegationRewards';
     value: {
-      delegatorAddress: AccAddress;
-      validatorAddress: ValAddress;
+      delegator_address: AccAddress;
+      validator_address: ValAddress;
       denom: string;
     };
   }
 
   export interface Data {
     '@type': '/alliance.alliance.MsgClaimDelegationRewards';
-    delegatorAddress: AccAddress;
-    validatorAddress: ValAddress;
+    delegator_address: AccAddress;
+    validator_address: ValAddress;
     denom: string;
   }
 
