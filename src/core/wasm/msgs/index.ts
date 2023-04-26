@@ -5,6 +5,8 @@ import { MsgExecuteContract } from './MsgExecuteContract';
 import { MsgMigrateContract } from './MsgMigrateContract';
 import { MsgUpdateContractAdmin } from './MsgUpdateContractAdmin';
 import { MsgClearContractAdmin } from './MsgClearContractAdmin';
+import { WasmTokenFactory } from './tokenfactory';
+import { MsgCreateDenom } from './tokenfactory/MsgCreateDenom';
 
 export * from './MsgStoreCode';
 export * from './MsgMigrateCode';
@@ -13,6 +15,7 @@ export * from './MsgExecuteContract';
 export * from './MsgMigrateContract';
 export * from './MsgUpdateContractAdmin';
 export * from './MsgClearContractAdmin';
+export * from './tokenfactory';
 
 export type WasmMsg =
   | MsgStoreCode
@@ -21,7 +24,8 @@ export type WasmMsg =
   | MsgExecuteContract
   | MsgMigrateContract
   | MsgUpdateContractAdmin
-  | MsgClearContractAdmin;
+  | MsgClearContractAdmin
+  | WasmTokenFactory;
 
 export namespace WasmMsg {
   export type Amino =
@@ -31,7 +35,8 @@ export namespace WasmMsg {
     | MsgExecuteContract.Amino
     | MsgMigrateContract.Amino
     | MsgUpdateContractAdmin.Amino
-    | MsgClearContractAdmin.Amino;
+    | MsgClearContractAdmin.Amino
+    | MsgCreateDenom.Amino;
   export type Data =
     | MsgStoreCode.Data
     | MsgMigrateCode.Data
@@ -39,7 +44,8 @@ export namespace WasmMsg {
     | MsgExecuteContract.Data
     | MsgMigrateContract.Data
     | MsgUpdateContractAdmin.Data
-    | MsgClearContractAdmin.Data;
+    | MsgClearContractAdmin.Data
+    | MsgCreateDenom.Data;
   export type Proto =
     | MsgStoreCode.Proto
     | MsgMigrateCode.Proto
@@ -47,5 +53,6 @@ export namespace WasmMsg {
     | MsgExecuteContract.Proto
     | MsgMigrateContract.Proto
     | MsgUpdateContractAdmin.Proto
-    | MsgClearContractAdmin.Proto;
+    | MsgClearContractAdmin.Proto
+    | MsgCreateDenom.Proto;
 }

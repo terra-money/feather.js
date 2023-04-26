@@ -88,6 +88,7 @@ import {
 import { MsgVerifyInvariant, CrisisMsg } from './crisis';
 import { Any } from '@terra-money/terra.proto/google/protobuf/any';
 import { MsgLiquidStake, MsgRedeemStake } from './stride/msgs';
+import { MsgCreateDenom } from './wasm/msgs/tokenfactory/MsgCreateDenom';
 
 export type Msg =
   | BankMsg
@@ -341,6 +342,8 @@ export namespace Msg {
           data as MsgClearContractAdmin.Amino,
           isClassic
         );
+      case 'osmosis/tokenfactory/create-denom':
+        return MsgCreateDenom.fromAmino(data as MsgCreateDenom.Amino);
       // ibc-transfer
       case 'cosmos-sdk/MsgTransfer':
         return MsgTransfer.fromAmino(data as MsgTransfer.Amino, isClassic);
@@ -458,6 +461,8 @@ export namespace Msg {
       case '/terra.wasm.v1beta1.MsgClearContractAdmin':
       case '/cosmwasm.wasm.v1.MsgClearAdmin':
         return MsgClearContractAdmin.fromData(data, isClassic);
+      case '/cosmwasm.tokenfactory.v1beta1.MsgCreateDenom':
+        return MsgCreateDenom.fromData(data);
 
       // ibc-transfer
       case '/ibc.applications.transfer.v1.MsgTransfer':
@@ -614,6 +619,8 @@ export namespace Msg {
       case '/terra.wasm.v1beta1.MsgClearContractAdmin':
       case '/cosmwasm.wasm.v1.MsgClearAdmin':
         return MsgClearContractAdmin.unpackAny(proto, isClassic);
+      case '/cosmwasm.tokenfactory.v1beta1.MsgCreateDenom':
+        return MsgCreateDenom.unpackAny(proto, isClassic);
 
       // ibc-transfer
       case '/ibc.applications.transfer.v1.MsgTransfer':
