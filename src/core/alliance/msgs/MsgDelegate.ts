@@ -9,29 +9,48 @@ import { MsgDelegate as MsgDelegate_pb } from '@terra-money/terra.proto/alliance
  * to be staked through the alliance module in a validator.
  */
 export class MsgDelegate extends JSONSerializable<
-  {},
+  MsgDelegate.Amino,
   MsgDelegate.Data,
   MsgDelegate.Proto
 > {
   /**
    *
-   * @param delegatorAddress delegator's account address
-   * @param validatorAddress validator's operator address
+   * @param delegator_address delegator's account address
+   * @param validator_address validator's operator address
    * @param amount amount of alliance assets to be sent for delegation
    */
   constructor(
-    public delegatorAddress: AccAddress,
-    public validatorAddress: ValAddress,
+    public delegator_address: AccAddress,
+    public validator_address: ValAddress,
     public amount: Coin
   ) {
     super();
   }
 
-  public toAmino(_?: boolean): {} {
+  public static fromAmino(data: MsgDelegate.Amino, _?: boolean): MsgDelegate {
     _;
-    throw Error(
-      'Legacy Amino not supported for MsgDelegate from x/alliance module'
+    const {
+      value: { delegator_address, validator_address, amount },
+    } = data;
+
+    return new MsgDelegate(
+      delegator_address,
+      validator_address,
+      Coin.fromAmino(amount)
     );
+  }
+
+  public toAmino(_?: boolean): MsgDelegate.Amino {
+    _;
+    const { delegator_address, validator_address, amount } = this;
+    return {
+      type: 'alliance/MsgDelegate',
+      value: {
+        delegator_address: delegator_address,
+        validator_address: validator_address,
+        amount: amount.toAmino(),
+      },
+    };
   }
 
   public static fromProto(proto: MsgDelegate.Proto, _?: boolean): MsgDelegate {
@@ -45,11 +64,11 @@ export class MsgDelegate extends JSONSerializable<
 
   public toProto(_?: boolean): MsgDelegate.Proto {
     _;
-    const { delegatorAddress, validatorAddress, amount } = this;
+    const { delegator_address, validator_address, amount } = this;
     return MsgDelegate_pb.fromPartial({
       amount: amount.toProto(),
-      delegatorAddress: delegatorAddress,
-      validatorAddress: validatorAddress,
+      delegatorAddress: delegator_address,
+      validatorAddress: validator_address,
     });
   }
 
@@ -68,31 +87,40 @@ export class MsgDelegate extends JSONSerializable<
 
   public static fromData(data: MsgDelegate.Data, _?: boolean): MsgDelegate {
     _;
-    const { delegatorAddress, validatorAddress, amount } = data;
+    const { delegator_address, validator_address, amount } = data;
     return new MsgDelegate(
-      delegatorAddress,
-      validatorAddress,
+      delegator_address,
+      validator_address,
       Coin.fromData(amount)
     );
   }
 
   public toData(_?: boolean): MsgDelegate.Data {
     _;
-    const { delegatorAddress, validatorAddress, amount } = this;
+    const { delegator_address, validator_address, amount } = this;
     return {
       '@type': '/alliance.alliance.MsgDelegate',
-      delegatorAddress,
-      validatorAddress,
+      delegator_address,
+      validator_address,
       amount: amount.toData(),
     };
   }
 }
 
 export namespace MsgDelegate {
+  export interface Amino {
+    type: 'alliance/MsgDelegate';
+    value: {
+      delegator_address: AccAddress;
+      validator_address: ValAddress;
+      amount: Coin.Amino;
+    };
+  }
+
   export interface Data {
     '@type': '/alliance.alliance.MsgDelegate';
-    delegatorAddress: AccAddress;
-    validatorAddress: ValAddress;
+    delegator_address: AccAddress;
+    validator_address: ValAddress;
     amount: Coin.Data;
   }
 

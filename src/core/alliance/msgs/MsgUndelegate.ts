@@ -11,28 +11,50 @@ import { MsgUndelegate as MsgUndelegate_pb } from '@terra-money/terra.proto/alli
  * during which the Luna cannot be transacted or swapped.
  */
 export class MsgUndelegate extends JSONSerializable<
-  {},
+  MsgUndelegate.Amino,
   MsgUndelegate.Data,
   MsgUndelegate.Proto
 > {
   /**
-   * @param delegatorAddress delegator's account address
-   * @param validatorAddress validator's operator address
+   * @param delegator_address delegator's account address
+   * @param validator_address validator's operator address
    * @param amount alliance assets to be undelegated
    */
   constructor(
-    public delegatorAddress: AccAddress,
-    public validatorAddress: ValAddress,
+    public delegator_address: AccAddress,
+    public validator_address: ValAddress,
     public amount: Coin
   ) {
     super();
   }
 
-  public toAmino(_?: boolean): {} {
+  public static fromAmino(
+    data: MsgUndelegate.Amino,
+    _?: boolean
+  ): MsgUndelegate {
     _;
-    throw Error(
-      'Legacy Amino not supported for MsgUndelegate from x/alliance module'
+    const {
+      value: { delegator_address, validator_address, amount },
+    } = data;
+
+    return new MsgUndelegate(
+      delegator_address,
+      validator_address,
+      Coin.fromAmino(amount)
     );
+  }
+
+  public toAmino(_?: boolean): MsgUndelegate.Amino {
+    _;
+    const { delegator_address, validator_address, amount } = this;
+    return {
+      type: 'alliance/MsgUndelegate',
+      value: {
+        delegator_address,
+        validator_address,
+        amount: amount.toAmino(),
+      },
+    };
   }
 
   public static fromProto(
@@ -49,11 +71,11 @@ export class MsgUndelegate extends JSONSerializable<
 
   public toProto(_?: boolean): MsgUndelegate.Proto {
     _;
-    const { delegatorAddress, validatorAddress, amount } = this;
+    const { delegator_address, validator_address, amount } = this;
     return MsgUndelegate_pb.fromPartial({
       amount: amount.toProto(),
-      delegatorAddress: delegatorAddress,
-      validatorAddress: validatorAddress,
+      delegatorAddress: delegator_address,
+      validatorAddress: validator_address,
     });
   }
 
@@ -72,31 +94,40 @@ export class MsgUndelegate extends JSONSerializable<
 
   public static fromData(data: MsgUndelegate.Data, _?: boolean): MsgUndelegate {
     _;
-    const { delegatorAddress, validatorAddress, amount } = data;
+    const { delegator_address, validator_address, amount } = data;
     return new MsgUndelegate(
-      delegatorAddress,
-      validatorAddress,
+      delegator_address,
+      validator_address,
       Coin.fromData(amount)
     );
   }
 
   public toData(_?: boolean): MsgUndelegate.Data {
     _;
-    const { delegatorAddress, validatorAddress, amount } = this;
+    const { delegator_address, validator_address, amount } = this;
     return {
       '@type': '/alliance.alliance.MsgUndelegate',
-      delegatorAddress,
-      validatorAddress,
+      delegator_address,
+      validator_address,
       amount: amount.toData(),
     };
   }
 }
 
 export namespace MsgUndelegate {
+  export interface Amino {
+    type: 'alliance/MsgUndelegate';
+    value: {
+      delegator_address: AccAddress;
+      validator_address: ValAddress;
+      amount: Coin.Amino;
+    };
+  }
+
   export interface Data {
     '@type': '/alliance.alliance.MsgUndelegate';
-    delegatorAddress: AccAddress;
-    validatorAddress: ValAddress;
+    delegator_address: AccAddress;
+    validator_address: ValAddress;
     amount: Coin.Data;
   }
 
