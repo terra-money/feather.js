@@ -33,7 +33,7 @@ export interface V1Beta1DecCoin {
 balance in addition to shares which is more suitable for client responses.
 */
 export interface AllianceDelegationResponse {
-  delegation?: AllianceDelegation;
+  delegation: AllianceDelegation;
 
   /**
    * Coin defines a token with a denomination and an amount.
@@ -41,58 +41,61 @@ export interface AllianceDelegationResponse {
    * NOTE: The amount field is an Int which implements the custom method
    * signatures required by gogoproto.
    */
-  balance?: Coins;
+  balance: {
+    denom: string;
+    amount: string;
+  };
 }
 
 export interface AllianceRewardHistory {
-  denom?: string;
-  index?: string;
+  denom: string;
+  index: string;
 }
 
 export interface AllianceDelegation {
   /** delegator_address is the bech32-encoded address of the delegator. */
-  delegator_address?: string;
+  delegator_address: string;
 
   /** validator_address is the bech32-encoded address of the validator. */
-  validator_address?: string;
+  validator_address: string;
 
   /** denom of token staked */
-  denom?: string;
+  denom: string;
 
   /** shares define the delegation shares received. */
-  shares?: string;
-  reward_history?: AllianceRewardHistory[];
+  shares: string;
+  reward_history: AllianceRewardHistory[];
 
   /** @format uint64 */
-  last_reward_claim_height?: string;
+  last_reward_claim_height: string;
 }
 
 export interface AllianceAsset {
   /** Denom of the asset. It could either be a native token or an IBC token */
-  denom?: string;
+  denom: string;
 
   /**
    * The reward weight specifies the ratio of rewards that will be given to each alliance asset
    * It does not need to sum to 1. rate = weight / total_weight
    * Native asset is always assumed to have a weight of 1.s
    */
-  reward_weight?: string;
+  reward_weight: string;
 
   /**
    * A positive take rate is used for liquid staking derivatives. It defines an rate that is applied per take_rate_interval
    * that will be redirected to the distribution rewards pool
    */
-  take_rate?: string;
-  total_tokens?: string;
-  total_validator_shares?: string;
+  take_rate: string;
+  total_tokens: string;
+  total_validator_shares: string;
 
   /** @format date-time */
-  reward_start_time?: string;
-  reward_change_rate?: string;
-  reward_change_interval?: string;
+  reward_start_time: string;
+  reward_change_rate: string;
+  reward_change_interval: string;
 
   /** @format date-time */
-  last_reward_change_time?: string;
+  last_reward_change_time: string;
 }
 
 export class AllianceAPI extends BaseAPI {
@@ -131,7 +134,7 @@ export class AllianceAPI extends BaseAPI {
     params: Partial<PaginationOptions & APIParams> = {}
   ) {
     return this.getReqFromChainID(chainID).get<{
-      delegations?: AllianceDelegationResponse[];
+      delegations: AllianceDelegationResponse[];
       pagination: Pagination;
     }>(`/terra/alliances/delegations`, params);
   }
@@ -149,7 +152,7 @@ export class AllianceAPI extends BaseAPI {
     params: Partial<PaginationOptions & APIParams> = {}
   ) {
     return this.getReqFromAddress(delegatorAddr).get<{
-      delegations?: AllianceDelegationResponse[];
+      delegations: AllianceDelegationResponse[];
       pagination: Pagination;
     }>(`/terra/alliances/delegations/${delegatorAddr}`, params);
   }
@@ -168,7 +171,7 @@ export class AllianceAPI extends BaseAPI {
     params: Partial<PaginationOptions & APIParams> = {}
   ) {
     return this.getReqFromAddress(delegatorAddr).get<{
-      delegations?: AllianceDelegationResponse[];
+      delegations: AllianceDelegationResponse[];
       pagination: Pagination;
     }>(
       `/terra/alliances/delegations/${delegatorAddr}/${validatorAddr}`,
@@ -192,7 +195,7 @@ export class AllianceAPI extends BaseAPI {
     params: Partial<PaginationOptions & APIParams> = {}
   ) {
     return this.getReqFromAddress(delegatorAddr).get<{
-      delegation?: AllianceDelegationResponse[];
+      delegation: AllianceDelegationResponse[];
       pagination: Pagination;
     }>(
       `/terra/alliances/delegations/${delegatorAddr}/${validatorAddr}/${denom}`,
@@ -215,7 +218,7 @@ export class AllianceAPI extends BaseAPI {
     params: Partial<PaginationOptions & APIParams> = {}
   ) {
     return this.getReqFromChainID(chainId).get<{
-      alliance?: AllianceAsset;
+      alliance: AllianceAsset;
       pagination: Pagination;
     }>(`/terra/alliances/${denom}`, params);
   }
@@ -253,7 +256,7 @@ export class AllianceAPI extends BaseAPI {
     denom: string,
     params: Partial<PaginationOptions & APIParams> = {}
   ) {
-    return this.getReqFromAddress(delegatorAddr).get<{ rewards?: Coins }>(
+    return this.getReqFromAddress(delegatorAddr).get<{ rewards: Coins }>(
       `/terra/alliances/rewards/${delegatorAddr}/${validatorAddr}/${denom}`,
       params
     );
@@ -272,7 +275,7 @@ export class AllianceAPI extends BaseAPI {
     params: Partial<PaginationOptions & APIParams> = {}
   ) {
     return this.getReqFromChainID(chainID).get<{
-      validators?: AllianceValidator;
+      validators: AllianceValidator;
       pagination: Pagination;
     }>(`/terra/alliances/validators`, params);
   }
