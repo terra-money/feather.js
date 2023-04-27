@@ -11,45 +11,79 @@ import { MsgRedelegate as MsgRedelegate_pb } from '@terra-money/terra.proto/alli
  * and happen immediately.
  */
 export class MsgRedelegate extends JSONSerializable<
-  {},
+  MsgRedelegate.Amino,
   MsgRedelegate.Data,
   MsgRedelegate.Proto
 > {
   /**
    *
-   * @param delegatorAddress delegator's account address
-   * @param validatorSrcAddress validator to undelegate from
-   * @param validatorDstAddress validator to delegate to
+   * @param delegator_address delegator's account address
+   * @param validator_src_address validator to undelegate from
+   * @param validator_dst_address validator to delegate to
    * @param amount amount of alliance assets to be redelegated
    */
   constructor(
-    public delegatorAddress: AccAddress,
-    public validatorSrcAddress: ValAddress,
-    public validatorDstAddress: ValAddress,
+    public delegator_address: AccAddress,
+    public validator_src_address: ValAddress,
+    public validator_dst_address: ValAddress,
     public amount: Coin
   ) {
     super();
   }
 
-  public toAmino(_?: boolean): {} {
+  public static fromAmino(
+    data: MsgRedelegate.Amino,
+    _?: boolean
+  ): MsgRedelegate {
     _;
-    throw Error(
-      'Legacy Amino not supported for MsgRedelegate from x/alliance module'
+    const {
+      value: {
+        delegator_address,
+        validator_src_address,
+        validator_dst_address,
+        amount,
+      },
+    } = data;
+
+    return new MsgRedelegate(
+      delegator_address,
+      validator_src_address,
+      validator_dst_address,
+      Coin.fromAmino(amount)
     );
+  }
+
+  public toAmino(_?: boolean): MsgRedelegate.Amino {
+    _;
+    const {
+      delegator_address,
+      validator_src_address,
+      validator_dst_address,
+      amount,
+    } = this;
+    return {
+      type: 'alliance/MsgRedelegate',
+      value: {
+        delegator_address,
+        validator_src_address,
+        validator_dst_address,
+        amount: amount.toAmino(),
+      },
+    };
   }
 
   public static fromData(data: MsgRedelegate.Data, _?: boolean): MsgRedelegate {
     _;
     const {
-      delegatorAddress,
-      validatorSrcAddress,
-      validatorDstAddress,
+      delegator_address,
+      validator_src_address,
+      validator_dst_address,
       amount,
     } = data;
     return new MsgRedelegate(
-      delegatorAddress,
-      validatorSrcAddress,
-      validatorDstAddress,
+      delegator_address,
+      validator_src_address,
+      validator_dst_address,
       Coin.fromData(amount)
     );
   }
@@ -57,16 +91,16 @@ export class MsgRedelegate extends JSONSerializable<
   public toData(_?: boolean): MsgRedelegate.Data {
     _;
     const {
-      delegatorAddress,
-      validatorSrcAddress,
-      validatorDstAddress,
+      delegator_address,
+      validator_src_address,
+      validator_dst_address,
       amount,
     } = this;
     return {
       '@type': '/alliance.alliance.MsgRedelegate',
-      delegatorAddress,
-      validatorSrcAddress,
-      validatorDstAddress,
+      delegator_address,
+      validator_src_address,
+      validator_dst_address,
       amount: amount.toData(),
     };
   }
@@ -87,16 +121,16 @@ export class MsgRedelegate extends JSONSerializable<
   public toProto(_?: boolean): MsgRedelegate.Proto {
     _;
     const {
-      delegatorAddress,
-      validatorSrcAddress,
-      validatorDstAddress,
+      delegator_address,
+      validator_src_address,
+      validator_dst_address,
       amount,
     } = this;
     return MsgRedelegate_pb.fromPartial({
       amount: amount.toProto(),
-      delegatorAddress: delegatorAddress,
-      validatorDstAddress: validatorSrcAddress,
-      validatorSrcAddress: validatorDstAddress,
+      delegatorAddress: delegator_address,
+      validatorSrcAddress: validator_src_address,
+      validatorDstAddress: validator_dst_address,
     });
   }
 
@@ -115,11 +149,21 @@ export class MsgRedelegate extends JSONSerializable<
 }
 
 export namespace MsgRedelegate {
+  export interface Amino {
+    type: 'alliance/MsgRedelegate';
+    value: {
+      delegator_address: AccAddress;
+      validator_src_address: ValAddress;
+      validator_dst_address: ValAddress;
+      amount: Coin.Amino;
+    };
+  }
+
   export interface Data {
     '@type': '/alliance.alliance.MsgRedelegate';
-    delegatorAddress: AccAddress;
-    validatorSrcAddress: ValAddress;
-    validatorDstAddress: ValAddress;
+    delegator_address: AccAddress;
+    validator_src_address: ValAddress;
+    validator_dst_address: ValAddress;
     amount: Coin.Data;
   }
 
