@@ -11,7 +11,7 @@ export interface AllianceParams {
 
   /**
    * Last application of `take_rate` on assets
-   * @format date-time
+   * @format date-time from golang
    */
   last_take_rate_claim_time?: string;
 }
