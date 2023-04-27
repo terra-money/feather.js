@@ -89,6 +89,9 @@ import { MsgVerifyInvariant, CrisisMsg } from './crisis';
 import { Any } from '@terra-money/terra.proto/google/protobuf/any';
 import { MsgLiquidStake, MsgRedeemStake } from './stride/msgs';
 import { MsgCreateDenom } from './wasm/msgs/tokenfactory/MsgCreateDenom';
+import { MsgBurn } from './wasm/msgs/tokenfactory/MsgBurn';
+import { MsgChangeAdmin } from './wasm/msgs/tokenfactory/MsgChangeAdmin';
+import { MsgMint } from './wasm/msgs/tokenfactory/MsgMint';
 
 export type Msg =
   | BankMsg
@@ -344,6 +347,12 @@ export namespace Msg {
         );
       case 'osmosis/tokenfactory/create-denom':
         return MsgCreateDenom.fromAmino(data as MsgCreateDenom.Amino);
+      case 'osmosis/tokenfactory/burn':
+        return MsgBurn.fromAmino(data as MsgBurn.Amino);
+      case 'osmosis/tokenfactory/change-admin':
+        return MsgChangeAdmin.fromAmino(data as MsgChangeAdmin.Amino);
+      case 'osmosis/tokenfactory/mint':
+        return MsgMint.fromAmino(data as MsgMint.Amino);
       // ibc-transfer
       case 'cosmos-sdk/MsgTransfer':
         return MsgTransfer.fromAmino(data as MsgTransfer.Amino, isClassic);
@@ -463,6 +472,12 @@ export namespace Msg {
         return MsgClearContractAdmin.fromData(data, isClassic);
       case '/cosmwasm.tokenfactory.v1beta1.MsgCreateDenom':
         return MsgCreateDenom.fromData(data);
+      case '/cosmwasm.tokenfactory.v1beta1.MsgBurn':
+        return MsgBurn.fromData(data);
+      case '/cosmwasm.tokenfactory.v1beta1.MsgChangeAdmin':
+        return MsgChangeAdmin.fromData(data);
+      case '/cosmwasm.tokenfactory.v1beta1.MsgMint':
+        return MsgMint.fromData(data);
 
       // ibc-transfer
       case '/ibc.applications.transfer.v1.MsgTransfer':
@@ -621,6 +636,12 @@ export namespace Msg {
         return MsgClearContractAdmin.unpackAny(proto, isClassic);
       case '/cosmwasm.tokenfactory.v1beta1.MsgCreateDenom':
         return MsgCreateDenom.unpackAny(proto, isClassic);
+      case '/cosmwasm.tokenfactory.v1beta1.MsgBurn':
+        return MsgBurn.unpackAny(proto, isClassic);
+      case '/cosmwasm.tokenfactory.v1beta1.MsgChangeAdmin':
+        return MsgChangeAdmin.unpackAny(proto, isClassic);
+      case '/cosmwasm.tokenfactory.v1beta1.MsgMint':
+        return MsgMint.unpackAny(proto, isClassic);
 
       // ibc-transfer
       case '/ibc.applications.transfer.v1.MsgTransfer':

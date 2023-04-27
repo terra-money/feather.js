@@ -1,24 +1,24 @@
 import { JSONSerializable } from '../../../../../util/json';
 import { Any } from '@terra-money/terra.proto/google/protobuf/any';
-import { MsgRegisterCounterpartyAddress as MsgRegisterCounterpartyAddress_pb } from '@terra-money/terra.proto/ibc/applications/fee/v1/tx';
+import { MsgRegisterCounterpartyPayee as MsgRegisterCounterpartyPayee_pb } from '@terra-money/terra.proto/ibc/applications/fee/v1/tx';
 
-/**
- * MsgRegisterCounterpartyAddress defines the request type for the RegisterCounterpartyAddress rpc
- */
-export class MsgRegisterCounterpartyAddress extends JSONSerializable<
+/** MsgRegisterCounterpartyPayee defines the request type for the RegisterCounterpartyPayee rpc */
+export class MsgRegisterCounterpartyPayee extends JSONSerializable<
   any,
-  MsgRegisterCounterpartyAddress.Data,
-  MsgRegisterCounterpartyAddress.Proto
+  MsgRegisterCounterpartyPayee.Data,
+  MsgRegisterCounterpartyPayee.Proto
 > {
   /**
-   * @param address the relayer address
-   * @param counterparty_adress the counterparty relayer address
-   * @param channel_id unique channel identifier
+   * @param portId unique port identifier
+   * @param channelId unique channel identifier
+   * @param relayer the relayer address
+   * @param counterpartyPayee the counterparty payee address
    */
   constructor(
-    public address: string,
-    public counterparty_address: string,
-    public channel_id: string
+    public portId: string,
+    public channelId: string,
+    public relayer: string,
+    public counterpartyPayee: string
   ) {
     super();
   }
@@ -26,7 +26,7 @@ export class MsgRegisterCounterpartyAddress extends JSONSerializable<
   public static fromAmino(
     _: any,
     isClassic?: boolean
-  ): MsgRegisterCounterpartyAddress {
+  ): MsgRegisterCounterpartyPayee {
     if (isClassic) {
       throw new Error('Not supported for the network');
     }
@@ -42,57 +42,62 @@ export class MsgRegisterCounterpartyAddress extends JSONSerializable<
   }
 
   public static fromData(
-    data: MsgRegisterCounterpartyAddress.Data,
+    data: MsgRegisterCounterpartyPayee.Data,
     isClassic?: boolean
-  ): MsgRegisterCounterpartyAddress {
+  ): MsgRegisterCounterpartyPayee {
     if (isClassic) {
       throw new Error('Not supported for the network');
     }
-    const { address, counterparty_address, channel_id } = data;
+    const { portId, channelId, relayer, counterpartyPayee } = data;
 
-    return new MsgRegisterCounterpartyAddress(
-      address,
-      counterparty_address,
-      channel_id
+    return new MsgRegisterCounterpartyPayee(
+      portId,
+      channelId,
+      relayer,
+      counterpartyPayee
     );
   }
 
-  public toData(isClassic?: boolean): MsgRegisterCounterpartyAddress.Data {
+  public toData(isClassic?: boolean): MsgRegisterCounterpartyPayee.Data {
     if (isClassic) {
       throw new Error('Not supported for the network');
     }
-    const { address, counterparty_address, channel_id } = this;
+    const { portId, channelId, relayer, counterpartyPayee } = this;
     return {
-      '@type': '/ibc.applications.fee.v1.MsgRegisterCounterpartyAddress',
-      address,
-      counterparty_address,
-      channel_id,
+      '@type': '/ibc.applications.fee.v1.MsgRegisterCounterpartyPayee',
+      portId,
+      channelId,
+      relayer,
+      counterpartyPayee,
     };
   }
 
   public static fromProto(
-    proto: MsgRegisterCounterpartyAddress.Proto,
+    proto: MsgRegisterCounterpartyPayee.Proto,
     isClassic?: boolean
-  ): MsgRegisterCounterpartyAddress {
+  ): MsgRegisterCounterpartyPayee {
     if (isClassic) {
       throw new Error('Not supported for the network');
     }
-    return new MsgRegisterCounterpartyAddress(
-      proto.address,
-      proto.counterpartyAddress,
-      proto.channelId
+    return new MsgRegisterCounterpartyPayee(
+      proto.portId,
+      proto.channelId,
+      proto.relayer,
+      proto.counterpartyPayee
     );
   }
 
-  public toProto(isClassic?: boolean): MsgRegisterCounterpartyAddress.Proto {
+  public toProto(isClassic?: boolean): MsgRegisterCounterpartyPayee.Proto {
     if (isClassic) {
       throw new Error('Not supported for the network');
     }
-    const { address, counterparty_address, channel_id } = this;
-    return MsgRegisterCounterpartyAddress_pb.fromPartial({
-      address,
-      counterpartyAddress: counterparty_address,
-      channelId: channel_id,
+    const { portId, channelId, relayer, counterpartyPayee } = this;
+
+    return MsgRegisterCounterpartyPayee_pb.fromPartial({
+      portId,
+      channelId,
+      relayer,
+      counterpartyPayee,
     });
   }
 
@@ -101,8 +106,8 @@ export class MsgRegisterCounterpartyAddress extends JSONSerializable<
       throw new Error('Not supported for the network');
     }
     return Any.fromPartial({
-      typeUrl: '/ibc.applications.fee.v1.MsgRegisterCounterpartyAddress',
-      value: MsgRegisterCounterpartyAddress_pb.encode(
+      typeUrl: '/ibc.applications.fee.v1.MsgRegisterCounterpartyPayee',
+      value: MsgRegisterCounterpartyPayee_pb.encode(
         this.toProto(isClassic)
       ).finish(),
     });
@@ -111,23 +116,24 @@ export class MsgRegisterCounterpartyAddress extends JSONSerializable<
   public static unpackAny(
     msgAny: Any,
     isClassic?: boolean
-  ): MsgRegisterCounterpartyAddress {
+  ): MsgRegisterCounterpartyPayee {
     if (isClassic) {
       throw new Error('Not supported for the network');
     }
-    return MsgRegisterCounterpartyAddress.fromProto(
-      MsgRegisterCounterpartyAddress_pb.decode(msgAny.value)
+    return MsgRegisterCounterpartyPayee.fromProto(
+      MsgRegisterCounterpartyPayee_pb.decode(msgAny.value)
     );
   }
 }
 
-export namespace MsgRegisterCounterpartyAddress {
+export namespace MsgRegisterCounterpartyPayee {
   export interface Data {
-    '@type': '/ibc.applications.fee.v1.MsgRegisterCounterpartyAddress';
-    address: string;
-    counterparty_address: string;
-    channel_id: string;
+    '@type': '/ibc.applications.fee.v1.MsgRegisterCounterpartyPayee';
+    portId: string;
+    channelId: string;
+    relayer: string;
+    counterpartyPayee: string;
   }
 
-  export type Proto = MsgRegisterCounterpartyAddress_pb;
+  export type Proto = MsgRegisterCounterpartyPayee_pb;
 }

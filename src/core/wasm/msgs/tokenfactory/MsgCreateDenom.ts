@@ -4,8 +4,15 @@ import { Any } from '@terra-money/terra.proto/google/protobuf/any';
 import { MsgCreateDenom as MsgCreateDenom_pb } from '@terra-money/terra.proto/cosmwasm/tokenfactory/v1beta1/tx';
 
 /**
- * A delegator can submit this message to send more alliance assets
- * to be staked through the alliance module in a validator.
+ * MsgCreateDenom defines the message structure for the CreateDenom gRPC service
+ * method. It allows an account to create a new denom. It requires a sender
+ * address and a sub denomination. The (sender_address, sub_denomination) tuple
+ * must be unique and cannot be re-used.
+ *
+ * The resulting denom created is defined as
+ * <factory/{creatorAddress}/{subdenom}>. The resulting denom's admin is
+ * originally set to be the creator, but this can be changed later. The token
+ * denom does not indicate the current admin.
  */
 export class MsgCreateDenom extends JSONSerializable<
   MsgCreateDenom.Amino,
@@ -14,9 +21,8 @@ export class MsgCreateDenom extends JSONSerializable<
 > {
   /**
    *
-   * @param delegatorAddress delegator's account address
-   * @param validatorAddress validator's operator address
-   * @param amount amount of alliance assets to be sent for delegation
+   * @param sender internal account or external sender address
+   * @param subdenom can be up to 44 "alphanumeric" characters long.
    */
   constructor(public sender: AccAddress, public subdenom: string) {
     super();
