@@ -1,8 +1,8 @@
 import { JSONSerializable } from '../../../../util/json';
-import { AccAddress, ValAddress } from '../../../bech32';
+import { AccAddress } from '../../../bech32';
 import { Any } from '@terra-money/terra.proto/google/protobuf/any';
 import { MsgMint as MsgMint_pb } from '@terra-money/terra.proto/cosmwasm/tokenfactory/v1beta1/tx';
-import { Coin } from '@terra-money/terra.proto/cosmos/base/v1beta1/coin';
+import { Coin } from '../../../Coin';
 
 /**
  * MsgMint is the sdk.Msg type for allowing an admin account to mint
@@ -37,7 +37,10 @@ export class MsgMint extends JSONSerializable<
 
   public static fromProto(proto: MsgMint.Proto, _?: boolean): MsgMint {
     _;
-    return new MsgMint(proto.sender, proto.amount);
+    return new MsgMint(
+      proto.sender,
+      Coin.fromProto(proto.amount as Coin.Proto)
+    );
   }
 
   public toProto(_?: boolean): MsgMint.Proto {
@@ -45,7 +48,7 @@ export class MsgMint extends JSONSerializable<
     const { sender, amount } = this;
     return MsgMint_pb.fromPartial({
       sender,
-      amount,
+      amount: amount?.toProto(),
     });
   }
 

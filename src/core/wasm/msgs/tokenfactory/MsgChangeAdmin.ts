@@ -1,13 +1,10 @@
 import { JSONSerializable } from '../../../../util/json';
-import { AccAddress, ValAddress } from '../../../bech32';
+import { AccAddress } from '../../../bech32';
 import { Any } from '@terra-money/terra.proto/google/protobuf/any';
 import { MsgChangeAdmin as MsgChangeAdmin_pb } from '@terra-money/terra.proto/cosmwasm/tokenfactory/v1beta1/tx';
-import { Coin } from '@terra-money/terra.proto/cosmos/base/v1beta1/coin';
 
-/**
- * A delegator can submit this message to send more alliance assets
- * to be staked through the alliance module in a validator.
- */
+// MsgChangeAdmin is the sdk.Msg type for allowing an admin account to reassign
+// adminship of a denom to a new account
 export class MsgChangeAdmin extends JSONSerializable<
   MsgChangeAdmin.Amino,
   MsgChangeAdmin.Data,
@@ -15,9 +12,9 @@ export class MsgChangeAdmin extends JSONSerializable<
 > {
   /**
    *
-   * @param delegatorAddress delegator's account address
-   * @param validatorAddress validator's operator address
-   * @param amount amount of alliance assets to be sent for delegation
+   * @param sender current admin
+   * @param newAdmin new admin
+   * @param denom denom to change its admin
    */
   constructor(
     public sender: AccAddress,
@@ -32,7 +29,7 @@ export class MsgChangeAdmin extends JSONSerializable<
     const { sender, newAdmin, denom } = this;
 
     return {
-      type: 'osmosis/tokenfactory/create-denom',
+      type: 'osmosis/tokenfactory/change-admin',
       value: {
         sender,
         newAdmin,
@@ -103,7 +100,7 @@ export class MsgChangeAdmin extends JSONSerializable<
 
 export namespace MsgChangeAdmin {
   export interface Amino {
-    type: 'osmosis/tokenfactory/create-denom';
+    type: 'osmosis/tokenfactory/change-admin';
     value: {
       sender: AccAddress;
       newAdmin: AccAddress;

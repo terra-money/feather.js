@@ -1,5 +1,5 @@
 import { JSONSerializable } from '../../../../util/json';
-import { AccAddress, ValAddress } from '../../../bech32';
+import { AccAddress } from '../../../bech32';
 import { Any } from '@terra-money/terra.proto/google/protobuf/any';
 import { MsgCreateDenom as MsgCreateDenom_pb } from '@terra-money/terra.proto/cosmwasm/tokenfactory/v1beta1/tx';
 

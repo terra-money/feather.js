@@ -1,8 +1,8 @@
 import { JSONSerializable } from '../../../../util/json';
-import { AccAddress, ValAddress } from '../../../bech32';
+import { AccAddress } from '../../../bech32';
 import { Any } from '@terra-money/terra.proto/google/protobuf/any';
 import { MsgBurn as MsgBurn_pb } from '@terra-money/terra.proto/cosmwasm/tokenfactory/v1beta1/tx';
-import { Coin } from '@terra-money/terra.proto/cosmos/base/v1beta1/coin';
+import { Coin } from '../../../Coin';
 
 /**
  * MsgBurn is the sdk.Msg type for allowing an admin account to burn
@@ -37,7 +37,10 @@ export class MsgBurn extends JSONSerializable<
 
   public static fromProto(proto: MsgBurn.Proto, _?: boolean): MsgBurn {
     _;
-    return new MsgBurn(proto.sender, proto.amount);
+    return new MsgBurn(
+      proto.sender,
+      Coin.fromProto(proto.amount as Coin.Proto)
+    );
   }
 
   public toProto(_?: boolean): MsgBurn.Proto {
@@ -45,7 +48,7 @@ export class MsgBurn extends JSONSerializable<
     const { sender, amount } = this;
     return MsgBurn_pb.fromPartial({
       sender,
-      amount,
+      amount: amount?.toProto(),
     });
   }
 
