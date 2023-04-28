@@ -1,6 +1,6 @@
 {
-  "name": "@terra-money/feather.js",
-  "version": "1.0.3",
+  "name": "@elix1er/feather.js",
+  "version": "1.0.3-pre",
   "description": "The JavaScript SDK for Terra and Feather chains",
   "license": "MIT",
   "author": "Terraform Labs, PTE.",
@@ -18,7 +18,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/terra-money/feather.js.git"
+    "url": "git://github.com/elix1er/feather.js.git"
   },
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
