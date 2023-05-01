@@ -49,7 +49,7 @@ export class LocalTerra extends LCDClient {
         chainID: 'localterra',
         gasAdjustment: 1.75,
         gasPrices: { uluna: 0.15 },
-        prefix: 'terra1',
+        prefix: 'terra',
       },
     });
 
