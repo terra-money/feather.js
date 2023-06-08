@@ -24,42 +24,42 @@ export class MsgMigrateCode extends JSONSerializable<
 
   public static fromAmino(
     _data: MsgMigrateCode.Amino,
-    _isClassic?: boolean
+    _?: boolean
   ): MsgMigrateCode {
     throw new Error('Not supported for the network');
   }
 
-  public toAmino(_isClassic?: boolean): MsgMigrateCode.Amino {
+  public toAmino(_?: boolean): MsgMigrateCode.Amino {
     throw new Error('Not supported for the network');
   }
 
   public static fromProto(
     _proto: MsgMigrateCode.Proto,
-    _isClassic?: boolean
+    _?: boolean
   ): MsgMigrateCode {
     throw new Error('Not supported for the network');
   }
 
-  public toProto(_isClassic?: boolean): MsgMigrateCode.Proto {
+  public toProto(_?: boolean): MsgMigrateCode.Proto {
     throw new Error('Not supported for the network');
   }
 
-  public packAny(_isClassic?: boolean): Any {
+  public packAny(_?: boolean): Any {
     throw new Error('Not supported for the network');
   }
 
-  public static unpackAny(_msgAny: Any, _isClassic?: boolean): MsgMigrateCode {
+  public static unpackAny(_msgAny: Any, _?: boolean): MsgMigrateCode {
     throw new Error('Not supported for the network');
   }
 
   public static fromData(
     _data: MsgMigrateCode.Data,
-    _isClassic?: boolean
+    _?: boolean
   ): MsgMigrateCode {
     throw new Error('Not supported for the network');
   }
 
-  public toData(_isClassic?: boolean): MsgMigrateCode.Data {
+  public toData(_?: boolean): MsgMigrateCode.Data {
     throw new Error('Not supported for the network');
   }
 }
