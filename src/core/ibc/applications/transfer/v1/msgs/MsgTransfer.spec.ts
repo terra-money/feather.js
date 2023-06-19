@@ -18,6 +18,7 @@ describe('MsgTransfer', () => {
           revision_height: '0',
         },
         timeout_timestamp: '1642663176848000000',
+        memo: 'memo',
       },
       true
     );
@@ -33,6 +34,7 @@ describe('MsgTransfer', () => {
         revision_height: 0,
       },
       timeout_timestamp: Numeric.parse('1642663176848000000'),
+      memo: 'memo',
     });
   });
 
@@ -46,6 +48,7 @@ describe('MsgTransfer', () => {
       receiver: 'recvr17lmam6zguazs5q5u6z5mmx76uj63gldnse2pdp',
       timeout_height: new Height(0, 0).toData(),
       timeout_timestamp: '1642663176848000000',
+      memo: 'memo',
     });
     const aminoSend = send.toAmino();
 
@@ -59,6 +62,7 @@ describe('MsgTransfer', () => {
         receiver: 'recvr17lmam6zguazs5q5u6z5mmx76uj63gldnse2pdp',
         timeout_height: {},
         timeout_timestamp: '1642663176848000000',
+        memo: 'memo',
       },
     });
 
@@ -78,6 +82,7 @@ describe('MsgTransfer', () => {
         revision_height: '57240001',
       },
       timeout_timestamp: '0',
+      memo: 'memo',
     });
     const aminoSend = send.toAmino();
 
@@ -91,6 +96,7 @@ describe('MsgTransfer', () => {
         receiver: 'recvr17lmam6zguazs5q5u6z5mmx76uj63gldnse2pdp',
         timeout_height: new Height(5, 57240001).toAmino(),
         timeout_timestamp: undefined,
+        memo: 'memo',
       },
     });
 
