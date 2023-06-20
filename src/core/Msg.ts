@@ -28,6 +28,7 @@ import { MsgUnjail, SlashingMsg } from './slashing/msgs';
 import {
   MsgBeginRedelegate,
   MsgCreateValidator,
+  MsgCancelUnbondingDelegation,
   MsgDelegate,
   MsgEditValidator,
   MsgUndelegate,
@@ -292,6 +293,12 @@ export namespace Msg {
           data as MsgEditValidator.Amino,
           isClassic
         );
+      case 'staking/MsgCancelUnbondingDelegation':
+      case 'cosmos-sdk/MsgCancelUnbondingDelegation':
+        return MsgCancelUnbondingDelegation.fromAmino(
+          data as MsgCancelUnbondingDelegation.Amino,
+          isClassic
+        );
 
       // vesting
       case 'cosmos-sdk/MsgCreatePeriodicVestingAccount':
@@ -440,6 +447,8 @@ export namespace Msg {
         return MsgCreateValidator.fromData(data, isClassic);
       case '/cosmos.staking.v1beta1.MsgEditValidator':
         return MsgEditValidator.fromData(data, isClassic);
+      case '/cosmos.staking.v1beta1.MsgCancelUnbondingDelegation':
+        return MsgCancelUnbondingDelegation.fromData(data, isClassic);
 
       // vesting
       case '/cosmos.vesting.v1beta1.MsgCreatePeriodicVestingAccount':
@@ -604,6 +613,8 @@ export namespace Msg {
         return MsgCreateValidator.unpackAny(proto, isClassic);
       case '/cosmos.staking.v1beta1.MsgEditValidator':
         return MsgEditValidator.unpackAny(proto, isClassic);
+      case '/cosmos.staking.v1beta1.MsgCancelUnbondingDelegation':
+        return MsgCancelUnbondingDelegation.unpackAny(proto, isClassic);
 
       // vesting
       case '/cosmos.vesting.v1beta1.MsgCreatePeriodicVestingAccount':
