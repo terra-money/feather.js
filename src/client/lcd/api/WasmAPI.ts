@@ -113,17 +113,6 @@ export class WasmAPI extends BaseAPI {
     chainID: string,
     params: APIParams = {}
   ): Promise<CodeInfo> {
-    if (this.lcd.config[chainID].isClassic) {
-      const endpoint = `/terra/wasm/v1beta1/codes/${codeID}`;
-      return this.getReqFromChainID(chainID)
-        .get<{ code_info: CodeInfo.DataV1 }>(endpoint, params)
-        .then(({ code_info: d }) => ({
-          code_id: Number.parseInt(d.code_id),
-          code_hash: d.code_hash,
-          creator: d.creator,
-        }));
-    }
-
     const endpoint = `/cosmwasm/wasm/v1/code/${codeID}`;
     return this.getReqFromChainID(chainID)
       .get<{ code_info: CodeInfo.DataV2 }>(endpoint, params)
@@ -141,20 +130,6 @@ export class WasmAPI extends BaseAPI {
     contractAddress: AccAddress,
     params: APIParams = {}
   ): Promise<ContractInfo> {
-    const chainID = getChainIDFromAddress(contractAddress, this.lcd.config);
-    if (chainID && this.lcd.config[chainID].isClassic) {
-      const endpoint = `/terra/wasm/v1beta1/contracts/${contractAddress}`;
-      return this.getReqFromAddress(contractAddress)
-        .get<{ contract_info: ContractInfo.DataV1 }>(endpoint, params)
-        .then(({ contract_info: d }) => ({
-          code_id: Number.parseInt(d.code_id),
-          address: d.address,
-          creator: d.creator,
-          admin: d.admin !== '' ? d.admin : undefined,
-          init_msg: d.init_msg,
-        }));
-    }
-
     // new endpoint doesn't return init_msg so have to retrieve it from history
     const [historyEntry] = await this.contractHistory(contractAddress);
 
@@ -178,28 +153,15 @@ export class WasmAPI extends BaseAPI {
     query: object | string,
     params: APIParams = {}
   ): Promise<T> {
-    const chainID = getChainIDFromAddress(contractAddress, this.lcd.config);
-    if (chainID && this.lcd.config[chainID].isClassic) {
-      const endpoint = `/terra/wasm/v1beta1/contracts/${contractAddress}/store`;
-      return this.getReqFromAddress(contractAddress)
-        .get<{ query_result: T }>(endpoint, {
-          ...params,
-          query_msg: Buffer.from(JSON.stringify(query), 'utf-8').toString(
-            'base64'
-          ),
-        })
-        .then(d => d.query_result);
-    } else {
-      const query_msg = Buffer.from(JSON.stringify(query), 'utf-8').toString(
-        'base64'
-      );
-      const endpoint = `/cosmwasm/wasm/v1/contract/${contractAddress}/smart/${query_msg}`;
-      return this.getReqFromAddress(contractAddress)
-        .get<{ data: T }>(endpoint, {
-          ...params,
-        })
-        .then(d => d.data);
-    }
+    const query_msg = Buffer.from(JSON.stringify(query), 'utf-8').toString(
+      'base64'
+    );
+    const endpoint = `/cosmwasm/wasm/v1/contract/${contractAddress}/smart/${query_msg}`;
+    return this.getReqFromAddress(contractAddress)
+      .get<{ data: T }>(endpoint, {
+        ...params,
+      })
+      .then((d) => d.data);
   }
 
   public async parameters(
@@ -225,7 +187,7 @@ export class WasmAPI extends BaseAPI {
         params
       )
       .then(({ pinned_code: d }) => ({
-        code_ids: d.code_ids.map(code_id => Number.parseInt(code_id)),
+        code_ids: d.code_ids.map((code_id) => Number.parseInt(code_id)),
       }));
   }
 
@@ -274,8 +236,8 @@ export class WasmAPI extends BaseAPI {
         entries: HistoryEntry.Data[];
         pagination: Pagination;
       }>(`/cosmwasm/wasm/v1/contract/${contractAddress}/history`, params)
-      .then(d => [
-        d.entries.map(entry => HistoryEntry.fromData(entry)),
+      .then((d) => [
+        d.entries.map((entry) => HistoryEntry.fromData(entry)),
         d.pagination,
       ]);
   }
@@ -289,8 +251,8 @@ export class WasmAPI extends BaseAPI {
         models: Model.Data[];
         pagination: Pagination;
       }>(`/cosmwasm/wasm/v1/contract/${contractAddress}/state`, params)
-      .then(d => [
-        d.models.map(model => {
+      .then((d) => [
+        d.models.map((model) => {
           return {
             key: model.key,
             value: model.value,
@@ -309,8 +271,8 @@ export class WasmAPI extends BaseAPI {
         codeInfos: CodeInfo.DataV2[];
         pagination: Pagination;
       }>(`/cosmwasm/wasm/v1/code`, params)
-      .then(d => [
-        d.codeInfos.map(codeInfo => {
+      .then((d) => [
+        d.codeInfos.map((codeInfo) => {
           return {
             code_id: +codeInfo.code_id,
             code_hash: codeInfo.data_hash,
