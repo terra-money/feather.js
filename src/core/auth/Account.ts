@@ -5,6 +5,7 @@ import { ContinuousVestingAccount } from './ContinuousVestingAccount';
 import { DelayedVestingAccount } from './DelayedVestingAccount';
 import { PeriodicVestingAccount } from './PeriodicVestingAccount';
 import { BaseVestingAccount } from './BaseVestingAccount';
+import { ModuleAccount } from './ModuleAccount';
 
 export type Account =
   | BaseAccount
@@ -12,7 +13,8 @@ export type Account =
   | LazyGradedVestingAccount
   | ContinuousVestingAccount
   | DelayedVestingAccount
-  | PeriodicVestingAccount;
+  | PeriodicVestingAccount
+  | ModuleAccount;
 /**
  * Stores information about an account fetched from the blockchain.
  */
@@ -23,14 +25,18 @@ export namespace Account {
     | LazyGradedVestingAccount.Amino
     | ContinuousVestingAccount.Amino
     | DelayedVestingAccount.Amino
-    | PeriodicVestingAccount.Amino;
+    | PeriodicVestingAccount.Amino
+    | ModuleAccount.Amino;
+
   export type Data =
     | BaseAccount.Data
     | BaseVestingAccount.Data
     | LazyGradedVestingAccount.Data
     | ContinuousVestingAccount.Data
     | DelayedVestingAccount.Data
-    | PeriodicVestingAccount.Data;
+    | PeriodicVestingAccount.Data
+    | ModuleAccount.Data;
+
   export type Proto = Any;
 
   export function fromAmino(
@@ -52,6 +58,8 @@ export namespace Account {
         return DelayedVestingAccount.fromAmino(amino, isClassic);
       case 'cosmos-sdk/PeriodicVestingAccount':
         return PeriodicVestingAccount.fromAmino(amino, isClassic);
+      case 'cosmos-sdk/ModuleAccount':
+        return ModuleAccount.fromAmino(amino, isClassic);
     }
   }
 
@@ -69,6 +77,8 @@ export namespace Account {
         return DelayedVestingAccount.fromData(data, isClassic);
       case '/cosmos.vesting.v1beta1.PeriodicVestingAccount':
         return PeriodicVestingAccount.fromData(data, isClassic);
+      case '/cosmos.auth.v1beta1.ModuleAccount':
+        return ModuleAccount.fromData(data, isClassic);
     }
   }
 
@@ -87,6 +97,8 @@ export namespace Account {
       return DelayedVestingAccount.unpackAny(accountAny, isClassic);
     } else if (typeUrl === '/cosmos.vesting.v1beta1.PeriodicVestingAccount') {
       return PeriodicVestingAccount.unpackAny(accountAny, isClassic);
+    } else if (typeUrl === '/cosmos.auth.v1beta1.ModuleAccount') {
+      return ModuleAccount.unpackAny(accountAny, isClassic);
     }
 
     throw new Error(`Account type ${typeUrl} not recognized`);
