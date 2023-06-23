@@ -6,6 +6,7 @@ import {
   PeriodicVestingAccount,
   ContinuousVestingAccount,
   BaseAccount,
+  ModuleAccount,
 } from '../../../core';
 import { BaseAPI } from './BaseAPI';
 import { APIParams } from '../APIRequester';
@@ -32,6 +33,21 @@ export namespace AuthParams {
 export class AuthAPI extends BaseAPI {
   constructor(public lcd: LCDClient) {
     super(lcd.apiRequesters, lcd.config);
+  }
+  /**
+   * Query the modules acccounts information
+   *
+   * @param address address of account to look up
+   */
+  public async moduleAccountInfo(
+    chainID: string,
+    params: APIParams = {}
+  ): Promise<Array<Account>> {
+    const { accounts } = await this.getReqFromChainID(chainID).get<{
+      accounts: Array<ModuleAccount.Data>;
+    }>(`/cosmos/auth/v1beta1/module_accounts`, params);
+
+    return accounts.map((account: any) => Account.fromData(account));
   }
   /**
    * Looks up the account information using its Terra account address. If the account has
