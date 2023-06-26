@@ -35,6 +35,7 @@ export * from './auth/LazyGradedVestingAccount';
 export * from './auth/DelayedVestingAccount';
 export * from './auth/ContinuousVestingAccount';
 export * from './auth/PeriodicVestingAccount';
+export * from './auth/ModuleAccount';
 
 // Bank
 export * from './bank/msgs';

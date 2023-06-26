@@ -1,5 +1,5 @@
 import { AuthAPI } from './AuthAPI';
-import { BaseAccount } from '../../../core';
+import { BaseAccount, ModuleAccount } from '../../../core';
 import { MnemonicKey } from '../../../key';
 import { LCDClient } from '../LCDClient';
 
@@ -46,6 +46,18 @@ describe('AuthAPI', () => {
       expect(param.tx_size_cost_per_byte).toBeGreaterThanOrEqual(0);
       expect(param.sig_verify_cost_ed25519).toBeGreaterThanOrEqual(0);
       expect(param.sig_verify_cost_secp256k1).toBeGreaterThanOrEqual(0);
+    });
+  });
+
+  describe('module accounts', () => {
+    it('account exists', async () => {
+      const accts = await auth.moduleAccountInfo('pisco-1');
+
+      expect(accts.length).toBeGreaterThan(0);
+
+      accts.forEach(acct => {
+        expect(acct instanceof ModuleAccount).toBe(true);
+      });
     });
   });
 });
