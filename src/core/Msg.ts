@@ -58,6 +58,8 @@ import {
   MsgClearContractAdmin,
   WasmMsg,
 } from './wasm/msgs';
+
+import { JAXMsgExecuteContract, JaxExecuteMessage } from './jax/msgs';
 import { MsgTransfer, IbcTransferMsg } from './ibc/applications/transfer';
 import {
   MsgCreateClient,
@@ -112,6 +114,7 @@ export type Msg =
   | CustomMsg
   | MsgLiquidStake
   | MsgRedeemStake
+  | JaxExecuteMessage
   | CrisisMsg;
 
 export namespace Msg {
@@ -127,6 +130,7 @@ export namespace Msg {
     | WasmMsg.Amino
     | IbcTransferMsg.Amino
     | CustomMsg.Amino
+    | JaxExecuteMessage.Amino
     | CrisisMsg.Amino;
 
   export type Data =
@@ -150,6 +154,7 @@ export namespace Msg {
     | CustomMsg.Data
     | MsgLiquidStake.Data
     | MsgRedeemStake.Data
+    | JaxExecuteMessage.Data
     | CrisisMsg.Data;
 
   export type Proto =
@@ -172,10 +177,17 @@ export namespace Msg {
     | AMsgUndelegate.Proto
     | MsgLiquidStake.Proto
     | MsgRedeemStake.Proto
+    | JaxExecuteMessage.Proto
     | CrisisMsg.Proto;
 
   export function fromAmino(data: Msg.Amino, isClassic?: boolean): Msg {
+    console.log(data.type);
     switch (data.type) {
+      case '/jax.MsgExecuteContract':
+        return JAXMsgExecuteContract.fromAmino(
+          data as JAXMsgExecuteContract.Amino,
+          isClassic
+        );
       // bank
       case 'bank/MsgSend':
       case 'cosmos-sdk/MsgSend':
@@ -377,6 +389,7 @@ export namespace Msg {
     }
   }
   export function fromData(data: Msg.Data, isClassic?: boolean): Msg {
+    console.log(data['@type']);
     switch (data['@type']) {
       case '/stride.stakeibc.MsgLiquidStake':
         return MsgLiquidStake.fromData(data, isClassic);
@@ -457,6 +470,9 @@ export namespace Msg {
         return MsgCreateVestingAccount.fromData(data, isClassic);
       case '/cosmos.vesting.v1beta1.MsgDonateAllVestingTokens':
         return MsgDonateAllVestingTokens.fromData(data, isClassic);
+
+      case '/jax.MsgExecuteContract':
+        return JAXMsgExecuteContract.fromData(data, isClassic);
 
       // wasm
       case '/terra.wasm.v1beta1.MsgStoreCode':
@@ -545,7 +561,10 @@ export namespace Msg {
   }
 
   export function fromProto(proto: Any, isClassic?: boolean): Msg {
+    console.log(proto.typeUrl);
     switch (proto.typeUrl) {
+      case '/jax.MsgExecuteContract':
+        return JAXMsgExecuteContract.unpackAny(proto, isClassic);
       case '/stride.stakeibc.MsgLiquidStake':
         return MsgLiquidStake.unpackAny(proto, isClassic);
       case '/stride.stakeibc.MsgRedeemStake':
