@@ -5,7 +5,6 @@ import { LCDClient } from '../LCDClient';
 import { HistoryEntry } from '../../../core/wasm/HistoryEntry';
 import { AbsoluteTxPosition } from '../../../core/wasm/AbsoluteTxPosition';
 import { AccessConfig } from '../../../core/wasm';
-import { getChainIDFromAddress } from '../../../util/bech32';
 
 export interface CodeInfo {
   code_id: number;
@@ -161,7 +160,7 @@ export class WasmAPI extends BaseAPI {
       .get<{ data: T }>(endpoint, {
         ...params,
       })
-      .then((d) => d.data);
+      .then(d => d.data);
   }
 
   public async parameters(
@@ -187,7 +186,7 @@ export class WasmAPI extends BaseAPI {
         params
       )
       .then(({ pinned_code: d }) => ({
-        code_ids: d.code_ids.map((code_id) => Number.parseInt(code_id)),
+        code_ids: d.code_ids.map(code_id => Number.parseInt(code_id)),
       }));
   }
 
@@ -236,8 +235,8 @@ export class WasmAPI extends BaseAPI {
         entries: HistoryEntry.Data[];
         pagination: Pagination;
       }>(`/cosmwasm/wasm/v1/contract/${contractAddress}/history`, params)
-      .then((d) => [
-        d.entries.map((entry) => HistoryEntry.fromData(entry)),
+      .then(d => [
+        d.entries.map(entry => HistoryEntry.fromData(entry)),
         d.pagination,
       ]);
   }
@@ -251,8 +250,8 @@ export class WasmAPI extends BaseAPI {
         models: Model.Data[];
         pagination: Pagination;
       }>(`/cosmwasm/wasm/v1/contract/${contractAddress}/state`, params)
-      .then((d) => [
-        d.models.map((model) => {
+      .then(d => [
+        d.models.map(model => {
           return {
             key: model.key,
             value: model.value,
@@ -271,8 +270,8 @@ export class WasmAPI extends BaseAPI {
         codeInfos: CodeInfo.DataV2[];
         pagination: Pagination;
       }>(`/cosmwasm/wasm/v1/code`, params)
-      .then((d) => [
-        d.codeInfos.map((codeInfo) => {
+      .then(d => [
+        d.codeInfos.map(codeInfo => {
           return {
             code_id: +codeInfo.code_id,
             code_hash: codeInfo.data_hash,
