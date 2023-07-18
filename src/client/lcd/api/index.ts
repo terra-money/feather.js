@@ -10,5 +10,6 @@ export * from './TendermintAPI';
 export * from './TxAPI';
 export * from './WasmAPI';
 export * from './MintAPI';
+export * from './TokenFactoryAPI';
 export * from './IbcAPI';
 export * from './IbcTransferAPI';
