@@ -25,7 +25,7 @@ export abstract class Key {
    *
    * @param payload the data to be signed
    */
-  public abstract sign(payload: Buffer): Promise<Buffer>;
+  public abstract sign(payload: Buffer, isEthereum?: boolean): Promise<Buffer>;
 
   /**
    * Account address.
@@ -73,14 +73,16 @@ export abstract class Key {
       );
     }
 
+    const isEthereum = tx.chain_id.startsWith('injective-');
+
     return new SignatureV2(
       this.publicKey,
       new SignatureV2.Descriptor(
         new SignatureV2.Descriptor.Single(
           SignMode.SIGN_MODE_LEGACY_AMINO_JSON,
-          (await this.sign(Buffer.from(tx.toAminoJSON(isClassic)))).toString(
-            'base64'
-          )
+          (
+            await this.sign(Buffer.from(tx.toAminoJSON(isClassic)), isEthereum)
+          ).toString('base64')
         )
       ),
       tx.sequence
@@ -102,6 +104,8 @@ export abstract class Key {
       );
     }
 
+    const isEthereum = signDoc.chain_id.startsWith('injective-');
+
     // backup for restore
     const signerInfos = signDoc.auth_info.signer_infos;
     signDoc.auth_info.signer_infos = [
@@ -113,7 +117,7 @@ export abstract class Key {
     ];
 
     const sigBytes = (
-      await this.sign(Buffer.from(signDoc.toBytes(isClassic)))
+      await this.sign(Buffer.from(signDoc.toBytes(isClassic)), isEthereum)
     ).toString('base64');
 
     // restore signDoc to origin
