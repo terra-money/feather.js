@@ -6,6 +6,7 @@ import { DelayedVestingAccount } from './DelayedVestingAccount';
 import { PeriodicVestingAccount } from './PeriodicVestingAccount';
 import { BaseVestingAccount } from './BaseVestingAccount';
 import { ModuleAccount } from './ModuleAccount';
+import { EthAccount } from './EthAccount';
 
 export type Account =
   | BaseAccount
@@ -14,7 +15,8 @@ export type Account =
   | ContinuousVestingAccount
   | DelayedVestingAccount
   | PeriodicVestingAccount
-  | ModuleAccount;
+  | ModuleAccount
+  | EthAccount;
 /**
  * Stores information about an account fetched from the blockchain.
  */
@@ -26,7 +28,8 @@ export namespace Account {
     | ContinuousVestingAccount.Amino
     | DelayedVestingAccount.Amino
     | PeriodicVestingAccount.Amino
-    | ModuleAccount.Amino;
+    | ModuleAccount.Amino
+    | EthAccount.Amino;
 
   export type Data =
     | BaseAccount.Data
@@ -35,7 +38,8 @@ export namespace Account {
     | ContinuousVestingAccount.Data
     | DelayedVestingAccount.Data
     | PeriodicVestingAccount.Data
-    | ModuleAccount.Data;
+    | ModuleAccount.Data
+    | EthAccount.Data;
 
   export type Proto = Any;
 
@@ -60,6 +64,8 @@ export namespace Account {
         return PeriodicVestingAccount.fromAmino(amino, isClassic);
       case 'cosmos-sdk/ModuleAccount':
         return ModuleAccount.fromAmino(amino, isClassic);
+      case 'injective/EthAccount':
+        return EthAccount.fromAmino(amino, isClassic);
     }
   }
 
@@ -79,6 +85,8 @@ export namespace Account {
         return PeriodicVestingAccount.fromData(data, isClassic);
       case '/cosmos.auth.v1beta1.ModuleAccount':
         return ModuleAccount.fromData(data, isClassic);
+      case '/injective.types.v1beta1.EthAccount':
+        return EthAccount.fromData(data, isClassic);
     }
   }
 

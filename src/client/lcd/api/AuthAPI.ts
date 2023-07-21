@@ -65,7 +65,8 @@ export class AuthAPI extends BaseAPI {
         | LazyGradedVestingAccount.Data
         | DelayedVestingAccount.Data
         | PeriodicVestingAccount.Data
-        | ContinuousVestingAccount.Data;
+        | ContinuousVestingAccount.Data
+        | BaseAccount.Data;
     }>(`/cosmos/auth/v1beta1/accounts/${address}`, params);
 
     return Account.fromData(account);

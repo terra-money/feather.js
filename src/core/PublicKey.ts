@@ -5,6 +5,12 @@ import { Any } from '@terra-money/terra.proto/google/protobuf/any';
 import { PubKey as PubKey_pb } from '@terra-money/terra.proto/cosmos/crypto/secp256k1/keys';
 import { PubKey as ValConsPubKey_pb } from '@terra-money/terra.proto/cosmos/crypto/ed25519/keys';
 import { bech32 } from 'bech32';
+import {
+  publicKey as EthCryptoPublicKey,
+  util as EthCryptoUtil,
+} from 'eth-crypto';
+import { Address as EthereumUtilsAddress, toBuffer } from 'ethereumjs-util';
+import { keccak256 } from 'ethers/lib/utils';
 
 // As discussed in https://github.com/binance-chain/javascript-sdk/issues/163
 // Prefixes listed here: https://github.com/tendermint/tendermint/blob/d419fffe18531317c28c29a292ad7d253f6cafdf/docs/spec/blockchain/encoding.md#public-key-cryptography
@@ -62,7 +68,7 @@ export namespace PublicKey {
 
   export function fromData(data: PublicKey.Data): PublicKey {
     switch (data['@type']) {
-      case '/cosmos.crypto.secp256k1.PubKey':
+      case '/injective.crypto.v1beta1.ethsecp256k1.PubKey':
         return SimplePublicKey.fromData(data);
       case '/cosmos.crypto.multisig.LegacyAminoPubKey':
         return LegacyAminoMultisigPublicKey.fromData(data);
@@ -111,7 +117,7 @@ export class SimplePublicKey extends JSONSerializable<
 
   public toData(): SimplePublicKey.Data {
     return {
-      '@type': '/cosmos.crypto.secp256k1.PubKey',
+      '@type': '/injective.crypto.v1beta1.ethsecp256k1.PubKey',
       key: this.key,
     };
   }
@@ -128,7 +134,7 @@ export class SimplePublicKey extends JSONSerializable<
 
   public packAny(): Any {
     return Any.fromPartial({
-      typeUrl: '/cosmos.crypto.secp256k1.PubKey',
+      typeUrl: '/injective.crypto.v1beta1.ethsecp256k1.PubKey',
       value: PubKey_pb.encode(this.toProto()).finish(),
     });
   }
@@ -144,13 +150,38 @@ export class SimplePublicKey extends JSONSerializable<
     ]);
   }
 
+  public rawEthAddress(): Uint8Array {
+    const pubkeyData = Buffer.from(this.key, 'base64');
+    const decompressedPublicKey = EthCryptoPublicKey.decompress(
+      pubkeyData.toString('hex')
+    );
+
+    const addressBuffer = Buffer.from(
+      keccak256(Buffer.from(decompressedPublicKey, 'hex')).replace('0x', ''),
+      'hex'
+    ).subarray(-20);
+
+    const address = addressBuffer.toString('hex');
+
+    const addressHex = address.startsWith('0x') ? address : `0x${address}`;
+
+    return EthereumUtilsAddress.fromString(addressHex.toString()).toBuffer();
+  }
+
   public rawAddress(): Uint8Array {
     const pubkeyData = Buffer.from(this.key, 'base64');
     return ripemd160(sha256(pubkeyData));
   }
 
   public address(prefix: string): string {
-    return bech32.encode(prefix, bech32.toWords(this.rawAddress()));
+    return bech32.encode(
+      prefix,
+      bech32.toWords(
+        prefix === 'inj' || prefix === 'inj2'
+          ? this.rawEthAddress()
+          : this.rawAddress()
+      )
+    );
   }
 
   public pubkeyAddress(prefix: string): string {
@@ -168,7 +199,7 @@ export namespace SimplePublicKey {
   }
 
   export interface Data {
-    '@type': '/cosmos.crypto.secp256k1.PubKey';
+    '@type': '/injective.crypto.v1beta1.ethsecp256k1.PubKey';
     key: string;
   }
 
