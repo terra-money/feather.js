@@ -58,8 +58,7 @@ import {
   MsgClearContractAdmin,
   WasmMsg,
 } from './wasm/msgs';
-
-import { JAXMsgExecuteContract, JaxExecuteMessage } from './jax/msgs';
+import { JAXMsgExecuteContract, JAXMsgStoreCode, JaxMsg } from './jax/msgs';
 import { MsgTransfer, IbcTransferMsg } from './ibc/applications/transfer';
 import {
   MsgCreateClient,
@@ -114,8 +113,8 @@ export type Msg =
   | CustomMsg
   | MsgLiquidStake
   | MsgRedeemStake
-  | JaxExecuteMessage
-  | CrisisMsg;
+  | CrisisMsg
+  | JaxMsg;
 
 export namespace Msg {
   export type Amino =
@@ -130,8 +129,8 @@ export namespace Msg {
     | WasmMsg.Amino
     | IbcTransferMsg.Amino
     | CustomMsg.Amino
-    | JaxExecuteMessage.Amino
-    | CrisisMsg.Amino;
+    | CrisisMsg.Amino
+    | JaxMsg.Amino;
 
   export type Data =
     | BankMsg.Data
@@ -154,8 +153,8 @@ export namespace Msg {
     | CustomMsg.Data
     | MsgLiquidStake.Data
     | MsgRedeemStake.Data
-    | JaxExecuteMessage.Data
-    | CrisisMsg.Data;
+    | CrisisMsg.Data
+    | JaxMsg.Data;
 
   export type Proto =
     | BankMsg.Proto
@@ -177,17 +176,11 @@ export namespace Msg {
     | AMsgUndelegate.Proto
     | MsgLiquidStake.Proto
     | MsgRedeemStake.Proto
-    | JaxExecuteMessage.Proto
-    | CrisisMsg.Proto;
+    | CrisisMsg.Proto
+    | JaxMsg.Proto;
 
   export function fromAmino(data: Msg.Amino, isClassic?: boolean): Msg {
-    console.log(data.type);
     switch (data.type) {
-      case '/jax.MsgExecuteContract':
-        return JAXMsgExecuteContract.fromAmino(
-          data as JAXMsgExecuteContract.Amino,
-          isClassic
-        );
       // bank
       case 'bank/MsgSend':
       case 'cosmos-sdk/MsgSend':
@@ -382,6 +375,17 @@ export namespace Msg {
           data as MsgVerifyInvariant.Amino,
           isClassic
         );
+      // jax
+      case 'jax/MsgExecuteContract':
+        return JAXMsgExecuteContract.fromAmino(
+          data as JAXMsgExecuteContract.Amino,
+          isClassic
+        );
+      case 'jax/MsgStoreCode':
+        return JAXMsgStoreCode.fromAmino(
+          data as JAXMsgStoreCode.Amino,
+          isClassic
+        );
 
       // custom
       default:
@@ -389,7 +393,6 @@ export namespace Msg {
     }
   }
   export function fromData(data: Msg.Data, isClassic?: boolean): Msg {
-    console.log(data['@type']);
     switch (data['@type']) {
       case '/stride.stakeibc.MsgLiquidStake':
         return MsgLiquidStake.fromData(data, isClassic);
@@ -471,9 +474,6 @@ export namespace Msg {
       case '/cosmos.vesting.v1beta1.MsgDonateAllVestingTokens':
         return MsgDonateAllVestingTokens.fromData(data, isClassic);
 
-      case '/jax.MsgExecuteContract':
-        return JAXMsgExecuteContract.fromData(data, isClassic);
-
       // wasm
       case '/terra.wasm.v1beta1.MsgStoreCode':
       case '/cosmwasm.wasm.v1.MsgStoreCode':
@@ -554,6 +554,12 @@ export namespace Msg {
       case '/cosmos.crisis.v1beta1.MsgVerifyInvariant':
         return MsgVerifyInvariant.fromData(data, isClassic);
 
+      // jax
+      case '/jax.MsgExecuteContract':
+        return JAXMsgExecuteContract.fromData(data, isClassic);
+      case '/jax.MsgStoreCode':
+        return JAXMsgStoreCode.fromData(data, isClassic);
+
       // custom
       default:
         return MsgAminoCustom.fromData(data, isClassic);
@@ -561,10 +567,7 @@ export namespace Msg {
   }
 
   export function fromProto(proto: Any, isClassic?: boolean): Msg {
-    console.log(proto.typeUrl);
     switch (proto.typeUrl) {
-      case '/jax.MsgExecuteContract':
-        return JAXMsgExecuteContract.unpackAny(proto, isClassic);
       case '/stride.stakeibc.MsgLiquidStake':
         return MsgLiquidStake.unpackAny(proto, isClassic);
       case '/stride.stakeibc.MsgRedeemStake':
@@ -722,6 +725,13 @@ export namespace Msg {
       // crisis
       case '/cosmos.crisis.v1beta1.MsgVerifyInvariant':
         return MsgVerifyInvariant.unpackAny(proto, isClassic);
+
+      // jax
+      case '/jax.MsgExecuteContract':
+        return JAXMsgExecuteContract.unpackAny(proto, isClassic);
+      case '/jax.MsgStoreCode':
+        return JAXMsgStoreCode.unpackAny(proto, isClassic);
+
       default:
         throw Error(`not supported msg ${proto.typeUrl}`);
     }

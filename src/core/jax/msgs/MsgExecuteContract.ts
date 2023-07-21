@@ -1,8 +1,8 @@
 import { JSONSerializable, removeNull } from '../../../util/json';
 import { AccAddress } from '../../bech32';
 import { Coins } from '../../Coins';
-import { Any } from '@octalmage/terra.proto/google/protobuf/any';
-import { MsgExecuteContract as MsgExecuteContract_pb } from '@octalmage/terra.proto/jax/tx';
+import { Any } from '@terra-money/terra.proto/google/protobuf/any';
+import { MsgExecuteContract as MsgExecuteContract_pb } from '@terra-money/terra.proto/jax/tx';
 
 export class MsgExecuteContract extends JSONSerializable<
   MsgExecuteContract.Amino,
