@@ -54,7 +54,7 @@ export class MsgExecuteContract extends JSONSerializable<
         contract,
         method,
         params,
-        funds: coins.toAmino(),
+        coins: coins.toAmino(),
       },
     };
   }
@@ -139,7 +139,7 @@ export namespace MsgExecuteContract {
       contract: AccAddress;
       method: string;
       params: string;
-      funds: Coins.Amino;
+      coins: Coins.Amino;
     };
   }
 
@@ -160,7 +160,7 @@ export namespace MsgExecuteContract {
     contract: AccAddress;
     method: string;
     params: string;
-    coins: Coins.Amino;
+    coins: Coins.Data;
   }
   export interface DataV2 {
     '@type': '/jax.MsgExecuteContract';
@@ -168,7 +168,7 @@ export namespace MsgExecuteContract {
     contract: AccAddress;
     method: string;
     params: string;
-    coins: Coins.Amino;
+    coins: Coins.Data;
   }
 
   export type Amino = AminoV1 | AminoV2;

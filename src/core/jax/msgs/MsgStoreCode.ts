@@ -1,5 +1,6 @@
 import { JSONSerializable } from '../../../util/json';
 import { AccAddress } from '../../bech32';
+import { Coins } from '../../Coins';
 import { Any } from '@terra-money/terra.proto/google/protobuf/any';
 import { MsgStoreCode as MsgStoreCode_pb } from '@terra-money/terra.proto/jax/tx';
 
@@ -8,19 +9,23 @@ export class MsgStoreCode extends JSONSerializable<
   MsgStoreCode.Data,
   MsgStoreCode.Proto
 > {
+  public coins: Coins;
   /**
    * @param creator contract deployer
    * @param admin address of contract admin, usually contract deployer
    * @param code the JavaScript source code of the contract
    * @param params json stringified params to pass to init
+   * @param coins coins to be sent to contract
    */
   constructor(
     public creator: AccAddress,
     public admin: AccAddress,
     public code: string,
-    public params: string
+    public params: string,
+    coins: Coins.Input = {}
   ) {
     super();
+    this.coins = new Coins(coins);
   }
 
   public static fromAmino(data: MsgStoreCode.Amino, _?: boolean): MsgStoreCode {
@@ -31,7 +36,7 @@ export class MsgStoreCode extends JSONSerializable<
   }
 
   public toAmino(_?: boolean): MsgStoreCode.Amino {
-    const { creator, admin, code, params } = this;
+    const { creator, admin, code, params, coins } = this;
     return {
       type: 'jax/MsgStoreCode',
       value: {
@@ -39,6 +44,7 @@ export class MsgStoreCode extends JSONSerializable<
         admin,
         code,
         params,
+        coins: coins.toAmino(),
       },
     };
   }
@@ -52,12 +58,13 @@ export class MsgStoreCode extends JSONSerializable<
   }
 
   public toProto(_?: boolean): MsgStoreCode.Proto {
-    const { creator, admin, code, params } = this;
+    const { creator, admin, code, params, coins } = this;
     return MsgStoreCode_pb.fromPartial({
       creator,
       admin,
       code,
       params,
+      coins: coins.toProto(),
     });
   }
 
@@ -78,18 +85,25 @@ export class MsgStoreCode extends JSONSerializable<
   }
 
   public static fromData(data: MsgStoreCode.Data, _?: boolean): MsgStoreCode {
-    const { creator, admin, code, params } = data as MsgStoreCode.DataV2;
-    return new MsgStoreCode(creator, admin, code, params);
+    const { creator, admin, code, params, coins } = data as MsgStoreCode.DataV2;
+    return new MsgStoreCode(
+      creator,
+      admin,
+      code,
+      params,
+      Coins.fromData(coins)
+    );
   }
 
   public toData(_?: boolean): MsgStoreCode.Data {
-    const { creator, admin, code, params } = this;
+    const { creator, admin, code, params, coins } = this;
     return {
       '@type': '/jax.MsgStoreCode',
       creator,
       admin,
       code,
       params,
+      coins: coins.toData(),
     };
   }
 }
@@ -102,6 +116,7 @@ export namespace MsgStoreCode {
       admin: AccAddress;
       code: string;
       params: string;
+      coins: Coins.Amino;
     };
   }
 
@@ -112,6 +127,7 @@ export namespace MsgStoreCode {
       admin: AccAddress;
       code: string;
       params: string;
+      coins: Coins.Amino;
     };
   }
 
@@ -121,6 +137,7 @@ export namespace MsgStoreCode {
     admin: AccAddress;
     code: string;
     params: string;
+    coins: Coins.Data;
   }
   export interface DataV2 {
     '@type': '/jax.MsgStoreCode';
@@ -128,6 +145,7 @@ export namespace MsgStoreCode {
     admin: AccAddress;
     code: string;
     params: string;
+    coins: Coins.Data;
   }
 
   export type Amino = AminoV1 | AminoV2;
