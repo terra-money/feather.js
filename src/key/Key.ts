@@ -116,8 +116,6 @@ export abstract class Key {
       ),
     ];
 
-    console.log(signDoc.toData());
-
     const sigBytes = (
       await this.sign(Buffer.from(signDoc.toBytes(isClassic)), isEthereum)
     ).toString('base64');
