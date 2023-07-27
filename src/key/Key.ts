@@ -7,6 +7,7 @@ import {
   ModeInfo,
   AuthInfo,
   PublicKey,
+  InjectivePubKey,
 } from '../core';
 import { SignatureV2 } from '../core/SignatureV2';
 import { SignMode } from '@terra-money/terra.proto/cosmos/tx/signing/v1beta1/signing';
@@ -75,8 +76,13 @@ export abstract class Key {
 
     const isEthereum = tx.chain_id.startsWith('injective-');
 
+    const publicKey = isEthereum
+      ? // @ts-expect-error
+        InjectivePubKey.fromData(this.publicKey)
+      : this.publicKey;
+
     return new SignatureV2(
-      this.publicKey,
+      publicKey,
       new SignatureV2.Descriptor(
         new SignatureV2.Descriptor.Single(
           SignMode.SIGN_MODE_LEGACY_AMINO_JSON,
@@ -106,11 +112,16 @@ export abstract class Key {
 
     const isEthereum = signDoc.chain_id.startsWith('injective-');
 
+    const publicKey = isEthereum
+      ? // @ts-expect-error
+        InjectivePubKey.fromData(this.publicKey)
+      : this.publicKey;
+
     // backup for restore
     const signerInfos = signDoc.auth_info.signer_infos;
     signDoc.auth_info.signer_infos = [
       new SignerInfo(
-        this.publicKey,
+        publicKey,
         signDoc.sequence,
         new ModeInfo(new ModeInfo.Single(SignMode.SIGN_MODE_DIRECT))
       ),
@@ -124,7 +135,7 @@ export abstract class Key {
     signDoc.auth_info.signer_infos = signerInfos;
 
     return new SignatureV2(
-      this.publicKey,
+      publicKey,
       new SignatureV2.Descriptor(
         new SignatureV2.Descriptor.Single(SignMode.SIGN_MODE_DIRECT, sigBytes)
       ),

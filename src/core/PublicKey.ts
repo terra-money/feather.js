@@ -5,10 +5,7 @@ import { Any } from '@terra-money/terra.proto/google/protobuf/any';
 import { PubKey as PubKey_pb } from '@terra-money/terra.proto/cosmos/crypto/secp256k1/keys';
 import { PubKey as ValConsPubKey_pb } from '@terra-money/terra.proto/cosmos/crypto/ed25519/keys';
 import { bech32 } from 'bech32';
-import {
-  publicKey as EthCryptoPublicKey,
-  util as EthCryptoUtil,
-} from 'eth-crypto';
+import { publicKeyConvert } from 'secp256k1';
 import { Address as EthereumUtilsAddress, toBuffer } from 'ethereumjs-util';
 import { keccak256 } from 'ethers/lib/utils';
 
@@ -42,17 +39,20 @@ const encodeUvarint = (value: number | string): number[] => {
 export type PublicKey =
   | SimplePublicKey
   | LegacyAminoMultisigPublicKey
-  | ValConsPublicKey;
+  | ValConsPublicKey
+  | InjectivePubKey;
 
 export namespace PublicKey {
   export type Amino =
     | SimplePublicKey.Amino
     | LegacyAminoMultisigPublicKey.Amino
-    | ValConsPublicKey.Amino;
+    | ValConsPublicKey.Amino
+    | InjectivePubKey.Amino;
   export type Data =
     | SimplePublicKey.Data
     | LegacyAminoMultisigPublicKey.Data
-    | ValConsPublicKey.Data;
+    | ValConsPublicKey.Data
+    | InjectivePubKey.Data;
   export type Proto = Any;
 
   export function fromAmino(data: PublicKey.Amino): PublicKey {
@@ -68,8 +68,10 @@ export namespace PublicKey {
 
   export function fromData(data: PublicKey.Data): PublicKey {
     switch (data['@type']) {
-      case '/injective.crypto.v1beta1.ethsecp256k1.PubKey':
+      case '/cosmos.crypto.secp256k1.PubKey':
         return SimplePublicKey.fromData(data);
+      case '/injective.crypto.v1beta1.ethsecp256k1.PubKey':
+        return InjectivePubKey.fromData(data);
       case '/cosmos.crypto.multisig.LegacyAminoPubKey':
         return LegacyAminoMultisigPublicKey.fromData(data);
       case '/cosmos.crypto.ed25519.PubKey':
@@ -81,6 +83,8 @@ export namespace PublicKey {
     const typeUrl = pubkeyAny.typeUrl;
     if (typeUrl === '/cosmos.crypto.secp256k1.PubKey') {
       return SimplePublicKey.unpackAny(pubkeyAny);
+    } else if (typeUrl === '/injective.crypto.v1beta1.ethsecp256k1.PubKey') {
+      return InjectivePubKey.unpackAny(pubkeyAny);
     } else if (typeUrl === '/cosmos.crypto.multisig.LegacyAminoPubKey') {
       return LegacyAminoMultisigPublicKey.unpackAny(pubkeyAny);
     } else if (typeUrl === '/cosmos.crypto.ed25519.PubKey') {
@@ -117,7 +121,7 @@ export class SimplePublicKey extends JSONSerializable<
 
   public toData(): SimplePublicKey.Data {
     return {
-      '@type': '/injective.crypto.v1beta1.ethsecp256k1.PubKey',
+      '@type': '/cosmos.crypto.secp256k1.PubKey',
       key: this.key,
     };
   }
@@ -134,7 +138,7 @@ export class SimplePublicKey extends JSONSerializable<
 
   public packAny(): Any {
     return Any.fromPartial({
-      typeUrl: '/injective.crypto.v1beta1.ethsecp256k1.PubKey',
+      typeUrl: '/cosmos.crypto.secp256k1.PubKey',
       value: PubKey_pb.encode(this.toProto()).finish(),
     });
   }
@@ -150,38 +154,13 @@ export class SimplePublicKey extends JSONSerializable<
     ]);
   }
 
-  public rawEthAddress(): Uint8Array {
-    const pubkeyData = Buffer.from(this.key, 'base64');
-    const decompressedPublicKey = EthCryptoPublicKey.decompress(
-      pubkeyData.toString('hex')
-    );
-
-    const addressBuffer = Buffer.from(
-      keccak256(Buffer.from(decompressedPublicKey, 'hex')).replace('0x', ''),
-      'hex'
-    ).subarray(-20);
-
-    const address = addressBuffer.toString('hex');
-
-    const addressHex = address.startsWith('0x') ? address : `0x${address}`;
-
-    return EthereumUtilsAddress.fromString(addressHex.toString()).toBuffer();
-  }
-
   public rawAddress(): Uint8Array {
     const pubkeyData = Buffer.from(this.key, 'base64');
     return ripemd160(sha256(pubkeyData));
   }
 
   public address(prefix: string): string {
-    return bech32.encode(
-      prefix,
-      bech32.toWords(
-        prefix === 'inj' || prefix === 'inj2'
-          ? this.rawEthAddress()
-          : this.rawAddress()
-      )
-    );
+    return bech32.encode(prefix, bech32.toWords(this.rawAddress()));
   }
 
   public pubkeyAddress(prefix: string): string {
@@ -193,6 +172,120 @@ export class SimplePublicKey extends JSONSerializable<
 }
 
 export namespace SimplePublicKey {
+  export interface Amino {
+    type: 'tendermint/PubKeySecp256k1';
+    value: string;
+  }
+
+  export interface Data {
+    '@type': '/cosmos.crypto.secp256k1.PubKey';
+    key: string;
+  }
+
+  export type Proto = PubKey_pb;
+}
+
+export class InjectivePubKey extends JSONSerializable<
+  InjectivePubKey.Amino,
+  InjectivePubKey.Data,
+  InjectivePubKey.Proto
+> {
+  constructor(public key: string) {
+    super();
+  }
+
+  public static fromAmino(data: InjectivePubKey.Amino): InjectivePubKey {
+    return new InjectivePubKey(data.value);
+  }
+
+  public toAmino(): InjectivePubKey.Amino {
+    return {
+      type: 'tendermint/PubKeySecp256k1',
+      value: this.key,
+    };
+  }
+
+  public static fromData(data: InjectivePubKey.Data): InjectivePubKey {
+    return new InjectivePubKey(data.key);
+  }
+
+  public toData(): InjectivePubKey.Data {
+    return {
+      '@type': '/injective.crypto.v1beta1.ethsecp256k1.PubKey',
+      key: this.key,
+    };
+  }
+
+  public static fromProto(pubkeyProto: InjectivePubKey.Proto): InjectivePubKey {
+    return new InjectivePubKey(Buffer.from(pubkeyProto.key).toString('base64'));
+  }
+
+  public toProto(): InjectivePubKey.Proto {
+    return PubKey_pb.fromPartial({
+      key: Buffer.from(this.key, 'base64'),
+    });
+  }
+
+  public packAny(): Any {
+    return Any.fromPartial({
+      typeUrl: '/injective.crypto.v1beta1.ethsecp256k1.PubKey',
+      value: PubKey_pb.encode(this.toProto()).finish(),
+    });
+  }
+
+  public static unpackAny(pubkeyAny: Any): InjectivePubKey {
+    return InjectivePubKey.fromProto(PubKey_pb.decode(pubkeyAny.value));
+  }
+
+  public encodeAminoPubkey(): Uint8Array {
+    return Buffer.concat([
+      pubkeyAminoPrefixSecp256k1,
+      Buffer.from(this.key, 'base64'),
+    ]);
+  }
+
+  public rawEthAddress(): Uint8Array {
+    const pubkeyData = Buffer.from(this.key, 'base64');
+
+    const fixedPubKey = new Uint8Array(
+      Buffer.from(
+        (pubkeyData.length === 64 ? '04' : '') + pubkeyData.toString('hex'),
+        'hex'
+      )
+    );
+
+    const decompressedPublicKey = Buffer.from(
+      publicKeyConvert(fixedPubKey, false)
+    ).toString('hex');
+
+    const addressBuffer = Buffer.from(
+      keccak256(Buffer.from(decompressedPublicKey.substring(2), 'hex')).replace(
+        '0x',
+        ''
+      ),
+      'hex'
+    ).subarray(-20);
+
+    const address = addressBuffer.toString('hex');
+
+    const addressHex = address.startsWith('0x') ? address : `0x${address}`;
+
+    return EthereumUtilsAddress.fromString(addressHex.toString()).toBuffer();
+  }
+
+  public address(prefix: string): string {
+    return bech32.encode(prefix, bech32.toWords(this.rawEthAddress()));
+  }
+
+  public pubkeyAddress(prefix: string): string {
+    return bech32.encode(
+      `${prefix}pub`,
+      bech32.toWords(this.encodeAminoPubkey())
+    );
+  }
+}
+
+export namespace InjectivePubKey {
   export interface Amino {
     type: 'tendermint/PubKeySecp256k1';
     value: string;

@@ -4,7 +4,7 @@ import keccak256 from 'keccak256';
 import { Wallet } from 'ethers';
 import * as BytesUtils from '@ethersproject/bytes';
 import { Key } from './Key';
-import { SimplePublicKey } from '../core/PublicKey';
+import { InjectivePubKey, SimplePublicKey } from '../core/PublicKey';
 
 /**
  * An implementation of the Key interfaces that uses a raw private key.
@@ -15,12 +15,16 @@ export class RawKey extends Key {
    */
   public privateKey: Buffer;
 
-  constructor(privateKey: Buffer) {
+  constructor(privateKey: Buffer, private isInjective?: boolean) {
     const publicKey = secp256k1.publicKeyCreate(
       new Uint8Array(privateKey),
       true
     );
-    super(new SimplePublicKey(Buffer.from(publicKey).toString('base64')));
+    super(
+      isInjective
+        ? new InjectivePubKey(Buffer.from(publicKey).toString('base64'))
+        : new SimplePublicKey(Buffer.from(publicKey).toString('base64'))
+    );
     this.privateKey = privateKey;
   }
 
@@ -49,8 +53,8 @@ export class RawKey extends Key {
     };
   }
 
-  public async sign(payload: Buffer, isEthereum?: boolean): Promise<Buffer> {
-    const { signature } = isEthereum
+  public async sign(payload: Buffer): Promise<Buffer> {
+    const { signature } = this.isInjective
       ? this.etherSign(payload)
       : this.ecdsaSign(payload);
     return Buffer.from(signature);
