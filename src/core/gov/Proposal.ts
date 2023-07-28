@@ -29,7 +29,7 @@ import {
   proposalStatusToJSON,
 } from '@terra-money/terra.proto/cosmos/gov/v1beta1/gov';
 import { Any } from '@terra-money/terra.proto/google/protobuf/any';
-import * as Long from 'long';
+import Long from 'long';
 import {
   MsgCreateAllianceProposal,
   MsgDeleteAllianceProposal,

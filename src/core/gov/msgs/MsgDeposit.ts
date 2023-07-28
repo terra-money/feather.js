@@ -3,7 +3,7 @@ import { JSONSerializable } from '../../../util/json';
 import { AccAddress } from '../../bech32';
 import { Any } from '@terra-money/terra.proto/google/protobuf/any';
 import { MsgDeposit as MsgDeposit_pb } from '@terra-money/terra.proto/cosmos/gov/v1beta1/tx';
-import * as Long from 'long';
+import Long from 'long';
 
 /**
  * Add a deposit for a proposal

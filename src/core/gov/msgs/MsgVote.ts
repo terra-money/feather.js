@@ -3,7 +3,7 @@ import { AccAddress } from '../../bech32';
 import { Any } from '@terra-money/terra.proto/google/protobuf/any';
 import { MsgVote as MsgVote_pb } from '@terra-money/terra.proto/cosmos/gov/v1beta1/tx';
 import { VoteOption } from '@terra-money/terra.proto/cosmos/gov/v1beta1/gov';
-import * as Long from 'long';
+import Long from 'long';
 
 /**
  * Vote for a proposal

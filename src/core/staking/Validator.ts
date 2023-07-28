@@ -9,7 +9,7 @@ import {
   CommissionRates as CommissionRates_pb,
   BondStatus,
 } from '@terra-money/terra.proto/cosmos/staking/v1beta1/staking';
-import * as Long from 'long';
+import Long from 'long';
 import { Any } from '@terra-money/terra.proto/google/protobuf/any';
 
 /**

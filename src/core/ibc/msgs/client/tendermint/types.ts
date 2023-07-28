@@ -14,7 +14,7 @@ import {
   ValidatorSet as ValidatorSet_pb,
 } from '@terra-money/terra.proto/tendermint/types/validator';
 
-import * as Long from 'long';
+import Long from 'long';
 import { JSONSerializable } from '../../../../../util/json';
 import { Consensus } from './version';
 import { PublicKey } from './crypto';

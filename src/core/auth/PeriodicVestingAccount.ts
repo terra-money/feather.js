@@ -7,7 +7,7 @@ import {
   Period as Period_pb,
 } from '@terra-money/terra.proto/cosmos/vesting/v1beta1/vesting';
 import { Any } from '@terra-money/terra.proto/google/protobuf/any';
-import * as Long from 'long';
+import Long from 'long';
 import { PublicKey } from '../PublicKey';
 
 /**

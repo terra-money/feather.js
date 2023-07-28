@@ -1,6 +1,6 @@
 import { Proof as Proof_pb } from '@terra-money/terra.proto/tendermint/crypto/proof';
 import { PublicKey as PublicKey_pb } from '@terra-money/terra.proto/tendermint/crypto/keys';
-import * as Long from 'long';
+import Long from 'long';
 import { JSONSerializable } from '../../../../../util/json';
 
 export class Proof extends JSONSerializable<any, Proof.Data, Proof.Proto> {
