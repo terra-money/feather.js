@@ -265,11 +265,7 @@ export class InjectivePubKey extends JSONSerializable<
       'hex'
     ).subarray(-20);
 
-    const address = addressBuffer.toString('hex');
-
-    const paddedAddress = address.length % 2 ? `0${address}` : address;
-
-    return Buffer.from(paddedAddress, 'hex');
+    return addressBuffer;
   }
 
   public address(prefix: string): string {
