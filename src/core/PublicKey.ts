@@ -6,7 +6,6 @@ import { PubKey as PubKey_pb } from '@terra-money/terra.proto/cosmos/crypto/secp
 import { PubKey as ValConsPubKey_pb } from '@terra-money/terra.proto/cosmos/crypto/ed25519/keys';
 import { bech32 } from 'bech32';
 import { publicKeyConvert } from 'secp256k1';
-import { Address as EthereumUtilsAddress, toBuffer } from 'ethereumjs-util';
 import { keccak256 } from 'ethers/lib/utils';
 
 // As discussed in https://github.com/binance-chain/javascript-sdk/issues/163
@@ -268,9 +267,9 @@ export class InjectivePubKey extends JSONSerializable<
 
     const address = addressBuffer.toString('hex');
 
-    const addressHex = address.startsWith('0x') ? address : `0x${address}`;
+    const paddedAddress = address.length % 2 ? `0${address}` : address;
 
-    return EthereumUtilsAddress.fromString(addressHex.toString()).toBuffer();
+    return Buffer.from(paddedAddress, 'hex');
   }
 
   public address(prefix: string): string {
