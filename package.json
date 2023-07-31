@@ -93,6 +93,7 @@
     "bufferutil": "^4.0.3",
     "decimal.js": "^10.2.1",
     "jscrypto": "^1.0.1",
+    "long": "^5.2.3",
     "readable-stream": "^3.6.0",
     "secp256k1": "^4.0.2",
     "tmp": "^0.2.1",

@@ -1,6 +1,6 @@
 import { JSONSerializable } from '../../util/json';
 import { BaseVestingAccount } from './BaseVestingAccount';
-import * as Long from 'long';
+import Long from 'long';
 import { PublicKey } from '../PublicKey';
 
 import { BaseVestingAccount as BaseVestingAccount_pb } from '@terra-money/terra.proto/cosmos/vesting/v1beta1/vesting';

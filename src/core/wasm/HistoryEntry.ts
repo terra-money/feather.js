@@ -5,7 +5,7 @@ import {
   contractCodeHistoryOperationTypeToJSON,
 } from '@terra-money/terra.proto/cosmwasm/wasm/v1/types';
 import { JSONSerializable, removeNull } from '../../util/json';
-import * as Long from 'long';
+import Long from 'long';
 import { AbsoluteTxPosition } from './AbsoluteTxPosition';
 /**
  *

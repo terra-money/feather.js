@@ -3,7 +3,7 @@ import { AccAddress } from '../../bech32';
 import { Any } from '@terra-money/terra.proto/google/protobuf/any';
 import { MsgMigrateContract as MsgMigrateContract_legacy_pb } from '@terra-money/legacy.proto/terra/wasm/v1beta1/tx';
 import { MsgMigrateContract as MsgMigrateContract_pb } from '@terra-money/terra.proto/cosmwasm/wasm/v1/tx';
-import * as Long from 'long';
+import Long from 'long';
 
 export class MsgMigrateContract extends JSONSerializable<
   MsgMigrateContract.Amino,

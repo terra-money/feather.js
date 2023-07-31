@@ -5,7 +5,7 @@ import {
   UnbondingDelegation as UnbondingDelegation_pb,
   UnbondingDelegationEntry as UnbondingDelegationEntry_pb,
 } from '@terra-money/terra.proto/cosmos/staking/v1beta1/staking';
-import * as Long from 'long';
+import Long from 'long';
 
 /**
  * When a delegator decides to take out their funds from the staking pool, they must

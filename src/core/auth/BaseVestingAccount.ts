@@ -3,7 +3,7 @@ import { Coins } from '../Coins';
 import { BaseAccount } from './BaseAccount';
 import { BaseAccount as BaseAccount_pb } from '@terra-money/terra.proto/cosmos/auth/v1beta1/auth';
 import { BaseVestingAccount as BaseVestingAccount_pb } from '@terra-money/terra.proto/cosmos/vesting/v1beta1/vesting';
-import * as Long from 'long';
+import Long from 'long';
 import { PublicKey } from '../PublicKey';
 
 /**
