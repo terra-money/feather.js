@@ -86,7 +86,7 @@ export class MnemonicKey extends RawKey {
       throw new Error('Failed to derive key pair');
     }
 
-    super(privateKey);
+    super(privateKey, coinType === 60);
     this.mnemonic = mnemonic;
   }
 }

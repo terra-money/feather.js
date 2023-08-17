@@ -7,6 +7,7 @@ import {
   ModeInfo,
   AuthInfo,
   PublicKey,
+  InjectivePubKey,
 } from '../core';
 import { SignatureV2 } from '../core/SignatureV2';
 import { SignMode } from '@terra-money/terra.proto/cosmos/tx/signing/v1beta1/signing';
@@ -25,7 +26,7 @@ export abstract class Key {
    *
    * @param payload the data to be signed
    */
-  public abstract sign(payload: Buffer): Promise<Buffer>;
+  public abstract sign(payload: Buffer, isEthereum?: boolean): Promise<Buffer>;
 
   /**
    * Account address.
@@ -73,14 +74,21 @@ export abstract class Key {
       );
     }
 
+    const isEthereum = tx.chain_id.startsWith('injective-');
+
+    const publicKey = isEthereum
+      ? // @ts-expect-error
+        InjectivePubKey.fromData(this.publicKey)
+      : this.publicKey;
+
     return new SignatureV2(
-      this.publicKey,
+      publicKey,
       new SignatureV2.Descriptor(
         new SignatureV2.Descriptor.Single(
           SignMode.SIGN_MODE_LEGACY_AMINO_JSON,
-          (await this.sign(Buffer.from(tx.toAminoJSON(isClassic)))).toString(
-            'base64'
-          )
+          (
+            await this.sign(Buffer.from(tx.toAminoJSON(isClassic)), isEthereum)
+          ).toString('base64')
         )
       ),
       tx.sequence
@@ -102,25 +110,32 @@ export abstract class Key {
       );
     }
 
+    const isEthereum = signDoc.chain_id.startsWith('injective-');
+
+    const publicKey = isEthereum
+      ? // @ts-expect-error
+        InjectivePubKey.fromData(this.publicKey)
+      : this.publicKey;
+
     // backup for restore
     const signerInfos = signDoc.auth_info.signer_infos;
     signDoc.auth_info.signer_infos = [
       new SignerInfo(
-        this.publicKey,
+        publicKey,
         signDoc.sequence,
         new ModeInfo(new ModeInfo.Single(SignMode.SIGN_MODE_DIRECT))
       ),
     ];
 
     const sigBytes = (
-      await this.sign(Buffer.from(signDoc.toBytes(isClassic)))
+      await this.sign(Buffer.from(signDoc.toBytes(isClassic)), isEthereum)
     ).toString('base64');
 
     // restore signDoc to origin
     signDoc.auth_info.signer_infos = signerInfos;
 
     return new SignatureV2(
-      this.publicKey,
+      publicKey,
       new SignatureV2.Descriptor(
         new SignatureV2.Descriptor.Single(SignMode.SIGN_MODE_DIRECT, sigBytes)
       ),
