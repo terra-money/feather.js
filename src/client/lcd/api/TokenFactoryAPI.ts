@@ -2,7 +2,7 @@ import { APIParams } from '../APIRequester';
 import { LCDClient } from '../LCDClient';
 import { BaseAPI } from './BaseAPI';
 import { QueryParamsResponse } from '@terra-money/terra.proto/cosmwasm/wasm/v1/query';
-import { AccAddress } from 'core';
+import { AccAddress } from '../../../core';
 
 export interface DenomsFromCreatorResponse {
   denoms: string[];

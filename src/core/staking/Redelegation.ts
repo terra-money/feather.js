@@ -7,7 +7,7 @@ import {
   RedelegationEntry as RedelegationEntry_pb,
   RedelegationEntryResponse as RedelegationEntryResponse_pb,
 } from '@terra-money/terra.proto/cosmos/staking/v1beta1/staking';
-import * as Long from 'long';
+import Long from 'long';
 
 /**
  * A redelegation is when a delegator decides to stop staking with one validator and

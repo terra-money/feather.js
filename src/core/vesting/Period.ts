@@ -2,7 +2,7 @@ import { Coins } from '../Coins';
 import { Period as Period_pb } from '@terra-money/terra.proto/cosmos/vesting/v1beta1/vesting';
 
 import { JSONSerializable } from '../../util/json';
-import * as Long from 'long';
+import Long from 'long';
 /**
  * Period defines a length of time and amount of coins that will vest.
  */

@@ -3,7 +3,7 @@ import { JSONSerializable } from '../../util/json';
 import { AccAddress } from '../bech32';
 import { ModuleAccount as ModuleAccount_pb } from '@terra-money/terra.proto/cosmos/auth/v1beta1/auth';
 import { Any } from '@terra-money/terra.proto/google/protobuf/any';
-import * as Long from 'long';
+import Long from 'long';
 import { BaseAccount } from './BaseAccount';
 
 /**

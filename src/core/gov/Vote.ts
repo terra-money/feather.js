@@ -6,7 +6,7 @@ import {
   WeightedVoteOption as WeightedVoteOption_pb,
 } from '@terra-money/terra.proto/cosmos/gov/v1beta1/gov';
 import { Dec, Numeric } from '../numeric';
-import * as Long from 'long';
+import Long from 'long';
 /**
  * Stores vote information for a proposal
  */

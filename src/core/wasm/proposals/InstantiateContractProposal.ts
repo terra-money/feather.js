@@ -3,7 +3,7 @@ import { AccAddress } from '../../bech32';
 import { Coins } from '../../Coins';
 import { Any } from '@terra-money/terra.proto/google/protobuf/any';
 import { InstantiateContractProposal as InstantiateContractProposal_pb } from '@terra-money/terra.proto/cosmwasm/wasm/v1/proposal';
-import * as Long from 'long';
+import Long from 'long';
 
 /**
  * InstantiateContractProposal gov proposal content type to instantiate a

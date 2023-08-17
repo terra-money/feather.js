@@ -3,7 +3,7 @@ import { Coins } from './Coins';
 import { Int } from './numeric';
 import { AccAddress } from './bech32';
 import { Fee as Fee_pb } from '@terra-money/terra.proto/cosmos/tx/v1beta1/tx';
-import * as Long from 'long';
+import Long from 'long';
 
 /**
  * A transaction must include a fee, otherwise it will be rejected.

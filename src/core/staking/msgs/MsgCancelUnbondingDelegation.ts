@@ -2,6 +2,7 @@ import { JSONSerializable } from '../../../util/json';
 import { Coin } from '../../Coin';
 import { Any } from '@terra-money/terra.proto/google/protobuf/any';
 import { MsgCancelUnbondingDelegation as MsgCancelUnbondingDelegation_pb } from '@terra-money/terra.proto/cosmos/staking/v1beta1/tx';
+import Long from 'long';
 
 /**
  * When a user wants to cancel the unbonding this messaage can be used

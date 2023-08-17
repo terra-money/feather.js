@@ -3,7 +3,7 @@ import { AccAddress } from '../../bech32';
 import { WeightedVoteOption } from '../Vote';
 import { Any } from '@terra-money/terra.proto/google/protobuf/any';
 import { MsgVoteWeighted as MsgVoteWeighted_pb } from '@terra-money/terra.proto/cosmos/gov/v1beta1/tx';
-import * as Long from 'long';
+import Long from 'long';
 
 /**
  * Weighted vote for a proposal
