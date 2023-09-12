@@ -86,6 +86,7 @@
   },
   "dependencies": {
     "@ethersproject/bytes": "^5.7.0",
+    "@noble/curves": "^1.2.0",
     "@terra-money/legacy.proto": "npm:@terra-money/terra.proto@^0.1.7",
     "@terra-money/terra.proto": "^3.1.0-alpha.1",
     "assert": "^2.0.0",

@@ -5,7 +5,7 @@ import { Wallet } from 'ethers';
 import * as BytesUtils from '@ethersproject/bytes';
 import { Key } from './Key';
 import { InjectivePubKey, SimplePublicKey } from '../core/PublicKey';
-
+import { schnorr } from '@noble/curves/secp256k1';
 /**
  * An implementation of the Key interfaces that uses a raw private key.
  */
@@ -60,16 +60,16 @@ export class RawKey extends Key {
     return Buffer.from(signature);
   }
 
-  public ecdsaVerify(
+  public static verifySchnorr(
     signature: Buffer,
     message: Buffer,
     publicKey: Buffer
   ): boolean {
-    return secp256k1.ecdsaVerify(signature, message, publicKey);
+    return schnorr.verify(signature, message, publicKey);
   }
 
-  public getRawPublicKey(): Buffer {
-    const pub = secp256k1.publicKeyCreate(this.privateKey);
+  public getSchnorrPubKey(): Buffer {
+    const pub = schnorr.getPublicKey(this.privateKey);
 
     return Buffer.from(pub);
   }
