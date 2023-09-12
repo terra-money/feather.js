@@ -67,4 +67,10 @@ export class RawKey extends Key {
   ): boolean {
     return secp256k1.ecdsaVerify(signature, message, publicKey);
   }
+
+  public getRawPublicKey(): Buffer {
+    const pub = secp256k1.publicKeyCreate(this.privateKey);
+
+    return Buffer.from(pub);
+  }
 }
