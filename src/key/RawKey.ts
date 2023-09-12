@@ -59,4 +59,12 @@ export class RawKey extends Key {
       : this.ecdsaSign(payload);
     return Buffer.from(signature);
   }
+
+  public ecdsaVerify(
+    signature: Buffer,
+    message: Buffer,
+    publicKey: Buffer
+  ): boolean {
+    return secp256k1.ecdsaVerify(signature, message, publicKey);
+  }
 }
