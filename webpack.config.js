@@ -50,6 +50,7 @@ const webConfig = {
   resolve: {
     ...commonConfig.resolve,
     fallback: {
+      ...commonConfig.fallback,
       stream: require.resolve('stream-browserify'),
       buffer: require.resolve('buffer'),
     },
