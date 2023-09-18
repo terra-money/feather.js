@@ -25,7 +25,7 @@ describe('UpgradeAPI', () => {
 
   describe('node_versions', () => {
     it('module count', async () => {
-      expect(await upgrade.moduleVersions('pisco-1')).toHaveLength(26);
+      expect(await upgrade.moduleVersions('pisco-1')).toHaveLength(28);
     });
   });
 });
