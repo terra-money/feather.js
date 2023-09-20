@@ -16,9 +16,6 @@ export * from './MultiSignature';
 
 // Custom
 export * from './custom/msgs';
-// Stride
-export { MsgLiquidStake } from './stride/msgs';
-export { MsgRedeemStake } from './stride/msgs';
 
 // Alliance
 export { MsgDelegate as MsgAllianceDelegate } from './alliance/msgs/MsgDelegate';
