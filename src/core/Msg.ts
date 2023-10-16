@@ -94,6 +94,12 @@ import { MsgBurn } from './wasm/msgs/tokenfactory/MsgBurn';
 import { MsgChangeAdmin } from './wasm/msgs/tokenfactory/MsgChangeAdmin';
 import { MsgMint } from './wasm/msgs/tokenfactory/MsgMint';
 import { MsgAuctionBid } from './pob/MsgAuctionBid';
+import {
+  FeeshareMsg,
+  MsgCancelFeeShare,
+  MsgRegisterFeeShare,
+  MsgUpdateFeeShare,
+} from './feeshare';
 
 export type Msg =
   | BankMsg
@@ -113,7 +119,8 @@ export type Msg =
   | CustomMsg
   | CrisisMsg
   | JaxMsg
-  | MsgAuctionBid;
+  | MsgAuctionBid
+  | FeeshareMsg;
 
 export namespace Msg {
   export type Amino =
@@ -130,7 +137,8 @@ export namespace Msg {
     | CustomMsg.Amino
     | CrisisMsg.Amino
     | JaxMsg.Amino
-    | MsgAuctionBid.Amino;
+    | MsgAuctionBid.Amino
+    | FeeshareMsg.Amino;
 
   export type Data =
     | BankMsg.Data
@@ -153,7 +161,8 @@ export namespace Msg {
     | CustomMsg.Data
     | CrisisMsg.Data
     | JaxMsg.Data
-    | MsgAuctionBid.Data;
+    | MsgAuctionBid.Data
+    | FeeshareMsg.Data;
 
   export type Proto =
     | BankMsg.Proto
@@ -175,7 +184,8 @@ export namespace Msg {
     | AMsgUndelegate.Proto
     | CrisisMsg.Proto
     | JaxMsg.Proto
-    | MsgAuctionBid.Proto;
+    | MsgAuctionBid.Proto
+    | FeeshareMsg.Proto;
 
   export function fromAmino(data: Msg.Amino, isClassic?: boolean): Msg {
     switch (data.type) {
@@ -384,8 +394,27 @@ export namespace Msg {
           data as JAXMsgStoreCode.Amino,
           isClassic
         );
+
+      // Pob module
       case 'pob/MsgAuctionBid':
         return MsgAuctionBid.fromAmino(data as MsgAuctionBid.Amino, isClassic);
+
+      // Feeshare module
+      case 'juno/MsgRegisterFeeShare':
+        return MsgRegisterFeeShare.fromAmino(
+          data as MsgRegisterFeeShare.Amino,
+          isClassic
+        );
+      case 'juno/MsgUpdateFeeShare':
+        return MsgUpdateFeeShare.fromAmino(
+          data as MsgUpdateFeeShare.Amino,
+          isClassic
+        );
+      case 'juno/MsgCancelFeeShare':
+        return MsgCancelFeeShare.fromAmino(
+          data as MsgCancelFeeShare.Amino,
+          isClassic
+        );
 
       // custom
       default:
@@ -556,8 +585,17 @@ export namespace Msg {
       case '/jax.MsgStoreCode':
         return JAXMsgStoreCode.fromData(data, isClassic);
 
+      // pob module
       case '/pob.builder.v1.MsgAuctionBid':
         return MsgAuctionBid.fromData(data, isClassic);
+
+      // Feeshare
+      case '/juno.feeshare.v1.MsgRegisterFeeShare':
+        return MsgRegisterFeeShare.fromData(data, isClassic);
+      case '/juno.feeshare.v1.MsgUpdateFeeShare':
+        return MsgUpdateFeeShare.fromData(data, isClassic);
+      case '/juno.feeshare.v1.MsgCancelFeeShare':
+        return MsgCancelFeeShare.fromData(data, isClassic);
 
       // custom
       default:
@@ -729,6 +767,14 @@ export namespace Msg {
 
       case '/pob.builder.v1.MsgAuctionBid':
         return MsgAuctionBid.unpackAny(proto, isClassic);
+
+      // Feeshare
+      case '/juno.feeshare.v1.MsgRegisterFeeShare':
+        return MsgRegisterFeeShare.unpackAny(proto, isClassic);
+      case '/juno.feeshare.v1.MsgUpdateFeeShare':
+        return MsgUpdateFeeShare.unpackAny(proto, isClassic);
+      case '/juno.feeshare.v1.MsgCancelFeeShare':
+        return MsgCancelFeeShare.unpackAny(proto, isClassic);
 
       default:
         throw Error(`not supported msg ${proto.typeUrl}`);

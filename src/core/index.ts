@@ -92,5 +92,8 @@ export * from './ibc/msgs/connection';
 // IBC-transfer
 export * from './ibc/applications/transfer';
 
+// Feeshare
+export * from './feeshare';
+
 // bech32 types
 export * from './bech32';
