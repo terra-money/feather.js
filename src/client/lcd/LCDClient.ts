@@ -21,6 +21,7 @@ import { Numeric } from '../../core/numeric';
 import { Coins } from '../../core/Coins';
 import { Key } from '../../key';
 import { AllianceAPI } from './api/AllianceAPI';
+import { PobAPI } from './api/PobAPI';
 
 export interface LCDClientConfig {
   /**
@@ -111,6 +112,7 @@ export class LCDClient {
   public tx: TxAPI;
   public ibc: IbcAPI;
   public ibcTransfer: IbcTransferAPI;
+  public pob: PobAPI;
   public utils: LCDUtils;
 
   /**
@@ -152,6 +154,7 @@ export class LCDClient {
     this.ibc = new IbcAPI(this);
     this.ibcTransfer = new IbcTransferAPI(this);
     this.tx = new TxAPI(this);
+    this.pob = new PobAPI(this);
     this.utils = new LCDUtils(this);
   }
 

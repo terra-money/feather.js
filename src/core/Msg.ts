@@ -93,6 +93,7 @@ import { MsgCreateDenom } from './wasm/msgs/tokenfactory/MsgCreateDenom';
 import { MsgBurn } from './wasm/msgs/tokenfactory/MsgBurn';
 import { MsgChangeAdmin } from './wasm/msgs/tokenfactory/MsgChangeAdmin';
 import { MsgMint } from './wasm/msgs/tokenfactory/MsgMint';
+import { MsgAuctionBid } from './pob/MsgAuctionBid';
 
 export type Msg =
   | BankMsg
@@ -111,7 +112,8 @@ export type Msg =
   | AllianceMsg
   | CustomMsg
   | CrisisMsg
-  | JaxMsg;
+  | JaxMsg
+  | MsgAuctionBid;
 
 export namespace Msg {
   export type Amino =
@@ -127,7 +129,8 @@ export namespace Msg {
     | IbcTransferMsg.Amino
     | CustomMsg.Amino
     | CrisisMsg.Amino
-    | JaxMsg.Amino;
+    | JaxMsg.Amino
+    | MsgAuctionBid.Amino;
 
   export type Data =
     | BankMsg.Data
@@ -149,7 +152,8 @@ export namespace Msg {
     | AMsgUndelegate.Data
     | CustomMsg.Data
     | CrisisMsg.Data
-    | JaxMsg.Data;
+    | JaxMsg.Data
+    | MsgAuctionBid.Data;
 
   export type Proto =
     | BankMsg.Proto
@@ -170,7 +174,8 @@ export namespace Msg {
     | AMsgRedelegate.Proto
     | AMsgUndelegate.Proto
     | CrisisMsg.Proto
-    | JaxMsg.Proto;
+    | JaxMsg.Proto
+    | MsgAuctionBid.Proto;
 
   export function fromAmino(data: Msg.Amino, isClassic?: boolean): Msg {
     switch (data.type) {
@@ -379,6 +384,8 @@ export namespace Msg {
           data as JAXMsgStoreCode.Amino,
           isClassic
         );
+      case 'pob/MsgAuctionBid':
+        return MsgAuctionBid.fromAmino(data as MsgAuctionBid.Amino, isClassic);
 
       // custom
       default:
@@ -549,6 +556,9 @@ export namespace Msg {
       case '/jax.MsgStoreCode':
         return JAXMsgStoreCode.fromData(data, isClassic);
 
+      case '/pob.builder.v1.MsgAuctionBid':
+        return MsgAuctionBid.fromData(data, isClassic);
+
       // custom
       default:
         return MsgAminoCustom.fromData(data, isClassic);
@@ -716,6 +726,9 @@ export namespace Msg {
         return JAXMsgExecuteContract.unpackAny(proto, isClassic);
       case '/jax.MsgStoreCode':
         return JAXMsgStoreCode.unpackAny(proto, isClassic);
+
+      case '/pob.builder.v1.MsgAuctionBid':
+        return MsgAuctionBid.unpackAny(proto, isClassic);
 
       default:
         throw Error(`not supported msg ${proto.typeUrl}`);
