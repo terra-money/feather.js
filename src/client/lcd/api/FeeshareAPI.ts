@@ -15,14 +15,14 @@ export class FeeshareAPI extends BaseAPI {
    *
    * @tags Query
    * @name params
-   * @request GET:/juno/feeshare/v1/fee_shares
+   * @request GET:/juno/feeshare/v1/params
    */
   public async params(
     chainId: string,
     params: Partial<PaginationOptions & APIParams> = {}
   ) {
     return this.getReqFromChainID(chainId).get<{ params: Params }>(
-      `/juno/feeshare/v1/fee_shares`,
+      `/juno/feeshare/v1/params`,
       params
     );
   }
