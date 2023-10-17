@@ -21,6 +21,8 @@ import { Numeric } from '../../core/numeric';
 import { Coins } from '../../core/Coins';
 import { Key } from '../../key';
 import { AllianceAPI } from './api/AllianceAPI';
+import { PobAPI } from './api/PobAPI';
+import { FeeshareAPI } from './api/FeeshareAPI';
 
 export interface LCDClientConfig {
   /**
@@ -111,6 +113,8 @@ export class LCDClient {
   public tx: TxAPI;
   public ibc: IbcAPI;
   public ibcTransfer: IbcTransferAPI;
+  public pob: PobAPI;
+  public feeshare: FeeshareAPI;
   public utils: LCDUtils;
 
   /**
@@ -152,6 +156,8 @@ export class LCDClient {
     this.ibc = new IbcAPI(this);
     this.ibcTransfer = new IbcTransferAPI(this);
     this.tx = new TxAPI(this);
+    this.pob = new PobAPI(this);
+    this.feeshare = new FeeshareAPI(this);
     this.utils = new LCDUtils(this);
   }
 
