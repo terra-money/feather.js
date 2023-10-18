@@ -46,7 +46,7 @@ import {
   MsgDelegate as AMsgDelegate,
   MsgRedelegate as AMsgRedelegate,
   MsgUndelegate as AMsgUndelegate,
-} from './alliance/msgs';
+} from './alliance';
 import { CustomMsg, MsgAminoCustom } from './custom/msgs';
 import {
   MsgStoreCode,
@@ -134,6 +134,7 @@ export namespace Msg {
     | VestingMsg.Amino
     | WasmMsg.Amino
     | IbcTransferMsg.Amino
+    | AllianceMsg.Amino
     | CustomMsg.Amino
     | CrisisMsg.Amino
     | JaxMsg.Amino
@@ -158,6 +159,7 @@ export namespace Msg {
     | AMsgDelegate.Data
     | AMsgRedelegate.Data
     | AMsgUndelegate.Data
+    | AllianceMsg.Data
     | CustomMsg.Data
     | CrisisMsg.Data
     | JaxMsg.Data
