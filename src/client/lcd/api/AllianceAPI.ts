@@ -69,7 +69,10 @@ export interface AllianceDelegation {
   /** @format uint64 */
   last_reward_claim_height: string;
 }
-
+export interface RewardWeightRange {
+  min: string;
+  max: string;
+}
 export interface AllianceAsset {
   /** Denom of the asset. It could either be a native token or an IBC token */
   denom: string;
@@ -96,11 +99,33 @@ export interface AllianceAsset {
 
   /** @format date-time */
   last_reward_change_time: string;
+  /** set a bound of weight range to limit how much reward weights can scale. */
+  reward_weight_range?: RewardWeightRange;
+  /** flag to check if an asset has completed the initialization process after the reward delay */
+  is_initialized: boolean;
 }
 
 export class AllianceAPI extends BaseAPI {
   constructor(public lcd: LCDClient) {
     super(lcd.apiRequesters, lcd.config);
+  }
+
+  /**
+   * Query the alliance module params
+   *
+   * @tags Query
+   * @name params
+   * @summary Query the alliance by denom
+   * @request GET:/terra/alliances/params
+   */
+  public async params(
+    chainId: string,
+    params: Partial<PaginationOptions & APIParams> = {}
+  ) {
+    return this.getReqFromChainID(chainId).get<{ params: AllianceParams }>(
+      `/terra/alliances/params`,
+      params
+    );
   }
 
   /**
@@ -119,6 +144,26 @@ export class AllianceAPI extends BaseAPI {
       pagination: Pagination;
       alliances: AllianceAsset[];
     }>(`/terra/alliances`, params);
+  }
+
+  /**
+   * Query the alliance by denom where denom can be either the
+   * ibc prefixed hash or any other native asset alliance denom
+   *
+   * @tags Query
+   * @name alliance
+   * @summary Query the alliance by denom
+   * @request GET:/terra/alliances/{denom}
+   */
+  public async alliance(
+    chainId: string,
+    denom: string,
+    params: Partial<PaginationOptions & APIParams> = {}
+  ) {
+    return this.getReqFromChainID(chainId).get<{
+      alliance: AllianceAsset;
+      pagination: Pagination;
+    }>(`/terra/alliances/${denom}`, params);
   }
 
   /**
@@ -204,44 +249,6 @@ export class AllianceAPI extends BaseAPI {
   }
 
   /**
-   * Query the alliance by denom where denom can be either the
-   * ibc prefixed hash or any other native asset alliance denom
-   *
-   * @tags Query
-   * @name alliance
-   * @summary Query the alliance by denom
-   * @request GET:/terra/alliances/{denom}
-   */
-  public async alliance(
-    chainId: string,
-    denom: string,
-    params: Partial<PaginationOptions & APIParams> = {}
-  ) {
-    return this.getReqFromChainID(chainId).get<{
-      alliance: AllianceAsset;
-      pagination: Pagination;
-    }>(`/terra/alliances/${denom}`, params);
-  }
-
-  /**
-   * Query the alliance module params
-   *
-   * @tags Query
-   * @name params
-   * @summary Query the alliance by denom
-   * @request GET:/terra/alliances/params
-   */
-  public async params(
-    chainId: string,
-    params: Partial<PaginationOptions & APIParams> = {}
-  ) {
-    return this.getReqFromChainID(chainId).get<{ params: AllianceParams }>(
-      `/terra/alliances/params`,
-      params
-    );
-  }
-
-  /**
    * Query for rewards by delegator addr, validator_addr and denom
    * where denom can be either the ibc prefixed hash or any other native asset alliance denom
    *
@@ -263,14 +270,14 @@ export class AllianceAPI extends BaseAPI {
   }
 
   /**
-   * Query all paginated alliance validators
+   * Query all validators that has alliance assets delegated to them
    *
    * @tags Query
-   * @name alliancesValidators
+   * @name allianceValidators
    * @summary Query all paginated alliance validators
-   * @request GET:/terra/alliances/validators/{validatorAddr}
+   * @request GET:/terra/alliances/validators
    */
-  public async alliancesValidators(
+  public async alliancesByValidators(
     chainID: string,
     params: Partial<PaginationOptions & APIParams> = {}
   ) {
@@ -281,15 +288,14 @@ export class AllianceAPI extends BaseAPI {
   }
 
   /**
-   * Query for rewards by delegator addr, validator_addr and denom
-   * where denom can be either the ibc prefixed hash or any other native asset alliance denom
+   * Query an alliance validator that has alliance assets delegated to it
    *
    * @tags Query
    * @name allianceValidators
    * @summary Query alliance validator
    * @request GET:/terra/alliances/validators/{validatorAddr}
    */
-  public async allianceValidator(
+  public async alliancesByValidator(
     validatorAddr: string,
     params: Partial<PaginationOptions & APIParams> = {}
   ) {
