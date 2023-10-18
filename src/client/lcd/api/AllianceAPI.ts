@@ -69,7 +69,10 @@ export interface AllianceDelegation {
   /** @format uint64 */
   last_reward_claim_height: string;
 }
-
+export interface RewardWeightRange {
+  min: string;
+  max: string;
+}
 export interface AllianceAsset {
   /** Denom of the asset. It could either be a native token or an IBC token */
   denom: string;
@@ -96,6 +99,10 @@ export interface AllianceAsset {
 
   /** @format date-time */
   last_reward_change_time: string;
+  /** set a bound of weight range to limit how much reward weights can scale. */
+  reward_weight_range?: RewardWeightRange;
+  /** flag to check if an asset has completed the initialization process after the reward delay */
+  is_initialized: boolean;
 }
 
 export class AllianceAPI extends BaseAPI {
