@@ -1,6 +1,6 @@
 {
   "name": "@terra-money/feather.js",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "The JavaScript SDK for Terra and Feather chains",
   "license": "MIT",
   "author": "Terraform Labs, PTE.",

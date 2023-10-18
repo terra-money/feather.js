@@ -277,7 +277,7 @@ export class AllianceAPI extends BaseAPI {
    * @summary Query all paginated alliance validators
    * @request GET:/terra/alliances/validators
    */
-  public async alliancesValidator(
+  public async alliancesByValidators(
     chainID: string,
     params: Partial<PaginationOptions & APIParams> = {}
   ) {
@@ -295,7 +295,7 @@ export class AllianceAPI extends BaseAPI {
    * @summary Query alliance validator
    * @request GET:/terra/alliances/validators/{validatorAddr}
    */
-  public async alliancesValidators(
+  public async alliancesByValidator(
     validatorAddr: string,
     params: Partial<PaginationOptions & APIParams> = {}
   ) {
