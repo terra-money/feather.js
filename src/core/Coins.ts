@@ -220,6 +220,14 @@ export class Coins
     return new Coins(this.toArray().filter(fn));
   }
 
+  /**
+   * Find out the Coin objects that match the predicate
+   * @param fn predicate
+   */
+  public find(fn: (c: Coin) => boolean): Coin | undefined {
+    return this.toArray().find(fn);
+  }
+
   public static fromAmino(data: Coins.Amino | null): Coins {
     return new Coins((data ?? []).map(Coin.fromAmino));
   }
