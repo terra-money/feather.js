@@ -111,6 +111,24 @@ export class AllianceAPI extends BaseAPI {
   }
 
   /**
+   * Query the alliance module params
+   *
+   * @tags Query
+   * @name params
+   * @summary Query the alliance by denom
+   * @request GET:/terra/alliances/params
+   */
+  public async params(
+    chainId: string,
+    params: Partial<PaginationOptions & APIParams> = {}
+  ) {
+    return this.getReqFromChainID(chainId).get<{ params: AllianceParams }>(
+      `/terra/alliances/params`,
+      params
+    );
+  }
+
+  /**
    * Query all available alliances with pagination
    *
    * @tags Query
@@ -126,6 +144,26 @@ export class AllianceAPI extends BaseAPI {
       pagination: Pagination;
       alliances: AllianceAsset[];
     }>(`/terra/alliances`, params);
+  }
+
+  /**
+   * Query the alliance by denom where denom can be either the
+   * ibc prefixed hash or any other native asset alliance denom
+   *
+   * @tags Query
+   * @name alliance
+   * @summary Query the alliance by denom
+   * @request GET:/terra/alliances/{denom}
+   */
+  public async alliance(
+    chainId: string,
+    denom: string,
+    params: Partial<PaginationOptions & APIParams> = {}
+  ) {
+    return this.getReqFromChainID(chainId).get<{
+      alliance: AllianceAsset;
+      pagination: Pagination;
+    }>(`/terra/alliances/${denom}`, params);
   }
 
   /**
@@ -211,44 +249,6 @@ export class AllianceAPI extends BaseAPI {
   }
 
   /**
-   * Query the alliance by denom where denom can be either the
-   * ibc prefixed hash or any other native asset alliance denom
-   *
-   * @tags Query
-   * @name alliance
-   * @summary Query the alliance by denom
-   * @request GET:/terra/alliances/{denom}
-   */
-  public async alliance(
-    chainId: string,
-    denom: string,
-    params: Partial<PaginationOptions & APIParams> = {}
-  ) {
-    return this.getReqFromChainID(chainId).get<{
-      alliance: AllianceAsset;
-      pagination: Pagination;
-    }>(`/terra/alliances/${denom}`, params);
-  }
-
-  /**
-   * Query the alliance module params
-   *
-   * @tags Query
-   * @name params
-   * @summary Query the alliance by denom
-   * @request GET:/terra/alliances/params
-   */
-  public async params(
-    chainId: string,
-    params: Partial<PaginationOptions & APIParams> = {}
-  ) {
-    return this.getReqFromChainID(chainId).get<{ params: AllianceParams }>(
-      `/terra/alliances/params`,
-      params
-    );
-  }
-
-  /**
    * Query for rewards by delegator addr, validator_addr and denom
    * where denom can be either the ibc prefixed hash or any other native asset alliance denom
    *
@@ -270,14 +270,14 @@ export class AllianceAPI extends BaseAPI {
   }
 
   /**
-   * Query all paginated alliance validators
+   * Query all validators that has alliance assets delegated to them
    *
    * @tags Query
-   * @name alliancesValidators
+   * @name allianceValidators
    * @summary Query all paginated alliance validators
-   * @request GET:/terra/alliances/validators/{validatorAddr}
+   * @request GET:/terra/alliances/validators
    */
-  public async alliancesValidators(
+  public async alliancesValidator(
     chainID: string,
     params: Partial<PaginationOptions & APIParams> = {}
   ) {
@@ -288,15 +288,14 @@ export class AllianceAPI extends BaseAPI {
   }
 
   /**
-   * Query for rewards by delegator addr, validator_addr and denom
-   * where denom can be either the ibc prefixed hash or any other native asset alliance denom
+   * Query an alliance validator that has alliance assets delegated to it
    *
    * @tags Query
    * @name allianceValidators
    * @summary Query alliance validator
    * @request GET:/terra/alliances/validators/{validatorAddr}
    */
-  public async allianceValidator(
+  public async alliancesValidators(
     validatorAddr: string,
     params: Partial<PaginationOptions & APIParams> = {}
   ) {
