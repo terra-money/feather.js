@@ -1,8 +1,8 @@
-import { JSONSerializable } from '../../../util/json';
-import { AccAddress } from '../../bech32';
+import { JSONSerializable } from '../../../../util/json';
+import { AccAddress } from '../../../bech32';
 import { Any } from '@terra-money/terra.proto/google/protobuf/any';
-import { MsgVote as MsgVote_pb } from '@terra-money/terra.proto/cosmos/gov/v1beta1/tx';
-import { VoteOption } from '@terra-money/terra.proto/cosmos/gov/v1beta1/gov';
+import { MsgVote as MsgVote_pb } from '@terra-money/terra.proto/cosmos/gov/v1/tx';
+import { VoteOption } from '@terra-money/terra.proto/cosmos/gov/v1/gov';
 import Long from 'long';
 
 /**
@@ -34,10 +34,10 @@ export class MsgVote extends JSONSerializable<
     return new MsgVote(Number.parseInt(proposal_id), voter, option);
   }
 
-  public toAmino(isClassic?: boolean): MsgVote.Amino {
+  public toAmino(_?: boolean): MsgVote.Amino {
     const { proposal_id, voter, option } = this;
     return {
-      type: isClassic ? 'gov/MsgVote' : 'cosmos-sdk/MsgVote',
+      type: 'cosmos-sdk/v1/MsgVote',
       value: {
         proposal_id: proposal_id.toFixed(),
         voter,
@@ -56,7 +56,7 @@ export class MsgVote extends JSONSerializable<
     _;
     const { proposal_id, voter, option } = this;
     return {
-      '@type': '/cosmos.gov.v1beta1.MsgVote',
+      '@type': '/cosmos.gov.v1.MsgVote',
       proposal_id: proposal_id.toFixed(),
       voter,
       option,
@@ -81,7 +81,7 @@ export class MsgVote extends JSONSerializable<
   public packAny(_?: boolean): Any {
     _;
     return Any.fromPartial({
-      typeUrl: '/cosmos.gov.v1beta1.MsgVote',
+      typeUrl: '/cosmos.gov.v1.MsgVote',
       value: MsgVote_pb.encode(this.toProto()).finish(),
     });
   }
@@ -97,7 +97,7 @@ export namespace MsgVote {
   export type Option = VoteOption;
 
   export interface Amino {
-    type: 'gov/MsgVote' | 'cosmos-sdk/MsgVote';
+    type: 'cosmos-sdk/v1/MsgVote';
     value: {
       proposal_id: string;
       voter: AccAddress;
@@ -106,7 +106,7 @@ export namespace MsgVote {
   }
 
   export interface Data {
-    '@type': '/cosmos.gov.v1beta1.MsgVote';
+    '@type': '/cosmos.gov.v1.MsgVote';
     proposal_id: string;
     voter: AccAddress;
     option: Option;

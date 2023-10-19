@@ -1,9 +1,9 @@
-import { Coins } from '../../Coins';
+import { Coins } from '../../../Coins';
 import { Proposal } from '../Proposal';
-import { JSONSerializable } from '../../../util/json';
-import { AccAddress } from '../../bech32';
+import { JSONSerializable } from '../../../../util/json';
+import { AccAddress } from '../../../bech32';
 import { Any } from '@terra-money/terra.proto/google/protobuf/any';
-import { MsgSubmitProposal as MsgSubmitProposal_pb } from '@terra-money/terra.proto/cosmos/gov/v1beta1/tx';
+import { MsgSubmitProposal as MsgSubmitProposal_pb } from '@terra-money/terra.proto/cosmos/gov/v1/tx';
 
 /**
  * Submit a proposal alongside an initial deposit.
@@ -16,12 +16,12 @@ export class MsgSubmitProposal extends JSONSerializable<
   public initial_deposit: Coins;
 
   /**
-   * @param content proposal content to submit
+   * @param messages proposal message to submit
    * @param initial_deposit deposit provided
    * @param proposer proposer's account address
    */
   constructor(
-    public content: Proposal.Content,
+    public messages: Proposal.Message[],
     initial_deposit: Coins.Input,
     public proposer: AccAddress
   ) {
@@ -31,27 +31,24 @@ export class MsgSubmitProposal extends JSONSerializable<
 
   public static fromAmino(
     data: MsgSubmitProposal.Amino,
-    isClassic?: boolean
+    _?: boolean
   ): MsgSubmitProposal {
     const {
-      value: { content, initial_deposit, proposer },
+      value: { messages, initial_deposit, proposer },
     } = data;
     return new MsgSubmitProposal(
-      // @ts-expect-error
-      Proposal.Content.fromAmino(content, isClassic),
+      messages.map((msg: any) => Proposal.Message.fromAmino(msg, _)),
       Coins.fromAmino(initial_deposit),
       proposer
     );
   }
 
-  public toAmino(isClassic?: boolean): MsgSubmitProposal.Amino {
-    const { content, initial_deposit, proposer } = this;
+  public toAmino(_?: boolean): MsgSubmitProposal.Amino {
+    const { messages, initial_deposit, proposer } = this;
     return {
-      type: isClassic
-        ? 'gov/MsgSubmitProposal'
-        : 'cosmos-sdk/MsgSubmitProposal',
+      type: 'cosmos-sdk/v1/MsgSubmitProposal',
       value: {
-        content: content.toAmino(isClassic),
+        messages: messages.map(msg => msg.toAmino(_)),
         initial_deposit: initial_deposit.toAmino(),
         proposer,
       },
@@ -60,22 +57,21 @@ export class MsgSubmitProposal extends JSONSerializable<
 
   public static fromData(
     data: MsgSubmitProposal.Data,
-    isClassic?: boolean
+    _?: boolean
   ): MsgSubmitProposal {
-    const { content, initial_deposit, proposer } = data;
+    const { messages, initial_deposit, proposer } = data;
     return new MsgSubmitProposal(
-      // @ts-expect-error
-      Proposal.Content.fromData(content, isClassic),
+      messages.map((msg: any) => Proposal.Message.fromData(msg, _)),
       Coins.fromData(initial_deposit),
       proposer
     );
   }
 
-  public toData(isClassic?: boolean): MsgSubmitProposal.Data {
-    const { content, initial_deposit, proposer } = this;
+  public toData(_?: boolean): MsgSubmitProposal.Data {
+    const { messages, initial_deposit, proposer } = this;
     return {
-      '@type': '/cosmos.gov.v1beta1.MsgSubmitProposal',
-      content: content.toData(isClassic),
+      '@type': '/cosmos.gov.v1.MsgSubmitProposal',
+      messages: messages.map(msg => msg.toData(_)),
       initial_deposit: initial_deposit.toData(),
       proposer,
     };
@@ -83,52 +79,61 @@ export class MsgSubmitProposal extends JSONSerializable<
 
   public static fromProto(
     proto: MsgSubmitProposal.Proto,
-    isClassic?: boolean
+    _?: boolean
   ): MsgSubmitProposal {
+    const _msgs = new Array<Proposal.Message>();
+    for (const msg of proto.messages) {
+      const _msg = Proposal.Message.fromProto(msg as any, _);
+      if (_msg !== undefined) {
+        _msgs.push(_msg);
+      } else {
+        console.warn('[GOV V1] IMPLEMENT THE PROTO INTERFACE FOR', _msg);
+      }
+    }
     return new MsgSubmitProposal(
-      Proposal.Content.fromProto(proto.content as any, isClassic),
+      _msgs,
       Coins.fromProto(proto.initialDeposit),
       proto.proposer
     );
   }
 
-  public toProto(isClassic?: boolean): MsgSubmitProposal.Proto {
-    const { content, initial_deposit, proposer } = this;
+  public toProto(_?: boolean): MsgSubmitProposal.Proto {
+    const { messages, initial_deposit, proposer } = this;
     return MsgSubmitProposal_pb.fromPartial({
-      content: content.packAny(isClassic),
+      messages: messages.map(msg => msg.packAny(_)),
       initialDeposit: initial_deposit.toProto(),
       proposer,
     });
   }
 
-  public packAny(isClassic?: boolean): Any {
+  public packAny(_?: boolean): Any {
     return Any.fromPartial({
-      typeUrl: '/cosmos.gov.v1beta1.MsgSubmitProposal',
-      value: MsgSubmitProposal_pb.encode(this.toProto(isClassic)).finish(),
+      typeUrl: '/cosmos.gov.v1.MsgSubmitProposal',
+      value: MsgSubmitProposal_pb.encode(this.toProto(_)).finish(),
     });
   }
 
-  public static unpackAny(msgAny: Any, isClassic?: boolean): MsgSubmitProposal {
+  public static unpackAny(msgAny: Any, _?: boolean): MsgSubmitProposal {
     return MsgSubmitProposal.fromProto(
       MsgSubmitProposal_pb.decode(msgAny.value),
-      isClassic
+      _
     );
   }
 }
 
 export namespace MsgSubmitProposal {
   export interface Amino {
-    type: 'gov/MsgSubmitProposal' | 'cosmos-sdk/MsgSubmitProposal';
+    type: 'cosmos-sdk/v1/MsgSubmitProposal';
     value: {
-      content: Proposal.Content.Amino;
+      messages: Proposal.Message.Amino;
       initial_deposit: Coins.Amino;
       proposer: AccAddress;
     };
   }
 
   export interface Data {
-    '@type': '/cosmos.gov.v1beta1.MsgSubmitProposal';
-    content: Proposal.Content.Data;
+    '@type': '/cosmos.gov.v1.MsgSubmitProposal';
+    messages: Proposal.Message.Data;
     initial_deposit: Coins.Data;
     proposer: AccAddress;
   }

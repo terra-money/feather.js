@@ -17,7 +17,15 @@ import {
   MsgSubmitProposal,
   MsgVote,
   MsgVoteWeighted,
-} from './gov/msgs';
+  MsgExecLegacyContent,
+} from './gov/v1/msgs';
+import {
+  GovMsg as LegacyGovMsg,
+  MsgDeposit as LegacyMsgDeposit,
+  MsgSubmitProposal as LegacyMsgSubmitProposal,
+  MsgVote as LegacyMsgVote,
+  MsgVoteWeighted as LegacyMsgVoteWeighted,
+} from './gov/v1beta1/msgs';
 import {
   MsgGrantAuthorization,
   MsgRevokeAuthorization,
@@ -106,6 +114,7 @@ export type Msg =
   | DistributionMsg
   | FeeGrantMsg
   | GovMsg
+  | LegacyGovMsg
   | MsgAuthMsg
   | SlashingMsg
   | StakingMsg
@@ -128,6 +137,7 @@ export namespace Msg {
     | DistributionMsg.Amino
     | FeeGrantMsg.Amino
     | GovMsg.Amino
+    | LegacyGovMsg.Amino
     | MsgAuthMsg.Amino
     | SlashingMsg.Amino
     | StakingMsg.Amino
@@ -146,6 +156,7 @@ export namespace Msg {
     | DistributionMsg.Data
     | FeeGrantMsg.Data
     | GovMsg.Data
+    | LegacyGovMsg.Data
     | MsgAuthMsg.Data
     | SlashingMsg.Data
     | StakingMsg.Data
@@ -171,6 +182,7 @@ export namespace Msg {
     | DistributionMsg.Proto
     | FeeGrantMsg.Proto
     | GovMsg.Proto
+    | LegacyGovMsg.Proto
     | MsgAuthMsg.Proto
     | SlashingMsg.Proto
     | StakingMsg.Proto
@@ -241,20 +253,44 @@ export namespace Msg {
       // gov
       case 'gov/MsgDeposit':
       case 'cosmos-sdk/MsgDeposit':
-        return MsgDeposit.fromAmino(data as MsgDeposit.Amino, isClassic);
+        return LegacyMsgDeposit.fromAmino(
+          data as LegacyMsgDeposit.Amino,
+          isClassic
+        );
       case 'gov/MsgSubmitProposal':
       case 'cosmos-sdk/MsgSubmitProposal':
-        return MsgSubmitProposal.fromAmino(
-          data as MsgSubmitProposal.Amino,
+        return LegacyMsgSubmitProposal.fromAmino(
+          data as LegacyMsgSubmitProposal.Amino,
           isClassic
         );
       case 'gov/MsgVote':
       case 'cosmos-sdk/MsgVote':
-        return MsgVote.fromAmino(data as MsgVote.Amino, isClassic);
+        return LegacyMsgVote.fromAmino(data as LegacyMsgVote.Amino, isClassic);
       case 'gov/MsgVoteWeighted':
       case 'cosmos-sdk/MsgVoteWeighted':
+        return LegacyMsgVoteWeighted.fromAmino(
+          data as LegacyMsgVoteWeighted.Amino,
+          isClassic
+        );
+
+      // gov
+      case 'cosmos-sdk/v1/MsgDeposit':
+        return MsgDeposit.fromAmino(data as MsgDeposit.Amino, isClassic);
+      case 'cosmos-sdk/v1/MsgSubmitProposal':
+        return MsgSubmitProposal.fromAmino(
+          data as MsgSubmitProposal.Amino,
+          isClassic
+        );
+      case 'cosmos-sdk/v1/MsgVote':
+        return MsgVote.fromAmino(data as MsgVote.Amino, isClassic);
+      case 'cosmos-sdk/v1/MsgVoteWeighted':
         return MsgVoteWeighted.fromAmino(
           data as MsgVoteWeighted.Amino,
+          isClassic
+        );
+      case 'cosmos-sdk/v1/MsgExecLegacyContent':
+        return MsgExecLegacyContent.fromAmino(
+          data as MsgExecLegacyContent.Amino,
           isClassic
         );
 
@@ -459,13 +495,25 @@ export namespace Msg {
 
       // gov
       case '/cosmos.gov.v1beta1.MsgDeposit':
-        return MsgDeposit.fromData(data, isClassic);
+        return LegacyMsgDeposit.fromData(data, isClassic);
       case '/cosmos.gov.v1beta1.MsgSubmitProposal':
-        return MsgSubmitProposal.fromData(data, isClassic);
+        return LegacyMsgSubmitProposal.fromData(data, isClassic);
       case '/cosmos.gov.v1beta1.MsgVote':
-        return MsgVote.fromData(data, isClassic);
+        return LegacyMsgVote.fromData(data, isClassic);
       case '/cosmos.gov.v1beta1.MsgVoteWeighted':
+        return LegacyMsgVoteWeighted.fromData(data, isClassic);
+
+      // gov v1
+      case '/cosmos.gov.v1.MsgDeposit':
+        return MsgDeposit.fromData(data, isClassic);
+      case '/cosmos.gov.v1.MsgSubmitProposal':
+        return MsgSubmitProposal.fromData(data, isClassic);
+      case '/cosmos.gov.v1.MsgVote':
+        return MsgVote.fromData(data, isClassic);
+      case '/cosmos.gov.v1.MsgVoteWeighted':
         return MsgVoteWeighted.fromData(data, isClassic);
+      case '/cosmos.gov.v1.MsgExecLegacyContent':
+        return MsgExecLegacyContent.fromData(data, isClassic);
 
       // authz
       case '/cosmos.authz.v1beta1.MsgGrant':
@@ -641,11 +689,23 @@ export namespace Msg {
 
       // gov
       case '/cosmos.gov.v1beta1.MsgDeposit':
-        return MsgDeposit.unpackAny(proto, isClassic);
+        return LegacyMsgDeposit.unpackAny(proto, isClassic);
       case '/cosmos.gov.v1beta1.MsgSubmitProposal':
-        return MsgSubmitProposal.unpackAny(proto, isClassic);
+        return LegacyMsgSubmitProposal.unpackAny(proto, isClassic);
       case '/cosmos.gov.v1beta1.MsgVote':
+        return LegacyMsgVote.unpackAny(proto, isClassic);
+
+      // gov
+      case '/cosmos.gov.v1.MsgDeposit':
+        return MsgDeposit.unpackAny(proto, isClassic);
+      case '/cosmos.gov.v1.MsgSubmitProposal':
+        return MsgSubmitProposal.unpackAny(proto, isClassic);
+      case '/cosmos.gov.v1.MsgVote':
         return MsgVote.unpackAny(proto, isClassic);
+      case '/cosmos.gov.v1.MsgVoteWeighted':
+        return MsgVoteWeighted.unpackAny(proto, isClassic);
+      case '/cosmos.gov.v1.MsgExecLegacyContent':
+        return MsgExecLegacyContent.unpackAny(proto, isClassic);
 
       // authz
       case '/cosmos.authz.v1beta1.MsgGrant':

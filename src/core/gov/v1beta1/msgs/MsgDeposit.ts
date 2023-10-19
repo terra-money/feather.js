@@ -1,12 +1,13 @@
-import { Coins } from '../../Coins';
-import { JSONSerializable } from '../../../util/json';
-import { AccAddress } from '../../bech32';
+import { Coins } from '../../../Coins';
+import { JSONSerializable } from '../../../../util/json';
+import { AccAddress } from '../../../bech32';
 import { Any } from '@terra-money/terra.proto/google/protobuf/any';
 import { MsgDeposit as MsgDeposit_pb } from '@terra-money/terra.proto/cosmos/gov/v1beta1/tx';
 import Long from 'long';
 
 /**
  * Add a deposit for a proposal
+ * @deprecated Please use v1.MsgDeposit instead
  */
 export class MsgDeposit extends JSONSerializable<
   MsgDeposit.Amino,

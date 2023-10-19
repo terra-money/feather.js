@@ -1,14 +1,14 @@
-import { Coins } from '../Coins';
-import { Int } from '../numeric';
-import { JSONSerializable } from '../../util/json';
-import { CommunityPoolSpendProposal } from '../distribution/proposals';
-import { ParameterChangeProposal } from '../params/proposals';
-import { ClientUpdateProposal } from '../ibc/proposals';
-import { TextProposal } from './proposals';
+import { Coins } from '../../Coins';
+import { Int } from '../../numeric';
+import { JSONSerializable } from '../../../util/json';
+import { CommunityPoolSpendProposal } from '../../distribution/proposals';
+import { ParameterChangeProposal } from '../../params/proposals';
+import { ClientUpdateProposal } from '../../ibc/proposals';
+import { TextProposal } from './../v1beta1/proposals';
 import {
   SoftwareUpgradeProposal,
   CancelSoftwareUpgradeProposal,
-} from '../upgrade/proposals';
+} from '../../upgrade/proposals';
 import {
   ClearAdminProposal,
   ExecuteContractProposal,
@@ -20,21 +20,22 @@ import {
   UnpinCodesProposal,
   UpdateAdminProposal,
   UpdateInstantiateConfigProposal,
-} from '../wasm/proposals';
+} from '../../wasm/proposals';
 import {
   Proposal as Proposal_pb,
   ProposalStatus,
   TallyResult,
   proposalStatusFromJSON,
   proposalStatusToJSON,
-} from '@terra-money/terra.proto/cosmos/gov/v1beta1/gov';
+} from '@terra-money/terra.proto/cosmos/gov/v1/gov';
 import { Any } from '@terra-money/terra.proto/google/protobuf/any';
 import Long from 'long';
 import {
   MsgCreateAllianceProposal,
   MsgDeleteAllianceProposal,
   MsgUpdateAllianceProposal,
-} from '../../core/alliance/proposals';
+} from '../../../core/alliance/proposals';
+import { AccAddress } from 'core/bech32';
 
 /**
  * Stores information pertaining to a submitted proposal, such as its status and time of
@@ -48,7 +49,7 @@ export class Proposal extends JSONSerializable<
   /**
    *
    * @param id proposal's ID
-   * @param content content of the proposal
+   * @param messages content of the proposal
    * @param status proposal's status
    * @param final_tally_result tally result
    * @param submit_time time proposal was submitted and deposit period started
@@ -59,14 +60,18 @@ export class Proposal extends JSONSerializable<
    */
   constructor(
     public id: number,
-    public content: Proposal.Content | undefined,
+    public messages: Proposal.Message[],
     public status: ProposalStatus,
     public final_tally_result: Proposal.FinalTallyResult,
     public submit_time: Date,
     public deposit_end_time: Date,
     public total_deposit: Coins,
-    public voting_start_time: Date,
-    public voting_end_time: Date
+    public metadata: string,
+    public title: string,
+    public summary: string,
+    public proposer: AccAddress,
+    public voting_start_time?: Date,
+    public voting_end_time?: Date
   ) {
     super();
   }
@@ -74,110 +79,145 @@ export class Proposal extends JSONSerializable<
   public static fromAmino(data: Proposal.Amino, isClassic?: boolean): Proposal {
     const {
       id,
-      content,
+      messages,
       status,
       final_tally_result,
       submit_time,
       deposit_end_time,
       total_deposit,
+      metadata,
+      title,
+      summary,
+      proposer,
       voting_start_time,
       voting_end_time,
     } = data;
 
+    const _messages = messages.map(m =>
+      Proposal.Message.fromAmino(m, isClassic)
+    );
+
     return new Proposal(
       Number.parseInt(id),
-      Proposal.Content.fromAmino(content, isClassic),
+      _messages,
       status,
       {
-        yes: new Int(final_tally_result.yes || 0),
-        no: new Int(final_tally_result.no || 0),
-        abstain: new Int(final_tally_result.abstain || 0),
-        no_with_veto: new Int(final_tally_result.no_with_veto || 0),
+        yes_count: new Int(final_tally_result.yes_count || 0),
+        no_count: new Int(final_tally_result.no_count || 0),
+        abstain_count: new Int(final_tally_result.abstain_count || 0),
+        no_with_veto_count: new Int(final_tally_result.no_with_veto_count || 0),
       },
       new Date(submit_time),
       new Date(deposit_end_time),
       Coins.fromAmino(total_deposit),
-      new Date(voting_start_time),
-      new Date(voting_end_time)
+      metadata,
+      title,
+      summary,
+      proposer,
+      voting_start_time ? new Date(voting_start_time) : undefined,
+      voting_end_time ? new Date(voting_end_time) : undefined
     );
   }
 
   public toAmino(isClassic?: boolean): Proposal.Amino {
     const { status, final_tally_result } = this;
 
+    const _messages = this.messages.map(msg => msg.toAmino(isClassic));
+
     return {
       id: this.id.toFixed(),
-      content: this.content?.toAmino(isClassic),
+      messages: _messages,
       status: status,
       final_tally_result: {
-        yes: final_tally_result.yes.toFixed(),
-        no: final_tally_result.no.toFixed(),
-        abstain: final_tally_result.abstain.toFixed(),
-        no_with_veto: final_tally_result.no_with_veto.toFixed(),
+        yes_count: final_tally_result.yes_count.toFixed(),
+        no_count: final_tally_result.no_count.toFixed(),
+        abstain_count: final_tally_result.abstain_count.toFixed(),
+        no_with_veto_count: final_tally_result.no_with_veto_count.toFixed(),
       },
       submit_time: this.submit_time.toISOString(),
       deposit_end_time: this.deposit_end_time.toISOString(),
       total_deposit: this.total_deposit.toAmino(),
-      voting_start_time: this.voting_start_time.toISOString(),
-      voting_end_time: this.voting_end_time.toISOString(),
+      metadata: this.metadata,
+      title: this.title,
+      summary: this.summary,
+      proposer: this.proposer,
+      voting_start_time: this.voting_start_time?.toISOString(),
+      voting_end_time: this.voting_end_time?.toISOString(),
     };
   }
 
   public static fromData(data: Proposal.Data, isClassic?: boolean): Proposal {
     const {
-      proposal_id,
-      content,
+      id,
+      messages,
       status,
       final_tally_result,
       submit_time,
       deposit_end_time,
       total_deposit,
+      metadata,
+      title,
+      summary,
+      proposer,
       voting_start_time,
       voting_end_time,
     } = data;
+    const _mesages = messages.map(message =>
+      Proposal.Message.fromData(message, isClassic)
+    );
 
     return new Proposal(
-      Number.parseInt(proposal_id),
-      Proposal.Content.fromData(content, isClassic),
+      Number.parseInt(id),
+      _mesages,
       proposalStatusFromJSON(status),
       {
-        yes: new Int(final_tally_result?.yes || 0),
-        no: new Int(final_tally_result?.no || 0),
-        abstain: new Int(final_tally_result?.abstain || 0),
-        no_with_veto: new Int(final_tally_result?.no_with_veto || 0),
+        yes_count: new Int(final_tally_result?.yes_count || 0),
+        no_count: new Int(final_tally_result?.no_count || 0),
+        abstain_count: new Int(final_tally_result?.abstain_count || 0),
+        no_with_veto_count: new Int(
+          final_tally_result?.no_with_veto_count || 0
+        ),
       },
       new Date(submit_time),
       new Date(deposit_end_time),
       Coins.fromData(total_deposit),
-      new Date(voting_start_time),
-      new Date(voting_end_time)
+      metadata,
+      title,
+      summary,
+      proposer,
+      voting_start_time ? new Date(voting_start_time) : undefined,
+      voting_end_time ? new Date(voting_end_time) : undefined
     );
   }
 
   public toData(isClassic?: boolean): Proposal.Data {
     const { status, final_tally_result } = this;
+    const _mesages = this.messages.map(message => message.toData(isClassic));
 
     return {
-      proposal_id: this.id.toFixed(),
-      content: this.content?.toData(isClassic),
+      id: this.id.toFixed(),
+      messages: _mesages,
       status: proposalStatusToJSON(status),
       final_tally_result: {
-        yes: final_tally_result.yes.toString(),
-        no: final_tally_result.no.toString(),
-        abstain: final_tally_result.abstain.toString(),
-        no_with_veto: final_tally_result.no_with_veto.toString(),
+        yes_count: final_tally_result.yes_count.toString(),
+        abstain_count: final_tally_result.abstain_count.toString(),
+        no_count: final_tally_result.no_count.toString(),
+        no_with_veto_count: final_tally_result.no_with_veto_count.toString(),
       },
       submit_time: this.submit_time.toISOString(),
       deposit_end_time: this.deposit_end_time.toISOString(),
       total_deposit: this.total_deposit.toData(),
-      voting_start_time: this.voting_start_time.toISOString(),
-      voting_end_time: this.voting_end_time.toISOString(),
+      metadata: this.metadata,
+      title: this.title,
+      summary: this.summary,
+      proposer: this.proposer,
+      voting_start_time: this.voting_start_time?.toISOString(),
+      voting_end_time: this.voting_end_time?.toISOString(),
     };
   }
 
   public static fromProto(data: Proposal.Proto, isClassic?: boolean): Proposal {
-    const id = data.proposalId;
-    const content = data.content;
+    const id = data.id;
     const status = data.status;
     const final_tally_result = data.finalTallyResult;
     const submit_time = data.submitTime;
@@ -186,21 +226,36 @@ export class Proposal extends JSONSerializable<
     const voting_start_time = data.votingStartTime;
     const voting_end_time = data.votingEndTime;
 
+    const _messages = new Array<Proposal.Message>();
+    for (const _msg of data.messages) {
+      const _message = Proposal.Message.fromProto(_msg, isClassic);
+
+      if (_message != undefined) {
+        _messages.push(_message);
+      } else {
+        console.warn('[GOV V1] IMPLEMENT THE PROTO INTERFACE FOR', _msg);
+      }
+    }
+
     return new Proposal(
       id.toNumber(),
-      Proposal.Content.fromProto(content as Any, isClassic),
+      _messages,
       status,
       {
-        yes: new Int(final_tally_result?.yes || 0),
-        no: new Int(final_tally_result?.no || 0),
-        abstain: new Int(final_tally_result?.abstain || 0),
-        no_with_veto: new Int(final_tally_result?.noWithVeto || 0),
+        yes_count: new Int(final_tally_result?.yesCount || 0),
+        abstain_count: new Int(final_tally_result?.abstainCount || 0),
+        no_count: new Int(final_tally_result?.noCount || 0),
+        no_with_veto_count: new Int(final_tally_result?.noWithVetoCount || 0),
       },
       submit_time as Date,
       deposit_end_time as Date,
       Coins.fromProto(total_deposit),
-      voting_start_time as Date,
-      voting_end_time as Date
+      data.metadata,
+      data.title,
+      data.summary,
+      data.proposer,
+      voting_start_time,
+      voting_end_time
     );
   }
 
@@ -210,21 +265,25 @@ export class Proposal extends JSONSerializable<
     let ftr: TallyResult | undefined;
     if (final_tally_result) {
       ftr = TallyResult.fromPartial({
-        yes: final_tally_result.yes.toString(),
-        no: final_tally_result.no.toString(),
-        abstain: final_tally_result.abstain.toString(),
-        noWithVeto: final_tally_result.no_with_veto.toString(),
+        yesCount: final_tally_result.yes_count.toString(),
+        abstainCount: final_tally_result.abstain_count.toString(),
+        noCount: final_tally_result.no_count.toString(),
+        noWithVetoCount: final_tally_result.no_with_veto_count.toString(),
       });
     }
 
     return Proposal_pb.fromPartial({
-      proposalId: Long.fromNumber(this.id),
-      content: this.content?.packAny(isClassic),
+      id: Long.fromNumber(this.id),
+      messages: this.messages.map(msg => msg.packAny(isClassic)),
       status,
       finalTallyResult: ftr,
       submitTime: this.submit_time,
       depositEndTime: this.deposit_end_time,
       totalDeposit: this.total_deposit.toProto(),
+      metadata: this.metadata,
+      title: this.title,
+      summary: this.summary,
+      proposer: this.proposer,
       votingEndTime: this.voting_end_time,
       votingStartTime: this.voting_start_time,
     });
@@ -236,13 +295,13 @@ export namespace Proposal {
   export type Status = ProposalStatus;
 
   export interface FinalTallyResult {
-    yes: Int;
-    abstain: Int;
-    no: Int;
-    no_with_veto: Int;
+    yes_count: Int;
+    abstain_count: Int;
+    no_count: Int;
+    no_with_veto_count: Int;
   }
 
-  export type Content =
+  export type Message =
     | TextProposal
     | CommunityPoolSpendProposal
     | ParameterChangeProposal
@@ -263,7 +322,7 @@ export namespace Proposal {
     | UpdateAdminProposal
     | UpdateInstantiateConfigProposal;
 
-  export namespace Content {
+  export namespace Message {
     export type Amino =
       | TextProposal.Amino
       | CommunityPoolSpendProposal.Amino
@@ -284,7 +343,7 @@ export namespace Proposal {
       | UnpinCodesProposal.Amino
       | UpdateAdminProposal.Amino
       | UpdateInstantiateConfigProposal.Amino
-      | undefined;
+      | any;
 
     export type Data =
       | TextProposal.Data
@@ -306,7 +365,7 @@ export namespace Proposal {
       | UnpinCodesProposal.Data
       | UpdateAdminProposal.Data
       | UpdateInstantiateConfigProposal.Data
-      | undefined;
+      | any;
 
     export type Proto =
       | TextProposal.Proto
@@ -331,10 +390,9 @@ export namespace Proposal {
       | undefined;
 
     export function fromAmino(
-      amino: Proposal.Content.Amino,
+      amino: Message.Amino,
       isClassic?: boolean
-    ): Proposal.Content | undefined {
-      if (!amino) return;
+    ): Message {
       switch (amino.type) {
         case 'gov/TextProposal':
         case 'cosmos-sdk/TextProposal':
@@ -379,14 +437,12 @@ export namespace Proposal {
           return MsgUpdateAllianceProposal.fromAmino(amino, isClassic);
         case 'alliance/MsgDeleteAllianceProposal':
           return MsgDeleteAllianceProposal.fromAmino(amino, isClassic);
+        default:
+          return amino;
       }
     }
 
-    export function fromData(
-      data: Proposal.Content.Data,
-      isClassic?: boolean
-    ): Proposal.Content | undefined {
-      if (!data) return;
+    export function fromData(data: Message.Data, isClassic?: boolean): Message {
       switch (data['@type']) {
         case '/cosmos.gov.v1beta1.TextProposal':
           return TextProposal.fromData(data, isClassic);
@@ -426,13 +482,15 @@ export namespace Proposal {
           return MsgUpdateAllianceProposal.fromData(data, isClassic);
         case '/alliance.alliance.MsgDeleteAllianceProposal':
           return MsgDeleteAllianceProposal.fromData(data, isClassic);
+        default:
+          return data;
       }
     }
 
     export function fromProto(
       anyProto: Any,
       isClassic?: boolean
-    ): Proposal.Content {
+    ): Message | undefined {
       const typeUrl = anyProto.typeUrl;
       switch (typeUrl) {
         case '/cosmos.gov.v1beta1.TextProposal':
@@ -473,44 +531,52 @@ export namespace Proposal {
           return MsgUpdateAllianceProposal.unpackAny(anyProto, isClassic);
         case '/alliance.alliance.MsgDeleteAllianceProposal':
           return MsgDeleteAllianceProposal.unpackAny(anyProto, isClassic);
+        default:
+          return undefined;
       }
-
-      throw `Proposal content ${typeUrl} not recognized`;
     }
   }
 
   export interface Amino {
-    content: Content.Amino;
     id: string;
+    messages: Message.Amino[];
     status: number;
     final_tally_result: {
-      yes: string;
-      abstain: string;
-      no: string;
-      no_with_veto: string;
+      yes_count: string;
+      abstain_count: string;
+      no_count: string;
+      no_with_veto_count: string;
     };
     submit_time: string;
     deposit_end_time: string;
     total_deposit: Coins.Amino;
-    voting_start_time: string;
-    voting_end_time: string;
+    metadata: string;
+    title: string;
+    summary: string;
+    proposer: string;
+    voting_start_time?: string;
+    voting_end_time?: string;
   }
 
   export interface Data {
-    content: Content.Data;
-    proposal_id: string;
+    id: string;
+    messages: Message.Data[];
     status: string;
     final_tally_result: {
-      yes: string;
-      abstain: string;
-      no: string;
-      no_with_veto: string;
+      yes_count: string;
+      abstain_count: string;
+      no_count: string;
+      no_with_veto_count: string;
     };
     submit_time: string;
     deposit_end_time: string;
     total_deposit: Coins.Data;
-    voting_start_time: string;
-    voting_end_time: string;
+    metadata: string;
+    title: string;
+    summary: string;
+    proposer: string;
+    voting_start_time?: string;
+    voting_end_time?: string;
   }
 
   export type Proto = Proposal_pb;

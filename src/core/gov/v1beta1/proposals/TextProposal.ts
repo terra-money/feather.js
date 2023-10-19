@@ -1,4 +1,4 @@
-import { JSONSerializable } from '../../../util/json';
+import { JSONSerializable } from '../../../../util/json';
 import { Any } from '@terra-money/terra.proto/google/protobuf/any';
 import { TextProposal as TextProposal_pb } from '@terra-money/terra.proto/cosmos/gov/v1beta1/gov';
 
