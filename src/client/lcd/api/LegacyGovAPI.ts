@@ -102,7 +102,7 @@ export namespace Tally {
   }
 }
 
-export class GovAPI extends BaseAPI {
+export class LegacyGovAPI extends BaseAPI {
   constructor(public lcd: LCDClient) {
     super(lcd.apiRequesters, lcd.config);
   }

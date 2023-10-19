@@ -50,10 +50,13 @@ import {
 } from './vesting/msgs';
 import {
   AllianceMsg,
-  MsgClaimDelegationRewards as AMsgClaimDelegationRewards,
-  MsgDelegate as AMsgDelegate,
-  MsgRedelegate as AMsgRedelegate,
-  MsgUndelegate as AMsgUndelegate,
+  MsgClaimDelegationRewards as MsgClaimAllianceDelegationRewards,
+  MsgDelegate as MsgAllianceDelegate,
+  MsgRedelegate as MsgAllianceRedelegate,
+  MsgUndelegate as MsgAllianceUndelegate,
+  MsgCreateAlliance,
+  MsgUpdateAlliance,
+  MsgDeleteAlliance,
 } from './alliance';
 import { CustomMsg, MsgAminoCustom } from './custom/msgs';
 import {
@@ -166,10 +169,6 @@ export namespace Msg {
     | IbcClientMsg.Data
     | IbcConnectionMsg.Data
     | IbcChannelMsg.Data
-    | AMsgClaimDelegationRewards.Data
-    | AMsgDelegate.Data
-    | AMsgRedelegate.Data
-    | AMsgUndelegate.Data
     | AllianceMsg.Data
     | CustomMsg.Data
     | CrisisMsg.Data
@@ -192,10 +191,7 @@ export namespace Msg {
     | IbcClientMsg.Proto
     | IbcConnectionMsg.Proto
     | IbcChannelMsg.Proto
-    | AMsgClaimDelegationRewards.Proto
-    | AMsgDelegate.Proto
-    | AMsgRedelegate.Proto
-    | AMsgUndelegate.Proto
+    | AllianceMsg.Proto
     | CrisisMsg.Proto
     | JaxMsg.Proto
     | MsgAuctionBid.Proto
@@ -203,6 +199,43 @@ export namespace Msg {
 
   export function fromAmino(data: Msg.Amino, isClassic?: boolean): Msg {
     switch (data.type) {
+      // alliance
+      case 'alliance/MsgCreateAlliance':
+        return MsgCreateAlliance.fromAmino(
+          data as MsgCreateAlliance.Amino,
+          isClassic
+        );
+      case 'alliance/MsgUpdateAlliance':
+        return MsgUpdateAlliance.fromAmino(
+          data as MsgUpdateAlliance.Amino,
+          isClassic
+        );
+      case 'alliance/MsgDeleteAlliance':
+        return MsgDeleteAlliance.fromAmino(
+          data as MsgDeleteAlliance.Amino,
+          isClassic
+        );
+      case 'alliance/MsgDelegate':
+        return MsgAllianceDelegate.fromAmino(
+          data as MsgAllianceDelegate.Amino,
+          isClassic
+        );
+      case 'alliance/MsgRedelegate':
+        return MsgAllianceRedelegate.fromAmino(
+          data as MsgAllianceRedelegate.Amino,
+          isClassic
+        );
+      case 'alliance/MsgUndelegate':
+        return MsgAllianceUndelegate.fromAmino(
+          data as MsgAllianceUndelegate.Amino,
+          isClassic
+        );
+      case 'alliance/MsgClaimDelegationRewards':
+        return MsgClaimAllianceDelegationRewards.fromAmino(
+          data as MsgClaimAllianceDelegationRewards.Amino,
+          isClassic
+        );
+
       // bank
       case 'bank/MsgSend':
       case 'cosmos-sdk/MsgSend':
@@ -456,20 +489,20 @@ export namespace Msg {
 
       // custom
       default:
-        return MsgAminoCustom.fromAmino(data, isClassic);
+        return MsgAminoCustom.fromAmino(data as any, isClassic);
     }
   }
   export function fromData(data: Msg.Data, isClassic?: boolean): Msg {
     switch (data['@type']) {
       // alliance
       case '/alliance.alliance.MsgDelegate':
-        return AMsgDelegate.fromData(data, isClassic);
+        return MsgAllianceDelegate.fromData(data, isClassic);
       case '/alliance.alliance.MsgRedelegate':
-        return AMsgRedelegate.fromData(data, isClassic);
+        return MsgAllianceRedelegate.fromData(data, isClassic);
       case '/alliance.alliance.MsgUndelegate':
-        return AMsgUndelegate.fromData(data, isClassic);
+        return MsgAllianceUndelegate.fromData(data, isClassic);
       case '/alliance.alliance.MsgClaimDelegationRewards':
-        return AMsgClaimDelegationRewards.fromData(data, isClassic);
+        return MsgClaimAllianceDelegationRewards.fromData(data, isClassic);
 
       // bank
       case '/cosmos.bank.v1beta1.MsgSend':
@@ -649,21 +682,27 @@ export namespace Msg {
 
       // custom
       default:
-        return MsgAminoCustom.fromData(data, isClassic);
+        return MsgAminoCustom.fromData(data as any, isClassic);
     }
   }
 
   export function fromProto(proto: Any, isClassic?: boolean): Msg {
     switch (proto.typeUrl) {
       // alliance
+      case '/alliance.alliance.MsgCreateAlliance':
+        return MsgCreateAlliance.unpackAny(proto, isClassic);
+      case '/alliance.alliance.MsgUpdateAlliance':
+        return MsgUpdateAlliance.unpackAny(proto, isClassic);
+      case '/alliance.alliance.MsgDeleteAlliance':
+        return MsgDeleteAlliance.unpackAny(proto, isClassic);
       case '/alliance.alliance.MsgDelegate':
-        return AMsgDelegate.unpackAny(proto, isClassic);
+        return MsgAllianceDelegate.unpackAny(proto, isClassic);
       case '/alliance.alliance.MsgRedelegate':
-        return AMsgRedelegate.unpackAny(proto, isClassic);
+        return MsgAllianceRedelegate.unpackAny(proto, isClassic);
       case '/alliance.alliance.MsgUndelegate':
-        return AMsgUndelegate.unpackAny(proto, isClassic);
+        return MsgAllianceUndelegate.unpackAny(proto, isClassic);
       case '/alliance.alliance.MsgClaimDelegationRewards':
-        return AMsgClaimDelegationRewards.unpackAny(proto, isClassic);
+        return MsgClaimAllianceDelegationRewards.unpackAny(proto, isClassic);
 
       // bank
       case '/cosmos.bank.v1beta1.MsgSend':

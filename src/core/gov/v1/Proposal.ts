@@ -34,6 +34,9 @@ import {
   MsgCreateAllianceProposal,
   MsgDeleteAllianceProposal,
   MsgUpdateAllianceProposal,
+  MsgUpdateAlliance,
+  MsgCreateAlliance,
+  MsgDeleteAlliance,
 } from '../../../core/alliance/proposals';
 import { AccAddress } from 'core/bech32';
 
@@ -310,6 +313,9 @@ export namespace Proposal {
     | MsgCreateAllianceProposal
     | MsgUpdateAllianceProposal
     | MsgDeleteAllianceProposal
+    | MsgCreateAlliance
+    | MsgUpdateAlliance
+    | MsgDeleteAlliance
     | ClientUpdateProposal
     | ClearAdminProposal
     | ExecuteContractProposal
@@ -332,6 +338,9 @@ export namespace Proposal {
       | MsgCreateAllianceProposal.Amino
       | MsgUpdateAllianceProposal.Amino
       | MsgDeleteAllianceProposal.Amino
+      | MsgCreateAlliance.Amino
+      | MsgUpdateAlliance.Amino
+      | MsgDeleteAlliance.Amino
       | ClientUpdateProposal.Amino
       | ClearAdminProposal.Amino
       | ExecuteContractProposal.Amino
@@ -354,6 +363,9 @@ export namespace Proposal {
       | MsgCreateAllianceProposal.Data
       | MsgUpdateAllianceProposal.Data
       | MsgDeleteAllianceProposal.Data
+      | MsgCreateAlliance.Data
+      | MsgUpdateAlliance.Data
+      | MsgDeleteAlliance.Data
       | ClientUpdateProposal.Data
       | ClearAdminProposal.Data
       | ExecuteContractProposal.Data
@@ -376,6 +388,9 @@ export namespace Proposal {
       | MsgCreateAllianceProposal.Proto
       | MsgUpdateAllianceProposal.Proto
       | MsgDeleteAllianceProposal.Proto
+      | MsgCreateAlliance.Proto
+      | MsgUpdateAlliance.Proto
+      | MsgDeleteAlliance.Proto
       | ClientUpdateProposal.Proto
       | ClearAdminProposal.Proto
       | ExecuteContractProposal.Proto
@@ -437,6 +452,12 @@ export namespace Proposal {
           return MsgUpdateAllianceProposal.fromAmino(amino, isClassic);
         case 'alliance/MsgDeleteAllianceProposal':
           return MsgDeleteAllianceProposal.fromAmino(amino, isClassic);
+        case 'alliance/MsgCreateAlliance':
+          return MsgCreateAlliance.fromAmino(amino, isClassic);
+        case 'alliance/MsgUpdateAlliance':
+          return MsgUpdateAlliance.fromAmino(amino, isClassic);
+        case 'alliance/MsgDeleteAlliance':
+          return MsgDeleteAlliance.fromAmino(amino, isClassic);
         default:
           return amino;
       }
@@ -482,6 +503,12 @@ export namespace Proposal {
           return MsgUpdateAllianceProposal.fromData(data, isClassic);
         case '/alliance.alliance.MsgDeleteAllianceProposal':
           return MsgDeleteAllianceProposal.fromData(data, isClassic);
+        case '/alliance.alliance.MsgCreateAlliance':
+          return MsgCreateAlliance.fromData(data, isClassic);
+        case '/alliance.alliance.MsgUpdateAlliance':
+          return MsgUpdateAlliance.fromData(data, isClassic);
+        case '/alliance.alliance.MsgDeleteAlliance':
+          return MsgDeleteAlliance.fromData(data, isClassic);
         default:
           return data;
       }
@@ -531,6 +558,12 @@ export namespace Proposal {
           return MsgUpdateAllianceProposal.unpackAny(anyProto, isClassic);
         case '/alliance.alliance.MsgDeleteAllianceProposal':
           return MsgDeleteAllianceProposal.unpackAny(anyProto, isClassic);
+        case '/alliance.alliance.MsgCreateAlliance':
+          return MsgCreateAlliance.unpackAny(anyProto, isClassic);
+        case '/alliance.alliance.MsgUpdateAlliance':
+          return MsgUpdateAlliance.unpackAny(anyProto, isClassic);
+        case '/alliance.alliance.MsgDeleteAlliance':
+          return MsgDeleteAlliance.unpackAny(anyProto, isClassic);
         default:
           return undefined;
       }

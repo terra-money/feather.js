@@ -13,8 +13,6 @@ export class MsgSubmitProposal extends JSONSerializable<
   MsgSubmitProposal.Data,
   MsgSubmitProposal.Proto
 > {
-  public initial_deposit: Coins;
-
   /**
    * @param messages proposal message to submit
    * @param initial_deposit deposit provided
@@ -22,11 +20,13 @@ export class MsgSubmitProposal extends JSONSerializable<
    */
   constructor(
     public messages: Proposal.Message[],
-    initial_deposit: Coins.Input,
-    public proposer: AccAddress
+    public initial_deposit: Coins,
+    public proposer: AccAddress,
+    public metadata: string,
+    public title: string,
+    public summary: string
   ) {
     super();
-    this.initial_deposit = new Coins(initial_deposit);
   }
 
   public static fromAmino(
@@ -34,23 +34,30 @@ export class MsgSubmitProposal extends JSONSerializable<
     _?: boolean
   ): MsgSubmitProposal {
     const {
-      value: { messages, initial_deposit, proposer },
+      value: { messages, initial_deposit, proposer, metadata, title, summary },
     } = data;
     return new MsgSubmitProposal(
       messages.map((msg: any) => Proposal.Message.fromAmino(msg, _)),
       Coins.fromAmino(initial_deposit),
-      proposer
+      proposer,
+      metadata,
+      title,
+      summary
     );
   }
 
   public toAmino(_?: boolean): MsgSubmitProposal.Amino {
-    const { messages, initial_deposit, proposer } = this;
+    const { messages, initial_deposit, proposer, metadata, title, summary } =
+      this;
     return {
       type: 'cosmos-sdk/v1/MsgSubmitProposal',
       value: {
-        messages: messages.map(msg => msg.toAmino(_)),
+        messages: messages.map((msg: any) => msg.toAmino(_)),
         initial_deposit: initial_deposit.toAmino(),
         proposer,
+        metadata,
+        title,
+        summary,
       },
     };
   }
@@ -59,21 +66,29 @@ export class MsgSubmitProposal extends JSONSerializable<
     data: MsgSubmitProposal.Data,
     _?: boolean
   ): MsgSubmitProposal {
-    const { messages, initial_deposit, proposer } = data;
+    const { messages, initial_deposit, proposer, metadata, title, summary } =
+      data;
     return new MsgSubmitProposal(
       messages.map((msg: any) => Proposal.Message.fromData(msg, _)),
       Coins.fromData(initial_deposit),
-      proposer
+      proposer,
+      metadata,
+      title,
+      summary
     );
   }
 
   public toData(_?: boolean): MsgSubmitProposal.Data {
-    const { messages, initial_deposit, proposer } = this;
+    const { messages, initial_deposit, proposer, metadata, title, summary } =
+      this;
     return {
       '@type': '/cosmos.gov.v1.MsgSubmitProposal',
-      messages: messages.map(msg => msg.toData(_)),
+      messages: messages.map((msg: any) => msg.toData()),
       initial_deposit: initial_deposit.toData(),
       proposer,
+      metadata,
+      title,
+      summary,
     };
   }
 
@@ -93,16 +108,23 @@ export class MsgSubmitProposal extends JSONSerializable<
     return new MsgSubmitProposal(
       _msgs,
       Coins.fromProto(proto.initialDeposit),
-      proto.proposer
+      proto.proposer,
+      proto.metadata,
+      proto.title,
+      proto.summary
     );
   }
 
   public toProto(_?: boolean): MsgSubmitProposal.Proto {
-    const { messages, initial_deposit, proposer } = this;
+    const { messages, initial_deposit, proposer, metadata, title, summary } =
+      this;
     return MsgSubmitProposal_pb.fromPartial({
       messages: messages.map(msg => msg.packAny(_)),
       initialDeposit: initial_deposit.toProto(),
       proposer,
+      metadata,
+      title,
+      summary,
     });
   }
 
@@ -125,17 +147,51 @@ export namespace MsgSubmitProposal {
   export interface Amino {
     type: 'cosmos-sdk/v1/MsgSubmitProposal';
     value: {
-      messages: Proposal.Message.Amino;
+      /** messages are the arbitrary messages to be executed if proposal passes. */
+      messages: Proposal.Message.Amino[];
+      /** initial_deposit is the deposit value that must be paid at proposal submission. */
       initial_deposit: Coins.Amino;
+      /** proposer is the account address of the proposer. */
       proposer: AccAddress;
+      /** metadata is any arbitrary metadata attached to the proposal. */
+      metadata: string;
+      /**
+       * title is the title of the proposal.
+       *
+       * Since: cosmos-sdk 0.47
+       */
+      title: string;
+      /**
+       * summary is the summary of the proposal
+       *
+       * Since: cosmos-sdk 0.47
+       */
+      summary: string;
     };
   }
 
   export interface Data {
     '@type': '/cosmos.gov.v1.MsgSubmitProposal';
-    messages: Proposal.Message.Data;
+    /** messages are the arbitrary messages to be executed if proposal passes. */
+    messages: Proposal.Message.Data[];
+    /** initial_deposit is the deposit value that must be paid at proposal submission. */
     initial_deposit: Coins.Data;
+    /** proposer is the account address of the proposer. */
     proposer: AccAddress;
+    /** metadata is any arbitrary metadata attached to the proposal. */
+    metadata: string;
+    /**
+     * title is the title of the proposal.
+     *
+     * Since: cosmos-sdk 0.47
+     */
+    title: string;
+    /**
+     * summary is the summary of the proposal
+     *
+     * Since: cosmos-sdk 0.47
+     */
+    summary: string;
   }
 
   export type Proto = MsgSubmitProposal_pb;

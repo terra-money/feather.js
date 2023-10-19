@@ -2,7 +2,7 @@ export * from './AuthAPI';
 export * from './BankAPI';
 export * from './DistributionAPI';
 export * from './FeeGrantAPI';
-export * from './GovAPI';
+export * from './LegacyGovAPI';
 export * from './AuthzAPI';
 export * from './SlashingAPI';
 export * from './StakingAPI';

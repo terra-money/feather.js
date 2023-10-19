@@ -1,10 +1,10 @@
-import { GovAPI } from './GovAPI';
+import { LegacyGovAPI } from './LegacyGovAPI';
 import { Coins, Dec, Int, Proposal } from '../../../core';
 import { Deposit } from '@terra-money/terra.proto/cosmos/gov/v1beta1/gov';
 import { LCDClient } from '../LCDClient';
 
 const lcd = LCDClient.fromDefaultConfig('testnet');
-const gov = new GovAPI(lcd);
+const gov = new LegacyGovAPI(lcd);
 
 describe('GovAPI', () => {
   it('parameters', async () => {

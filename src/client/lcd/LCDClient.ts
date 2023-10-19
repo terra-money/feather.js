@@ -4,7 +4,7 @@ import {
   BankAPI,
   DistributionAPI,
   FeeGrantAPI,
-  GovAPI,
+  LegacyGovAPI,
   MintAPI,
   AuthzAPI,
   SlashingAPI,
@@ -23,6 +23,7 @@ import { Key } from '../../key';
 import { AllianceAPI } from './api/AllianceAPI';
 import { PobAPI } from './api/PobAPI';
 import { FeeshareAPI } from './api/FeeshareAPI';
+import { GovV1API } from './api/GovV1API';
 
 export interface LCDClientConfig {
   /**
@@ -103,7 +104,8 @@ export class LCDClient {
   public bank: BankAPI;
   public distribution: DistributionAPI;
   public feeGrant: FeeGrantAPI;
-  public gov: GovAPI;
+  public gov: GovV1API;
+  public legacyGov: LegacyGovAPI;
   public mint: MintAPI;
   public authz: AuthzAPI;
   public slashing: SlashingAPI;
@@ -146,7 +148,8 @@ export class LCDClient {
     this.bank = new BankAPI(this);
     this.distribution = new DistributionAPI(this);
     this.feeGrant = new FeeGrantAPI(this);
-    this.gov = new GovAPI(this);
+    this.gov = new GovV1API(this);
+    this.legacyGov = new LegacyGovAPI(this);
     this.mint = new MintAPI(this);
     this.authz = new AuthzAPI(this);
     this.slashing = new SlashingAPI(this);
