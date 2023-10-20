@@ -1,6 +1,6 @@
-import { Coins } from './Coins';
-import { JSONSerializable } from '../util/json';
-import { AccAddress } from './bech32';
+import { Coins } from '../../Coins';
+import { JSONSerializable } from '../../../util/json';
+import { AccAddress } from '../../bech32';
 import { Deposit as Deposit_pb } from '@terra-money/terra.proto/cosmos/gov/v1beta1/gov';
 import Long from 'long';
 

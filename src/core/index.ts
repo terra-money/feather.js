@@ -10,7 +10,7 @@ export * from './SignDoc';
 export * from './Tx';
 export * from './TxInfo';
 export * from './ValidatorSet';
-export * from './Deposit';
+export * from './gov/v1/Deposit';
 export * from './SignatureV2';
 export * from './MultiSignature';
 
