@@ -24,6 +24,8 @@ import { AllianceAPI } from './api/AllianceAPI';
 import { PobAPI } from './api/PobAPI';
 import { FeeshareAPI } from './api/FeeshareAPI';
 import { GovV1API } from './api/GovV1API';
+import { ICAv1API } from './api/ICAv1API';
+import { ICQv1API } from './api/ICQv1API';
 
 export interface LCDClientConfig {
   /**
@@ -114,6 +116,8 @@ export class LCDClient {
   public wasm: WasmAPI;
   public tx: TxAPI;
   public ibc: IbcAPI;
+  public icaV1: ICAv1API;
+  public icqV1: ICQv1API;
   public ibcTransfer: IbcTransferAPI;
   public pob: PobAPI;
   public feeshare: FeeshareAPI;
@@ -157,6 +161,8 @@ export class LCDClient {
     this.tendermint = new TendermintAPI(this);
     this.wasm = new WasmAPI(this);
     this.ibc = new IbcAPI(this);
+    this.icaV1 = new ICAv1API(this);
+    this.icqV1 = new ICQv1API(this);
     this.ibcTransfer = new IbcTransferAPI(this);
     this.tx = new TxAPI(this);
     this.pob = new PobAPI(this);

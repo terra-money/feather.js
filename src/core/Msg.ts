@@ -111,6 +111,11 @@ import {
   MsgRegisterFeeShare,
   MsgUpdateFeeShare,
 } from './feeshare';
+import {
+  ICAMsg,
+  MsgRegisterInterchainAccount,
+  MsgSendTx,
+} from './ica/controller/v1/msgs';
 
 export type Msg =
   | BankMsg
@@ -127,6 +132,7 @@ export type Msg =
   | IbcClientMsg
   | IbcConnectionMsg
   | IbcChannelMsg
+  | ICAMsg
   | AllianceMsg
   | CustomMsg
   | CrisisMsg
@@ -169,6 +175,7 @@ export namespace Msg {
     | IbcClientMsg.Data
     | IbcConnectionMsg.Data
     | IbcChannelMsg.Data
+    | ICAMsg.Data
     | AllianceMsg.Data
     | CustomMsg.Data
     | CrisisMsg.Data
@@ -188,6 +195,7 @@ export namespace Msg {
     | VestingMsg.Proto
     | WasmMsg.Proto
     | IbcTransferMsg.Proto
+    | ICAMsg.Proto
     | IbcClientMsg.Proto
     | IbcConnectionMsg.Proto
     | IbcChannelMsg.Proto
@@ -492,6 +500,7 @@ export namespace Msg {
         return MsgAminoCustom.fromAmino(data as any, isClassic);
     }
   }
+
   export function fromData(data: Msg.Data, isClassic?: boolean): Msg {
     switch (data['@type']) {
       // alliance
@@ -615,6 +624,12 @@ export namespace Msg {
       // ibc-transfer
       case '/ibc.applications.transfer.v1.MsgTransfer':
         return MsgTransfer.fromData(data, isClassic);
+
+      // ibc ica
+      case '/ibc.applications.interchain_accounts.controller.v1.MsgRegisterInterchainAccount':
+        return MsgRegisterInterchainAccount.fromData(data, isClassic);
+      case '/ibc.applications.interchain_accounts.controller.v1.MsgSendTx':
+        return MsgSendTx.fromData(data, isClassic);
 
       // ibc-client
       case '/ibc.core.client.v1.MsgCreateClient':
@@ -813,6 +828,12 @@ export namespace Msg {
       // ibc-transfer
       case '/ibc.applications.transfer.v1.MsgTransfer':
         return MsgTransfer.unpackAny(proto, isClassic);
+
+      // ibc ica
+      case '/ibc.applications.interchain_accounts.controller.v1.MsgRegisterInterchainAccount':
+        return MsgRegisterInterchainAccount.unpackAny(proto, isClassic);
+      case '/ibc.applications.interchain_accounts.controller.v1.MsgSendTx':
+        return MsgSendTx.unpackAny(proto, isClassic);
 
       // ibc-client
       case '/ibc.core.client.v1.MsgCreateClient':
