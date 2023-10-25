@@ -2,11 +2,11 @@ import { AccAddress } from '../../../../bech32';
 import { Any } from '@terra-money/legacy.proto/google/protobuf/any';
 import { JSONSerializable } from '../../../../../util/json';
 import { MsgSendTx as MsgSendTx_pb } from '@terra-money/terra.proto/ibc/applications/interchain_accounts/controller/v1/tx';
-import { InterchainAccountPacketData } from '@terra-money/terra.proto/ibc/applications/interchain_accounts/v1/packet';
 import Long from 'long';
+import { InterchainAccountPacketData } from '../InterchainAccountPacketData';
 
 /**
- * A basic message for sending [[Coins]] between Terra accounts.
+ * Transaction message to wrap the packet data and execute actions on host chain.
  */
 export class MsgSendTx extends JSONSerializable<
   {},
@@ -69,6 +69,8 @@ export class MsgSendTx extends JSONSerializable<
       proto.connectionId,
       proto.relativeTimeout,
       proto.packetData
+        ? InterchainAccountPacketData.fromProto(proto.packetData)
+        : undefined
     );
   }
 
@@ -79,7 +81,7 @@ export class MsgSendTx extends JSONSerializable<
       owner,
       connectionId,
       relativeTimeout,
-      packetData,
+      packetData: packetData as any,
     });
   }
 

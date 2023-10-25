@@ -1,5 +1,6 @@
 import { Params as HostParams } from '@terra-money/terra.proto/ibc/applications/interchain_accounts/host/v1/host';
 import { Params as ControllerParams } from '@terra-money/terra.proto/ibc/applications/interchain_accounts/controller/v1/controller';
+import { QueryInterchainAccountResponse } from '@terra-money/terra.proto/ibc/applications/interchain_accounts/controller/v1/query';
 import { APIParams } from '../APIRequester';
 import { LCDClient } from '../LCDClient';
 import { BaseAPI } from './BaseAPI';
@@ -53,7 +54,9 @@ export class ICAv1API extends BaseAPI {
     connectionId: string,
     params: Partial<APIParams> = {}
   ) {
-    return this.getReqFromAddress(ownerAddr).get<{ params: ControllerParams }>(
+    return this.getReqFromAddress(
+      ownerAddr
+    ).get<QueryInterchainAccountResponse>(
       `/ibc/apps/interchain_accounts/controller/v1/owners/${ownerAddr}/connections/${connectionId}`,
       params
     );
