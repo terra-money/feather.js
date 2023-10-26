@@ -3,7 +3,32 @@ import { Any } from '@terra-money/legacy.proto/google/protobuf/any';
 import { JSONSerializable } from '../../../../../util/json';
 import { MsgSendTx as MsgSendTx_pb } from '@terra-money/terra.proto/ibc/applications/interchain_accounts/controller/v1/tx';
 import Long from 'long';
-import { InterchainAccountPacketData } from '../InterchainAccountPacketData';
+import {
+  InterchainAccountPacketData as InterchainAccountPacketData_pb,
+  Type,
+} from '@terra-money/terra.proto/ibc/applications/interchain_accounts/v1/packet';
+import { Msg } from '../../../../Msg';
+import { serialize } from 'v8';
+import { MsgSend } from '@terra-money/terra.proto/cosmos/bank/v1beta1/tx';
+
+export interface InterchainAccountPacketData {
+  type: Type;
+  data: Msg;
+  memo: string;
+}
+export namespace InterchainAccountPacketData {
+  export interface Amino {
+    value: {};
+  }
+
+  export interface Data {
+    type: Type;
+    data: Msg;
+    memo: string;
+  }
+
+  export type Proto = InterchainAccountPacketData_pb;
+}
 
 /**
  * Transaction message to wrap the packet data and execute actions on host chain.
@@ -22,7 +47,7 @@ export class MsgSendTx extends JSONSerializable<
     public owner: AccAddress,
     public connectionId: string,
     public relativeTimeout: Long,
-    public packetData?: InterchainAccountPacketData
+    public packetData: InterchainAccountPacketData
   ) {
     super();
   }
@@ -64,24 +89,35 @@ export class MsgSendTx extends JSONSerializable<
 
   public static fromProto(proto: MsgSendTx.Proto, _?: boolean): MsgSendTx {
     _;
+
     return new MsgSendTx(
       proto.owner,
       proto.connectionId,
       proto.relativeTimeout,
-      proto.packetData
-        ? InterchainAccountPacketData.fromProto(proto.packetData)
-        : undefined
+      {
+        data: proto.packetData?.data
+          ? Msg.fromProto(proto.packetData.data as any)
+          : Msg.fromData({} as any),
+        memo: proto.packetData?.memo ? proto.packetData.memo : '',
+        type: Type.TYPE_EXECUTE_TX,
+      }
     );
   }
 
   public toProto(_?: boolean): MsgSendTx.Proto {
     _;
     const { owner, connectionId, relativeTimeout, packetData } = this;
+    const parsedData = serialize((packetData.data.packAny() as any).value);
+
     return MsgSendTx_pb.fromPartial({
       owner,
       connectionId,
       relativeTimeout,
-      packetData: packetData as any,
+      packetData: {
+        memo: packetData.memo,
+        type: packetData.type,
+        data: parsedData.toString('base64') as any,
+      },
     });
   }
 
@@ -107,7 +143,7 @@ export namespace MsgSendTx {
     owner: AccAddress;
     connection_id: string;
     relative_timeout: string;
-    packet_data?: InterchainAccountPacketData;
+    packet_data: InterchainAccountPacketData;
   }
 
   export type Proto = MsgSendTx_pb;
