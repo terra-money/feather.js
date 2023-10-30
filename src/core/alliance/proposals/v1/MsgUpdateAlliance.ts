@@ -1,20 +1,19 @@
-import { JSONSerializable } from '../../../util/json';
+import { JSONSerializable } from '../../../../util/json';
 import { Any } from '@terra-money/legacy.proto/google/protobuf/any';
-import { MsgUpdateAllianceProposal as MsgUpdateAllianceProposal_pb } from '@terra-money/terra.proto/alliance/gov';
+import { MsgUpdateAlliance as MsgUpdateAlliance_pb } from '@terra-money/terra.proto/alliance/alliance/tx';
 import { Duration } from '@terra-money/terra.proto/google/protobuf/duration';
 
 /**
- *  MsgUpdateAllianceProposal is gov content type to create a new alliance
+ *  MsgUpdateAlliance is gov content type to create a new alliance
  */
-export class MsgUpdateAllianceProposal extends JSONSerializable<
-  MsgUpdateAllianceProposal.Amino,
-  MsgUpdateAllianceProposal.Data,
-  MsgUpdateAllianceProposal.Proto
+export class MsgUpdateAlliance extends JSONSerializable<
+  MsgUpdateAlliance.Amino,
+  MsgUpdateAlliance.Data,
+  MsgUpdateAlliance.Proto
 > {
   /**
    * @description Update an existent alliance using the gov module
-   * @param title of the proposal
-   * @param description of the proposal
+   * @param authority of the proposal
    * @param denom of the asset. It could either be a native token or an IBC token
    * @param rewardWeight specifies the ratio of rewards that will be given to each alliance asset it does not need to sum to 1. rate = weight / total_weight Native asset is always assumed to have a weight of 1.
    * @param takeRate positive take rate is used for liquid staking derivatives. It defines an annualized reward rate that will be redirected to the distribution rewards pool
@@ -22,8 +21,7 @@ export class MsgUpdateAllianceProposal extends JSONSerializable<
    * @param rewardChangeInterval how often the reward weight will change
    */
   constructor(
-    public title: string,
-    public description: string,
+    public authority: string,
     public denom: string,
     public rewardWeight: string,
     public takeRate: string,
@@ -34,36 +32,34 @@ export class MsgUpdateAllianceProposal extends JSONSerializable<
   }
 
   public static fromAmino(
-    data: MsgUpdateAllianceProposal.Amino,
+    data: MsgUpdateAlliance.Amino,
     _?: boolean
-  ): MsgUpdateAllianceProposal {
+  ): MsgUpdateAlliance {
     _;
     data;
     throw new Error('not implemented');
   }
 
-  public toAmino(_?: boolean): MsgUpdateAllianceProposal.Amino {
+  public toAmino(_?: boolean): MsgUpdateAlliance.Amino {
     _;
     throw new Error('not implemented');
   }
 
   public static fromData(
-    data: MsgUpdateAllianceProposal.Data,
+    data: MsgUpdateAlliance.Data,
     _?: boolean
-  ): MsgUpdateAllianceProposal {
+  ): MsgUpdateAlliance {
     _;
     const {
-      title,
-      description,
+      authority,
       denom,
       rewardWeight,
       takeRate,
       rewardChangeRate,
       rewardChangeInterval,
     } = data;
-    return new MsgUpdateAllianceProposal(
-      title,
-      description,
+    return new MsgUpdateAlliance(
+      authority,
       denom,
       rewardWeight,
       takeRate,
@@ -72,11 +68,10 @@ export class MsgUpdateAllianceProposal extends JSONSerializable<
     );
   }
 
-  public toData(_?: boolean): MsgUpdateAllianceProposal.Data {
+  public toData(_?: boolean): MsgUpdateAlliance.Data {
     _;
     const {
-      title,
-      description,
+      authority,
       denom,
       rewardWeight,
       takeRate,
@@ -85,9 +80,8 @@ export class MsgUpdateAllianceProposal extends JSONSerializable<
     } = this;
 
     return {
-      '@type': '/alliance.alliance.MsgUpdateAllianceProposal',
-      title,
-      description,
+      '@type': '/alliance.alliance.MsgUpdateAlliance',
+      authority,
       denom,
       rewardWeight,
       takeRate,
@@ -97,13 +91,12 @@ export class MsgUpdateAllianceProposal extends JSONSerializable<
   }
 
   public static fromProto(
-    proto: MsgUpdateAllianceProposal.Proto,
+    proto: MsgUpdateAlliance.Proto,
     _?: boolean
-  ): MsgUpdateAllianceProposal {
+  ): MsgUpdateAlliance {
     _;
-    return new MsgUpdateAllianceProposal(
-      proto.title,
-      proto.description,
+    return new MsgUpdateAlliance(
+      proto.authority,
       proto.denom,
       proto.rewardWeight,
       proto.takeRate,
@@ -112,20 +105,18 @@ export class MsgUpdateAllianceProposal extends JSONSerializable<
     );
   }
 
-  public toProto(_?: boolean): MsgUpdateAllianceProposal.Proto {
+  public toProto(_?: boolean): MsgUpdateAlliance.Proto {
     _;
     const {
-      title,
-      description,
+      authority,
       denom,
       rewardWeight,
       takeRate,
       rewardChangeRate,
       rewardChangeInterval,
     } = this;
-    return MsgUpdateAllianceProposal_pb.fromPartial({
-      title,
-      description,
+    return MsgUpdateAlliance_pb.fromPartial({
+      authority,
       denom,
       rewardWeight,
       takeRate,
@@ -137,24 +128,23 @@ export class MsgUpdateAllianceProposal extends JSONSerializable<
   public packAny(_?: boolean): Any {
     _;
     return Any.fromPartial({
-      typeUrl: '/alliance.alliance.MsgUpdateAllianceProposal',
-      value: MsgUpdateAllianceProposal_pb.encode(this.toProto()).finish(),
+      typeUrl: '/alliance.alliance.MsgUpdateAlliance',
+      value: MsgUpdateAlliance_pb.encode(this.toProto()).finish(),
     });
   }
 
-  public static unpackAny(msgAny: Any, _?: boolean): MsgUpdateAllianceProposal {
+  public static unpackAny(msgAny: Any, _?: boolean): MsgUpdateAlliance {
     _;
-    return MsgUpdateAllianceProposal.fromProto(
-      MsgUpdateAllianceProposal_pb.decode(msgAny.value)
+    return MsgUpdateAlliance.fromProto(
+      MsgUpdateAlliance_pb.decode(msgAny.value)
     );
   }
 }
 
-export namespace MsgUpdateAllianceProposal {
+export namespace MsgUpdateAlliance {
   export interface Amino {
-    type: 'alliance/MsgUpdateAllianceProposal';
-    title: string;
-    description: string;
+    type: 'alliance/MsgUpdateAlliance';
+    authority: string;
     denom: string;
     rewardWeight: string;
     takeRate: string;
@@ -163,9 +153,8 @@ export namespace MsgUpdateAllianceProposal {
   }
 
   export interface Data {
-    '@type': '/alliance.alliance.MsgUpdateAllianceProposal';
-    title: string;
-    description: string;
+    '@type': '/alliance.alliance.MsgUpdateAlliance';
+    authority: string;
     denom: string;
     rewardWeight: string;
     takeRate: string;
@@ -173,5 +162,5 @@ export namespace MsgUpdateAllianceProposal {
     rewardChangeInterval?: Duration;
   }
 
-  export type Proto = MsgUpdateAllianceProposal_pb;
+  export type Proto = MsgUpdateAlliance_pb;
 }

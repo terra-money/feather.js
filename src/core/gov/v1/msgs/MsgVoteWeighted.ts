@@ -1,8 +1,8 @@
-import { JSONSerializable } from '../../../util/json';
-import { AccAddress } from '../../bech32';
+import { JSONSerializable } from '../../../../util/json';
+import { AccAddress } from '../../../bech32';
 import { WeightedVoteOption } from '../Vote';
 import { Any } from '@terra-money/terra.proto/google/protobuf/any';
-import { MsgVoteWeighted as MsgVoteWeighted_pb } from '@terra-money/terra.proto/cosmos/gov/v1beta1/tx';
+import { MsgVoteWeighted as MsgVoteWeighted_pb } from '@terra-money/terra.proto/cosmos/gov/v1/tx';
 import Long from 'long';
 
 /**
@@ -41,10 +41,10 @@ export class MsgVoteWeighted extends JSONSerializable<
     );
   }
 
-  public toAmino(isClassic?: boolean): MsgVoteWeighted.Amino {
+  public toAmino(_?: boolean): MsgVoteWeighted.Amino {
     const { proposal_id, voter, options } = this;
     return {
-      type: isClassic ? 'gov/MsgVoteWeighted' : 'cosmos-sdk/MsgVoteWeighted',
+      type: 'cosmos-sdk/v1/MsgVoteWeighted',
       value: {
         proposal_id: proposal_id.toFixed(),
         voter,
@@ -70,7 +70,7 @@ export class MsgVoteWeighted extends JSONSerializable<
     _;
     const { proposal_id, voter, options } = this;
     return {
-      '@type': '/cosmos.gov.v1beta1.MsgVoteWeighted',
+      '@type': '/cosmos.gov.v1.MsgVoteWeighted',
       proposal_id: proposal_id.toFixed(),
       voter,
       options: options.map(o => o.toData()),
@@ -102,7 +102,7 @@ export class MsgVoteWeighted extends JSONSerializable<
   public packAny(_?: boolean): Any {
     _;
     return Any.fromPartial({
-      typeUrl: '/cosmos.gov.v1beta1.MsgVoteWeighted',
+      typeUrl: '/cosmos.gov.v1.MsgVoteWeighted',
       value: MsgVoteWeighted_pb.encode(this.toProto()).finish(),
     });
   }
@@ -115,7 +115,7 @@ export class MsgVoteWeighted extends JSONSerializable<
 
 export namespace MsgVoteWeighted {
   export interface Amino {
-    type: 'gov/MsgVoteWeighted' | 'cosmos-sdk/MsgVoteWeighted';
+    type: 'cosmos-sdk/v1/MsgVoteWeighted';
     value: {
       proposal_id: string;
       voter: AccAddress;
@@ -124,7 +124,7 @@ export namespace MsgVoteWeighted {
   }
 
   export interface Data {
-    '@type': '/cosmos.gov.v1beta1.MsgVoteWeighted';
+    '@type': '/cosmos.gov.v1.MsgVoteWeighted';
     proposal_id: string;
     voter: AccAddress;
     options: WeightedVoteOption.Data[];

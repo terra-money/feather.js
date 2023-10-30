@@ -1,14 +1,14 @@
-import { Coins } from '../Coins';
-import { Int } from '../numeric';
-import { JSONSerializable } from '../../util/json';
-import { CommunityPoolSpendProposal } from '../distribution/proposals';
-import { ParameterChangeProposal } from '../params/proposals';
-import { ClientUpdateProposal } from '../ibc/proposals';
+import { Coins } from '../../Coins';
+import { Int } from '../../numeric';
+import { JSONSerializable } from '../../../util/json';
+import { CommunityPoolSpendProposal } from '../../distribution/proposals';
+import { ParameterChangeProposal } from '../../params/proposals';
+import { ClientUpdateProposal } from '../../ibc/proposals';
 import { TextProposal } from './proposals';
 import {
   SoftwareUpgradeProposal,
   CancelSoftwareUpgradeProposal,
-} from '../upgrade/proposals';
+} from '../../upgrade/proposals';
 import {
   ClearAdminProposal,
   ExecuteContractProposal,
@@ -20,7 +20,7 @@ import {
   UnpinCodesProposal,
   UpdateAdminProposal,
   UpdateInstantiateConfigProposal,
-} from '../wasm/proposals';
+} from '../../wasm/proposals';
 import {
   Proposal as Proposal_pb,
   ProposalStatus,
@@ -34,11 +34,12 @@ import {
   MsgCreateAllianceProposal,
   MsgDeleteAllianceProposal,
   MsgUpdateAllianceProposal,
-} from '../../core/alliance/proposals';
+} from '../../../core/alliance/proposals';
 
 /**
  * Stores information pertaining to a submitted proposal, such as its status and time of
  * the voting period
+ * @deprecated Please use v1.Proposal instead
  */
 export class Proposal extends JSONSerializable<
   Proposal.Amino,

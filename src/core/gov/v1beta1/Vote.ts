@@ -1,14 +1,15 @@
-import { JSONSerializable } from '../../util/json';
-import { AccAddress } from '../bech32';
+import { JSONSerializable } from '../../../util/json';
+import { AccAddress } from '../../bech32';
 import {
   Vote as Vote_pb,
   VoteOption,
   WeightedVoteOption as WeightedVoteOption_pb,
 } from '@terra-money/terra.proto/cosmos/gov/v1beta1/gov';
-import { Dec, Numeric } from '../numeric';
+import { Dec, Numeric } from '../../numeric';
 import Long from 'long';
 /**
  * Stores vote information for a proposal
+ * @deprecated Please use v1.Vote instead
  */
 export class Vote extends JSONSerializable<Vote.Amino, Vote.Data, Vote.Proto> {
   public Option = VoteOption;

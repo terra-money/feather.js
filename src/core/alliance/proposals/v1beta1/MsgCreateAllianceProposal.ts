@@ -1,4 +1,4 @@
-import { JSONSerializable } from '../../../util/json';
+import { JSONSerializable } from '../../../../util/json';
 import { Any } from '@terra-money/legacy.proto/google/protobuf/any';
 import { RewardWeightRange } from '@terra-money/terra.proto/alliance/alliance';
 import { MsgCreateAllianceProposal as MsgCreateAllianceProposal_pb } from '@terra-money/terra.proto/alliance/gov';

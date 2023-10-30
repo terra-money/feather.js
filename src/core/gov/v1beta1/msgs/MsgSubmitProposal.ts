@@ -1,12 +1,13 @@
-import { Coins } from '../../Coins';
+import { Coins } from '../../../Coins';
 import { Proposal } from '../Proposal';
-import { JSONSerializable } from '../../../util/json';
-import { AccAddress } from '../../bech32';
+import { JSONSerializable } from '../../../../util/json';
+import { AccAddress } from '../../../bech32';
 import { Any } from '@terra-money/terra.proto/google/protobuf/any';
 import { MsgSubmitProposal as MsgSubmitProposal_pb } from '@terra-money/terra.proto/cosmos/gov/v1beta1/tx';
 
 /**
  * Submit a proposal alongside an initial deposit.
+ * @deprecated Please use v1.MsgSubmitProposal instead
  */
 export class MsgSubmitProposal extends JSONSerializable<
   MsgSubmitProposal.Amino,

@@ -10,7 +10,7 @@ export * from './SignDoc';
 export * from './Tx';
 export * from './TxInfo';
 export * from './ValidatorSet';
-export * from './Deposit';
+export * from './gov/v1/Deposit';
 export * from './SignatureV2';
 export * from './MultiSignature';
 
@@ -50,10 +50,24 @@ export * from './feegrant/msgs';
 export * from './feegrant/allowances';
 
 // Governance
-export * from './gov/msgs';
-export * from './gov/proposals';
-export * from './gov/Proposal';
-export * from './gov/Vote';
+export {
+  GovMsg as LegacyGovMsg,
+  MsgDeposit as LegacyMsgDeposit,
+  MsgSubmitProposal as LegacyMsgSubmitProposal,
+  MsgVote as LegacyMsgVote,
+  MsgVoteWeighted as LegacyMsgVoteWeighted,
+} from './gov/v1beta1/msgs';
+export * from './gov/v1beta1/proposals';
+export { Proposal as LegacyProposal } from './gov/v1beta1/Proposal';
+export {
+  Vote as LegacyVote,
+  WeightedVoteOption as LegacyWeightedVoteOption,
+} from './gov/v1beta1/Vote';
+
+// Governance v1
+export * from './gov/v1/msgs';
+export * from './gov/v1/Proposal';
+export * from './gov/v1/Vote';
 
 // MsgAuth
 export * from './authz/msgs';
