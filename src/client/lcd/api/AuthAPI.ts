@@ -39,15 +39,31 @@ export class AuthAPI extends BaseAPI {
    *
    * @param address address of account to look up
    */
-  public async moduleAccountInfo(
+  public async moduleAccountsInfo(
     chainID: string,
     params: APIParams = {}
-  ): Promise<Array<Account>> {
+  ): Promise<Array<ModuleAccount>> {
     const { accounts } = await this.getReqFromChainID(chainID).get<{
       accounts: Array<ModuleAccount.Data>;
     }>(`/cosmos/auth/v1beta1/module_accounts`, params);
 
-    return accounts.map((account: any) => Account.fromData(account));
+    return accounts.map((account: any) => ModuleAccount.fromData(account));
+  }
+  /**
+   * Query a specific module acccount information
+   *
+   * @param address address of account to look up
+   */
+  public async moduleAccountInfo(
+    chainID: string,
+    moduleName: string,
+    params: APIParams = {}
+  ): Promise<ModuleAccount> {
+    const { account } = await this.getReqFromChainID(chainID).get<{
+      account: ModuleAccount.Data;
+    }>(`/cosmos/auth/v1beta1/module_accounts/${moduleName}`, params);
+
+    return ModuleAccount.fromData(account);
   }
   /**
    * Looks up the account information using its Terra account address. If the account has

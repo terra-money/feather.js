@@ -31,7 +31,6 @@ export class CosmosTx extends JSONSerializable<
 
   public static fromData(data: CosmosTx.Data, _?: boolean): CosmosTx {
     _;
-    console.log('CosmosTx#fromData', data);
     const parsedData = Buffer.from(data, 'base64');
     const { messages } = CosmosTx_pb.decode(parsedData);
     return new CosmosTx(messages.map(msg => Msg.fromProto(msg)));
@@ -39,7 +38,6 @@ export class CosmosTx extends JSONSerializable<
 
   public toData(_?: boolean): CosmosTx.Data {
     _;
-    console.log('CosmosTx#toData', this.messages);
     const { messages } = this;
 
     const ct = CosmosTx_pb.encode({
@@ -51,13 +49,11 @@ export class CosmosTx extends JSONSerializable<
 
   public static fromProto(proto: CosmosTx.Proto, _?: boolean): CosmosTx {
     _;
-    console.log('CosmosTx#fromProto', proto);
     return new CosmosTx(proto.messages.map(msg => Msg.fromProto(msg)));
   }
 
   public toProto(_?: boolean): CosmosTx.Proto {
     _;
-    console.log('CosmosTx#toProto', this.messages);
     const { messages } = this;
 
     const ct = CosmosTx_pb.encode({
@@ -68,14 +64,12 @@ export class CosmosTx extends JSONSerializable<
   }
 
   public packAny(isClassic?: boolean): Any {
-    console.log('CosmosTx#packAny', this.messages);
     return Any.fromPartial({
       value: this.toProto(isClassic) as any,
     });
   }
 
   public static unpackAny(msgAny: Any, isClassic?: boolean): CosmosTx {
-    console.log('CosmosTx#unpackAny', msgAny);
     return CosmosTx.fromProto(CosmosTx_pb.decode(msgAny.value), isClassic);
   }
 }
