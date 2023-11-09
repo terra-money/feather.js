@@ -1,7 +1,7 @@
 import { APIParams } from '../APIRequester';
 import { LCDClient } from '../LCDClient';
 import { BaseAPI } from './BaseAPI';
-import { QueryParamsResponse } from '@terra-money/terra.proto/cosmwasm/wasm/v1/query';
+import { QueryParamsResponse } from '@terra-money/terra.proto/osmosis/tokenfactory/v1beta1/query';
 import { AccAddress } from '../../../core';
 
 export interface DenomsFromCreatorResponse {
@@ -14,40 +14,48 @@ export interface AuthorityMetadataResponse {
   };
 }
 
+export interface BeforeSendHookResponse {
+  before_send_hook: {
+    cosmwasm_address: AccAddress;
+  };
+}
+
 export class TokenFactory extends BaseAPI {
   constructor(public lcd: LCDClient) {
     super(lcd.apiRequesters, lcd.config);
   }
 
-  public params(
-    chainID: string,
-    params: APIParams = {}
-  ): Promise<QueryParamsResponse> {
+  public params(chainID: string): Promise<QueryParamsResponse> {
     return this.getReqFromChainID(chainID).get<QueryParamsResponse>(
-      `/osmosis/tokenfactory/v1beta1/params`,
-      params
+      `/osmosis/tokenfactory/v1beta1/params`
     );
   }
 
   public denomsFromCreator(
-    creator: AccAddress,
-    params: APIParams = {}
+    creator: AccAddress
   ): Promise<DenomsFromCreatorResponse> {
     const req = this.getReqFromAddress(creator);
 
     return req.get<DenomsFromCreatorResponse>(
-      `/osmosis/tokenfactory/v1beta1/denoms_from_creator/${creator}`,
-      params
+      `/osmosis/tokenfactory/v1beta1/denoms_from_creator/${creator}`
     );
   }
 
-  /*
-    The following request does not work yet because the endpoint 
-    does recognize the url encoded denom.
+  public authorityMetadata(
+    chainID: string,
+    denom: string
+  ): Promise<AuthorityMetadataResponse> {
+    return this.getReqFromChainID(chainID).get<AuthorityMetadataResponse>(
+      `/osmosis/tokenfactory/v1beta1/denoms/${denom}/authority_metadata`
+    );
+  }
 
-    public authorityMetadata(chainID: string, denom: string, params: APIParams = {}): Promise<AuthorityMetadataResponse> {
-        return this.getReqFromChainID(chainID)
-            .get<AuthorityMetadataResponse>(`/osmosis/tokenfactory/v1beta1/denoms/${denom}/authority_metadata`, params);
-    }
-    */
+  public beforeSendHook(
+    chainID: string,
+    denom: string
+  ): Promise<BeforeSendHookResponse> {
+    return this.getReqFromChainID(chainID).get<BeforeSendHookResponse>(
+      `/osmosis/tokenfactory/v1beta1/denoms/${denom}/before_send_hook`
+    );
+  }
 }
