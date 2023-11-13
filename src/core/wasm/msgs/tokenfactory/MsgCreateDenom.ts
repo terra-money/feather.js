@@ -61,7 +61,7 @@ export class MsgCreateDenom extends JSONSerializable<
   public packAny(_?: boolean): Any {
     _;
     return Any.fromPartial({
-      typeUrl: '/cosmwasm.tokenfactory.v1beta1.MsgCreateDenom',
+      typeUrl: '/osmosis.tokenfactory.v1beta1.MsgCreateDenom',
       value: MsgCreateDenom_pb.encode(this.toProto()).finish(),
     });
   }
@@ -84,7 +84,7 @@ export class MsgCreateDenom extends JSONSerializable<
     _;
     const { sender, subdenom } = this;
     return {
-      '@type': '/cosmwasm.tokenfactory.v1beta1.MsgCreateDenom',
+      '@type': '/osmosis.tokenfactory.v1beta1.MsgCreateDenom',
       sender,
       subdenom,
     };
@@ -109,7 +109,7 @@ export namespace MsgCreateDenom {
   }
 
   export interface Data {
-    '@type': '/cosmwasm.tokenfactory.v1beta1.MsgCreateDenom';
+    '@type': '/osmosis.tokenfactory.v1beta1.MsgCreateDenom';
     sender: AccAddress;
     subdenom: string;
   }

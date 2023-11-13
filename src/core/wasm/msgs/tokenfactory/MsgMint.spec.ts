@@ -20,7 +20,7 @@ describe('MsgMint', () => {
 
   it('match data interface with model MsgMint correctly', () => {
     const data: MsgMint.Data = {
-      '@type': '/cosmwasm.tokenfactory.v1beta1.MsgMint',
+      '@type': '/osmosis.tokenfactory.v1beta1.MsgMint',
       sender: 'MinterAddr',
       amount: new Coin('uluna', '10'),
     };

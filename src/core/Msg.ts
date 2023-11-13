@@ -612,13 +612,13 @@ export namespace Msg {
       case '/terra.wasm.v1beta1.MsgClearContractAdmin':
       case '/cosmwasm.wasm.v1.MsgClearAdmin':
         return MsgClearContractAdmin.fromData(data, isClassic);
-      case '/cosmwasm.tokenfactory.v1beta1.MsgCreateDenom':
+      case '/osmosis.tokenfactory.v1beta1.MsgCreateDenom':
         return MsgCreateDenom.fromData(data);
-      case '/cosmwasm.tokenfactory.v1beta1.MsgBurn':
+      case '/osmosis.tokenfactory.v1beta1.MsgBurn':
         return MsgBurn.fromData(data);
-      case '/cosmwasm.tokenfactory.v1beta1.MsgChangeAdmin':
+      case '/osmosis.tokenfactory.v1beta1.MsgChangeAdmin':
         return MsgChangeAdmin.fromData(data);
-      case '/cosmwasm.tokenfactory.v1beta1.MsgMint':
+      case '/osmosis.tokenfactory.v1beta1.MsgMint':
         return MsgMint.fromData(data);
 
       // ibc-transfer
@@ -816,13 +816,13 @@ export namespace Msg {
       case '/terra.wasm.v1beta1.MsgClearContractAdmin':
       case '/cosmwasm.wasm.v1.MsgClearAdmin':
         return MsgClearContractAdmin.unpackAny(proto, isClassic);
-      case '/cosmwasm.tokenfactory.v1beta1.MsgCreateDenom':
+      case '/osmosis.tokenfactory.v1beta1.MsgCreateDenom':
         return MsgCreateDenom.unpackAny(proto, isClassic);
-      case '/cosmwasm.tokenfactory.v1beta1.MsgBurn':
+      case '/osmosis.tokenfactory.v1beta1.MsgBurn':
         return MsgBurn.unpackAny(proto, isClassic);
-      case '/cosmwasm.tokenfactory.v1beta1.MsgChangeAdmin':
+      case '/osmosis.tokenfactory.v1beta1.MsgChangeAdmin':
         return MsgChangeAdmin.unpackAny(proto, isClassic);
-      case '/cosmwasm.tokenfactory.v1beta1.MsgMint':
+      case '/osmosis.tokenfactory.v1beta1.MsgMint':
         return MsgMint.unpackAny(proto, isClassic);
 
       // ibc-transfer

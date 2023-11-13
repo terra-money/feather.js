@@ -55,7 +55,7 @@ export class MsgBurn extends JSONSerializable<
   public packAny(_?: boolean): Any {
     _;
     return Any.fromPartial({
-      typeUrl: '/cosmwasm.tokenfactory.v1beta1.MsgBurn',
+      typeUrl: '/osmosis.tokenfactory.v1beta1.MsgBurn',
       value: MsgBurn_pb.encode(this.toProto()).finish(),
     });
   }
@@ -75,7 +75,7 @@ export class MsgBurn extends JSONSerializable<
     _;
     const { sender, amount } = this;
     return {
-      '@type': '/cosmwasm.tokenfactory.v1beta1.MsgBurn',
+      '@type': '/osmosis.tokenfactory.v1beta1.MsgBurn',
       sender,
       amount,
     };
@@ -100,7 +100,7 @@ export namespace MsgBurn {
   }
 
   export interface Data {
-    '@type': '/cosmwasm.tokenfactory.v1beta1.MsgBurn';
+    '@type': '/osmosis.tokenfactory.v1beta1.MsgBurn';
     sender: AccAddress;
     amount?: Coin;
   }

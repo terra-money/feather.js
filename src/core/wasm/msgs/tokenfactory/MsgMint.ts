@@ -55,7 +55,7 @@ export class MsgMint extends JSONSerializable<
   public packAny(_?: boolean): Any {
     _;
     return Any.fromPartial({
-      typeUrl: '/cosmwasm.tokenfactory.v1beta1.MsgMint',
+      typeUrl: '/osmosis.tokenfactory.v1beta1.MsgMint',
       value: MsgMint_pb.encode(this.toProto()).finish(),
     });
   }
@@ -75,7 +75,7 @@ export class MsgMint extends JSONSerializable<
     _;
     const { sender, amount } = this;
     return {
-      '@type': '/cosmwasm.tokenfactory.v1beta1.MsgMint',
+      '@type': '/osmosis.tokenfactory.v1beta1.MsgMint',
       sender,
       amount,
     };
@@ -100,7 +100,7 @@ export namespace MsgMint {
   }
 
   export interface Data {
-    '@type': '/cosmwasm.tokenfactory.v1beta1.MsgMint';
+    '@type': '/osmosis.tokenfactory.v1beta1.MsgMint';
     sender: AccAddress;
     amount?: Coin;
   }
