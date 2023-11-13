@@ -14,6 +14,7 @@ import {
   WasmAPI,
   IbcTransferAPI,
   IbcAPI,
+  TokenFactory,
 } from './api';
 import { LCDUtils } from './LCDUtils';
 import { Wallet } from './Wallet';
@@ -113,6 +114,7 @@ export class LCDClient {
   public slashing: SlashingAPI;
   public staking: StakingAPI;
   public tendermint: TendermintAPI;
+  public tokenfactory: TokenFactory;
   public wasm: WasmAPI;
   public tx: TxAPI;
   public ibc: IbcAPI;
@@ -159,6 +161,7 @@ export class LCDClient {
     this.slashing = new SlashingAPI(this);
     this.staking = new StakingAPI(this);
     this.tendermint = new TendermintAPI(this);
+    this.tokenfactory = new TokenFactory(this);
     this.wasm = new WasmAPI(this);
     this.ibc = new IbcAPI(this);
     this.icaV1 = new ICAv1API(this);
