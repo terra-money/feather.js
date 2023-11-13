@@ -59,7 +59,7 @@ export class MsgChangeAdmin extends JSONSerializable<
   public packAny(_?: boolean): Any {
     _;
     return Any.fromPartial({
-      typeUrl: '/cosmwasm.tokenfactory.v1beta1.MsgChangeAdmin',
+      typeUrl: '/osmosis.tokenfactory.v1beta1.MsgChangeAdmin',
       value: MsgChangeAdmin_pb.encode(this.toProto()).finish(),
     });
   }
@@ -82,7 +82,7 @@ export class MsgChangeAdmin extends JSONSerializable<
     _;
     const { sender, newAdmin, denom } = this;
     return {
-      '@type': '/cosmwasm.tokenfactory.v1beta1.MsgChangeAdmin',
+      '@type': '/osmosis.tokenfactory.v1beta1.MsgChangeAdmin',
       sender,
       newAdmin,
       denom,
@@ -109,7 +109,7 @@ export namespace MsgChangeAdmin {
   }
 
   export interface Data {
-    '@type': '/cosmwasm.tokenfactory.v1beta1.MsgChangeAdmin';
+    '@type': '/osmosis.tokenfactory.v1beta1.MsgChangeAdmin';
     sender: AccAddress;
     newAdmin: AccAddress;
     denom: string;

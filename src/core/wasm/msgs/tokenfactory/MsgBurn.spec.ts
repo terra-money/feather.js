@@ -20,7 +20,7 @@ describe('MsgBurn', () => {
 
   it('match data interface with model MsgBurn correctly', () => {
     const data: MsgBurn.Data = {
-      '@type': '/cosmwasm.tokenfactory.v1beta1.MsgBurn',
+      '@type': '/osmosis.tokenfactory.v1beta1.MsgBurn',
       sender: 'MinterAddr',
       amount: new Coin('uluna', '10'),
     };

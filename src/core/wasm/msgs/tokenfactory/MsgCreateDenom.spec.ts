@@ -19,7 +19,7 @@ describe('MsgCreateDenom', () => {
 
   it('match data interface with model MsgCreateDenom correctly', () => {
     const data: MsgCreateDenom.Data = {
-      '@type': '/cosmwasm.tokenfactory.v1beta1.MsgCreateDenom',
+      '@type': '/osmosis.tokenfactory.v1beta1.MsgCreateDenom',
       sender: 'terra',
       subdenom: 'uluna',
     };

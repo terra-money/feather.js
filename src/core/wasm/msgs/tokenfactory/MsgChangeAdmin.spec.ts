@@ -21,7 +21,7 @@ describe('MsgChangeAdmin', () => {
 
   it('match data interface with model MsgChangeAdmin correctly', () => {
     const data: MsgChangeAdmin.Data = {
-      '@type': '/cosmwasm.tokenfactory.v1beta1.MsgChangeAdmin',
+      '@type': '/osmosis.tokenfactory.v1beta1.MsgChangeAdmin',
       sender: 'terrav1',
       newAdmin: 'terrav2',
       denom: 'uluna',
