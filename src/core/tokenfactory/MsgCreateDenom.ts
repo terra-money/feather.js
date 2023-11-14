@@ -1,7 +1,7 @@
-import { JSONSerializable } from '../../../../util/json';
-import { AccAddress } from '../../../bech32';
+import { JSONSerializable } from '../../util/json';
+import { AccAddress } from '../bech32';
 import { Any } from '@terra-money/terra.proto/google/protobuf/any';
-import { MsgCreateDenom as MsgCreateDenom_pb } from '@terra-money/terra.proto/cosmwasm/tokenfactory/v1beta1/tx';
+import { MsgCreateDenom as MsgCreateDenom_pb } from '@terra-money/terra.proto/osmosis/tokenfactory/v1beta1/tx';
 
 /**
  * MsgCreateDenom defines the message structure for the CreateDenom gRPC service

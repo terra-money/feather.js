@@ -1,4 +1,4 @@
-import { Coin } from '../../../Coin';
+import { Coin } from '../Coin';
 import { MsgBurn } from './MsgBurn';
 
 describe('MsgBurn', () => {

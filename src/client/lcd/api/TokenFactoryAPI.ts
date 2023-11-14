@@ -1,4 +1,3 @@
-import { APIParams } from '../APIRequester';
 import { LCDClient } from '../LCDClient';
 import { BaseAPI } from './BaseAPI';
 import { QueryParamsResponse } from '@terra-money/terra.proto/osmosis/tokenfactory/v1beta1/query';

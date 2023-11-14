@@ -109,5 +109,8 @@ export * from './ibc/applications/transfer';
 // Feeshare
 export * from './feeshare';
 
+// token factory
+export * from './tokenfactory';
+
 // bech32 types
 export * from './bech32';

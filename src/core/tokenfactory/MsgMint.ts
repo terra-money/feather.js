@@ -1,8 +1,8 @@
-import { JSONSerializable } from '../../../../util/json';
-import { AccAddress } from '../../../bech32';
+import { JSONSerializable } from '../../util/json';
+import { AccAddress } from '../bech32';
 import { Any } from '@terra-money/terra.proto/google/protobuf/any';
-import { MsgMint as MsgMint_pb } from '@terra-money/terra.proto/cosmwasm/tokenfactory/v1beta1/tx';
-import { Coin } from '../../../Coin';
+import { MsgMint as MsgMint_pb } from '@terra-money/terra.proto/osmosis/tokenfactory/v1beta1/tx';
+import { Coin } from '../Coin';
 
 /**
  * MsgMint is the sdk.Msg type for allowing an admin account to mint

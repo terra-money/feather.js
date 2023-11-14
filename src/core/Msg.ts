@@ -69,6 +69,14 @@ import {
   MsgClearContractAdmin,
   WasmMsg,
 } from './wasm/msgs';
+import {
+  MsgBurn,
+  MsgChangeAdmin,
+  MsgCreateDenom,
+  MsgMint,
+  MsgSetBeforeSendHook,
+  TokenFactoryMsg,
+} from './tokenfactory';
 import { JAXMsgExecuteContract, JAXMsgStoreCode, JaxMsg } from './jax/msgs';
 import { MsgTransfer, IbcTransferMsg } from './ibc/applications/transfer';
 import {
@@ -100,10 +108,6 @@ import {
 } from './ibc/msgs/channel';
 import { MsgVerifyInvariant, CrisisMsg } from './crisis';
 import { Any } from '@terra-money/terra.proto/google/protobuf/any';
-import { MsgCreateDenom } from './wasm/msgs/tokenfactory/MsgCreateDenom';
-import { MsgBurn } from './wasm/msgs/tokenfactory/MsgBurn';
-import { MsgChangeAdmin } from './wasm/msgs/tokenfactory/MsgChangeAdmin';
-import { MsgMint } from './wasm/msgs/tokenfactory/MsgMint';
 import { MsgAuctionBid } from './pob/MsgAuctionBid';
 import {
   FeeshareMsg,
@@ -116,6 +120,8 @@ import {
   MsgRegisterInterchainAccount,
   MsgSendTx,
 } from './ica/controller/v1/msgs';
+import { MsgForceTransfer } from './tokenfactory/MsgForceTransfer';
+import { MsgSetDenomMetadata } from './tokenfactory/MsgSetDenomMetadata';
 
 export type Msg =
   | BankMsg
@@ -138,7 +144,8 @@ export type Msg =
   | CrisisMsg
   | JaxMsg
   | MsgAuctionBid
-  | FeeshareMsg;
+  | FeeshareMsg
+  | TokenFactoryMsg;
 
 export namespace Msg {
   export type Amino =
@@ -158,7 +165,8 @@ export namespace Msg {
     | CrisisMsg.Amino
     | JaxMsg.Amino
     | MsgAuctionBid.Amino
-    | FeeshareMsg.Amino;
+    | FeeshareMsg.Amino
+    | TokenFactoryMsg.Amino;
 
   export type Data =
     | BankMsg.Data
@@ -181,7 +189,8 @@ export namespace Msg {
     | CrisisMsg.Data
     | JaxMsg.Data
     | MsgAuctionBid.Data
-    | FeeshareMsg.Data;
+    | FeeshareMsg.Data
+    | TokenFactoryMsg.Data;
 
   export type Proto =
     | BankMsg.Proto
@@ -203,7 +212,8 @@ export namespace Msg {
     | CrisisMsg.Proto
     | JaxMsg.Proto
     | MsgAuctionBid.Proto
-    | FeeshareMsg.Proto;
+    | FeeshareMsg.Proto
+    | TokenFactoryMsg.Proto;
 
   export function fromAmino(data: Msg.Amino, isClassic?: boolean): Msg {
     switch (data.type) {
@@ -444,6 +454,8 @@ export namespace Msg {
           data as MsgClearContractAdmin.Amino,
           isClassic
         );
+
+      //token-factory
       case 'osmosis/tokenfactory/create-denom':
         return MsgCreateDenom.fromAmino(data as MsgCreateDenom.Amino);
       case 'osmosis/tokenfactory/burn':
@@ -452,9 +464,19 @@ export namespace Msg {
         return MsgChangeAdmin.fromAmino(data as MsgChangeAdmin.Amino);
       case 'osmosis/tokenfactory/mint':
         return MsgMint.fromAmino(data as MsgMint.Amino);
+      case 'osmosis/tokenfactory/set-beforesend-hook':
+        return MsgSetBeforeSendHook.fromAmino(
+          data as MsgSetBeforeSendHook.Amino
+        );
+      case 'osmosis/tokenfactory/force-transfer':
+        return MsgForceTransfer.fromAmino(data as MsgForceTransfer.Amino);
+      case 'osmosis/tokenfactory/set-metadata':
+        return MsgSetDenomMetadata.fromAmino(data as MsgSetDenomMetadata.Amino);
+
       // ibc-transfer
       case 'cosmos-sdk/MsgTransfer':
         return MsgTransfer.fromAmino(data as MsgTransfer.Amino, isClassic);
+
       // crisis
       case 'crisis/MsgVerifyInvariant':
       case 'cosmos-sdk/MsgVerifyInvariant':
@@ -612,6 +634,8 @@ export namespace Msg {
       case '/terra.wasm.v1beta1.MsgClearContractAdmin':
       case '/cosmwasm.wasm.v1.MsgClearAdmin':
         return MsgClearContractAdmin.fromData(data, isClassic);
+
+      // token factory
       case '/osmosis.tokenfactory.v1beta1.MsgCreateDenom':
         return MsgCreateDenom.fromData(data);
       case '/osmosis.tokenfactory.v1beta1.MsgBurn':
@@ -620,6 +644,12 @@ export namespace Msg {
         return MsgChangeAdmin.fromData(data);
       case '/osmosis.tokenfactory.v1beta1.MsgMint':
         return MsgMint.fromData(data);
+      case '/osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHook':
+        return MsgSetBeforeSendHook.fromData(data);
+      case '/osmosis.tokenfactory.v1beta1.MsgForceTransfer':
+        return MsgForceTransfer.fromData(data);
+      case '/osmosis.tokenfactory.v1beta1.MsgSetDenomMetadata':
+        return MsgSetDenomMetadata.fromData(data);
 
       // ibc-transfer
       case '/ibc.applications.transfer.v1.MsgTransfer':
@@ -816,6 +846,8 @@ export namespace Msg {
       case '/terra.wasm.v1beta1.MsgClearContractAdmin':
       case '/cosmwasm.wasm.v1.MsgClearAdmin':
         return MsgClearContractAdmin.unpackAny(proto, isClassic);
+
+      // token factory
       case '/osmosis.tokenfactory.v1beta1.MsgCreateDenom':
         return MsgCreateDenom.unpackAny(proto, isClassic);
       case '/osmosis.tokenfactory.v1beta1.MsgBurn':
@@ -824,6 +856,12 @@ export namespace Msg {
         return MsgChangeAdmin.unpackAny(proto, isClassic);
       case '/osmosis.tokenfactory.v1beta1.MsgMint':
         return MsgMint.unpackAny(proto, isClassic);
+      case '/osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHook':
+        return MsgSetBeforeSendHook.unpackAny(proto);
+      case '/osmosis.tokenfactory.v1beta1.MsgForceTransfer':
+        return MsgForceTransfer.unpackAny(proto);
+      case '/osmosis.tokenfactory.v1beta1.MsgSetDenomMetadata':
+        return MsgSetDenomMetadata.unpackAny(proto);
 
       // ibc-transfer
       case '/ibc.applications.transfer.v1.MsgTransfer':
