@@ -1,7 +1,7 @@
-import { JSONSerializable } from '../../../../util/json';
-import { AccAddress } from '../../../bech32';
+import { JSONSerializable } from '../../util/json';
+import { AccAddress } from '../bech32';
 import { Any } from '@terra-money/terra.proto/google/protobuf/any';
-import { MsgChangeAdmin as MsgChangeAdmin_pb } from '@terra-money/terra.proto/cosmwasm/tokenfactory/v1beta1/tx';
+import { MsgChangeAdmin as MsgChangeAdmin_pb } from '@terra-money/terra.proto/osmosis/tokenfactory/v1beta1/tx';
 
 // MsgChangeAdmin is the sdk.Msg type for allowing an admin account to reassign
 // adminship of a denom to a new account
