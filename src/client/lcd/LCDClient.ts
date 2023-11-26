@@ -35,6 +35,11 @@ export interface LCDClientConfig {
   lcd: string;
 
   /**
+   * The API key to be included in requests sent to the LCD.
+   */
+  apiToken?: string;
+
+  /**
    * Chain ID of the blockchain to connect to.
    */
   chainID: string;
@@ -142,7 +147,10 @@ export class LCDClient {
 
     this.apiRequesters = Object.keys(chains).reduce(
       (result: Record<string, APIRequester>, chainID) => {
-        result[chainID] = new APIRequester(chains[chainID].lcd);
+        result[chainID] = new APIRequester(
+          chains[chainID].lcd,
+          chains[chainID].apiToken
+        );
         return result;
       },
       {}

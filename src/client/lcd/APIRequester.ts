@@ -24,15 +24,25 @@ export class APIRequester {
   private axios: AxiosInstance;
   private readonly baseURL: string;
 
-  constructor(baseURL: string) {
+  constructor(baseURL: string, apiToken?: string) {
     this.baseURL = baseURL;
 
-    this.axios = Axios.create({
-      headers: {
-        Accept: 'application/json',
-      },
-      timeout: 30000,
-    });
+    if (apiToken) {
+      this.axios = Axios.create({
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${apiToken}`,
+        },
+        timeout: 30000,
+      });
+    } else {
+      this.axios = Axios.create({
+        headers: {
+          Accept: 'application/json',
+        },
+        timeout: 30000,
+      });
+    }
   }
 
   private computeEndpoint(endpoint: string) {
