@@ -5,6 +5,7 @@ import { LCDClient } from '../LCDClient';
 import { HistoryEntry } from '../../../core/wasm/HistoryEntry';
 import { AbsoluteTxPosition } from '../../../core/wasm/AbsoluteTxPosition';
 import { AccessConfig } from '../../../core/wasm';
+import { Params } from '@terra-money/terra.proto/cosmwasm/wasm/v1/types';
 
 export interface CodeInfo {
   code_id: number;
@@ -55,20 +56,6 @@ export namespace ContractInfo {
     label?: string;
     created?: AbsoluteTxPosition.Data;
     ibc_port_id?: string;
-  }
-}
-
-export interface WasmParams {
-  max_contract_size: number;
-  max_contract_gas: number;
-  max_contract_msg_size: number;
-}
-
-export namespace WasmParams {
-  export interface Data {
-    max_contract_size: string;
-    max_contract_gas: string;
-    max_contract_msg_size: string;
   }
 }
 
@@ -163,17 +150,10 @@ export class WasmAPI extends BaseAPI {
       .then(d => d.data);
   }
 
-  public async parameters(
-    chainID: string,
-    params: APIParams = {}
-  ): Promise<WasmParams> {
-    return this.getReqFromChainID(chainID)
-      .get<{ params: WasmParams.Data }>(`/terra/wasm/v1beta1/params`, params)
-      .then(({ params: d }) => ({
-        max_contract_size: Number.parseInt(d.max_contract_size),
-        max_contract_gas: Number.parseInt(d.max_contract_gas),
-        max_contract_msg_size: Number.parseInt(d.max_contract_msg_size),
-      }));
+  public async params(chainID: string): Promise<{ params: Params }> {
+    return this.getReqFromChainID(chainID).get<{ params: Params }>(
+      `/cosmwasm/wasm/v1/codes/params`
+    );
   }
 
   public async pinnedCodes(
