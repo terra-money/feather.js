@@ -28,16 +28,23 @@ import { GovV1API } from './api/GovV1API';
 import { ICAv1API } from './api/ICAv1API';
 import { ICQv1API } from './api/ICQv1API';
 
-export interface LCDClientConfig {
-  /**
-   * The base URL to which LCD requests will be made.
-   */
-  lcd: string;
-
+export type AxiosConfig = {
   /**
    * The API key to be included in requests sent to the LCD.
    */
   apiToken?: string;
+};
+
+export interface LCDClientConfig {
+  /**
+   * The Axios configuration to use when making requests to the LCD.
+   */
+  axiosConfig?: AxiosConfig;
+
+  /**
+   * The base URL to which LCD requests will be made.
+   */
+  lcd: string;
 
   /**
    * Chain ID of the blockchain to connect to.
@@ -149,7 +156,7 @@ export class LCDClient {
       (result: Record<string, APIRequester>, chainID) => {
         result[chainID] = new APIRequester(
           chains[chainID].lcd,
-          chains[chainID].apiToken
+          chains[chainID].axiosConfig
         );
         return result;
       },
