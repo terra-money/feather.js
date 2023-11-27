@@ -28,7 +28,19 @@ import { GovV1API } from './api/GovV1API';
 import { ICAv1API } from './api/ICAv1API';
 import { ICQv1API } from './api/ICQv1API';
 
+export type AxiosConfig = {
+  /**
+   * The API key to be included in requests sent to the LCD.
+   */
+  apiToken?: string;
+};
+
 export interface LCDClientConfig {
+  /**
+   * The Axios configuration to use when making requests to the LCD.
+   */
+  axiosConfig?: AxiosConfig;
+
   /**
    * The base URL to which LCD requests will be made.
    */
@@ -142,7 +154,10 @@ export class LCDClient {
 
     this.apiRequesters = Object.keys(chains).reduce(
       (result: Record<string, APIRequester>, chainID) => {
-        result[chainID] = new APIRequester(chains[chainID].lcd);
+        result[chainID] = new APIRequester(
+          chains[chainID].lcd,
+          chains[chainID].axiosConfig
+        );
         return result;
       },
       {}

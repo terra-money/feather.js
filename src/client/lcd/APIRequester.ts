@@ -1,5 +1,6 @@
 import Axios, { AxiosInstance } from 'axios';
 import { OrderBy as OrderBy_pb } from '@terra-money/legacy.proto/cosmos/tx/v1beta1/service';
+import { AxiosConfig } from './LCDClient';
 
 export type APIParams = Record<string, string | number | null | undefined>;
 
@@ -24,15 +25,25 @@ export class APIRequester {
   private axios: AxiosInstance;
   private readonly baseURL: string;
 
-  constructor(baseURL: string) {
+  constructor(baseURL: string, axiosConfig?: AxiosConfig) {
     this.baseURL = baseURL;
 
-    this.axios = Axios.create({
-      headers: {
-        Accept: 'application/json',
-      },
-      timeout: 30000,
-    });
+    if (axiosConfig?.apiToken) {
+      this.axios = Axios.create({
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${axiosConfig.apiToken}`,
+        },
+        timeout: 30000,
+      });
+    } else {
+      this.axios = Axios.create({
+        headers: {
+          Accept: 'application/json',
+        },
+        timeout: 30000,
+      });
+    }
   }
 
   private computeEndpoint(endpoint: string) {
