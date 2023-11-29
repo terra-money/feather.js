@@ -5,7 +5,7 @@ import { ClientConsensusStates } from '../../../core/ibc/core/client/ClientConse
 import { LCDClient } from '../LCDClient';
 //import { Params as ControllerParams } from '../../../core/ibc/applications/interchain-account/controller/Params';
 import { Params as HostParams } from '../../../core/ibc/applications/interchain-account/host/Params';
-import { Channel } from '../../../core/ibc/core/channel';
+import { Channel, IdentifiedChannel } from '../../../core/ibc/core/channel';
 import { IdentifiedConnection } from '../../../core/ibc/core/connection';
 import { Height } from '../../../core/ibc/core/client/Height';
 export interface IbcClientParams {
@@ -53,13 +53,16 @@ export class IbcAPI extends BaseAPI {
   public async channels(
     chainID: string,
     params: APIParams = {}
-  ): Promise<[Channel[], Pagination]> {
-    return this.getReqFromChainID(chainID)
-      .get<{
-        channels: Channel.Data[];
-        pagination: Pagination;
-      }>(`/ibc/core/channel/v1/channels`, params)
-      .then(d => [d.channels.map(Channel.fromData), d.pagination]);
+  ): Promise<{ channels: IdentifiedChannel[]; pagination: Pagination }> {
+    const res = await this.getReqFromChainID(chainID).get<{
+      channels: IdentifiedChannel.Data[];
+      pagination: Pagination;
+    }>(`/ibc/core/channel/v1/channels`, params);
+
+    return {
+      channels: res.channels.map(IdentifiedChannel.fromData),
+      pagination: res.pagination,
+    };
   }
 
   /**
