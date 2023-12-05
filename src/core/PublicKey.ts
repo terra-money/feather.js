@@ -7,6 +7,7 @@ import { PubKey as ValConsPubKey_pb } from '@terra-money/terra.proto/cosmos/cryp
 import { bech32 } from 'bech32';
 import { publicKeyConvert } from 'secp256k1';
 import { keccak256 } from 'ethers/lib/utils';
+import { Buffer } from "buffer"
 
 // As discussed in https://github.com/binance-chain/javascript-sdk/issues/163
 // Prefixes listed here: https://github.com/tendermint/tendermint/blob/d419fffe18531317c28c29a292ad7d253f6cafdf/docs/spec/blockchain/encoding.md#public-key-cryptography
