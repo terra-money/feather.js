@@ -122,6 +122,8 @@ import {
 } from './ica/controller/v1/msgs';
 import { MsgForceTransfer } from './tokenfactory/MsgForceTransfer';
 import { MsgSetDenomMetadata } from './tokenfactory/MsgSetDenomMetadata';
+import { FeemarketMsg, MsgParams } from './feemarket/msgs';
+import { MsgState } from './feemarket/msgs/MsgState';
 
 export type Msg =
   | BankMsg
@@ -145,6 +147,7 @@ export type Msg =
   | JaxMsg
   | MsgAuctionBid
   | FeeshareMsg
+  | FeemarketMsg
   | TokenFactoryMsg;
 
 export namespace Msg {
@@ -166,6 +169,7 @@ export namespace Msg {
     | JaxMsg.Amino
     | MsgAuctionBid.Amino
     | FeeshareMsg.Amino
+    | FeemarketMsg.Amino
     | TokenFactoryMsg.Amino;
 
   export type Data =
@@ -190,6 +194,7 @@ export namespace Msg {
     | JaxMsg.Data
     | MsgAuctionBid.Data
     | FeeshareMsg.Data
+    | FeemarketMsg.Data
     | TokenFactoryMsg.Data;
 
   export type Proto =
@@ -213,6 +218,7 @@ export namespace Msg {
     | JaxMsg.Proto
     | MsgAuctionBid.Proto
     | FeeshareMsg.Proto
+    | FeemarketMsg.Proto
     | TokenFactoryMsg.Proto;
 
   export function fromAmino(data: Msg.Amino, isClassic?: boolean): Msg {
@@ -517,6 +523,12 @@ export namespace Msg {
           isClassic
         );
 
+      // Feemarket module
+      case 'feemarket/MsgState':
+        return MsgState.fromAmino(data as MsgState.Amino);
+      case 'feemarket/MsgParams':
+        return MsgParams.fromAmino(data as MsgParams.Amino);
+
       // custom
       default:
         return MsgAminoCustom.fromAmino(data as any, isClassic);
@@ -724,6 +736,12 @@ export namespace Msg {
         return MsgUpdateFeeShare.fromData(data, isClassic);
       case '/juno.feeshare.v1.MsgCancelFeeShare':
         return MsgCancelFeeShare.fromData(data, isClassic);
+
+      // Feemarket
+      case '/feemarket.feemarket.v1.MsgState':
+        return MsgState.fromData(data);
+      case '/feemarket.feemarket.v1.MsgParams':
+        return MsgParams.fromData(data);
 
       // custom
       default:
@@ -935,6 +953,12 @@ export namespace Msg {
         return MsgUpdateFeeShare.unpackAny(proto, isClassic);
       case '/juno.feeshare.v1.MsgCancelFeeShare':
         return MsgCancelFeeShare.unpackAny(proto, isClassic);
+
+      // Feemarket
+      case '/feemarket.feemarket.v1.MsgState':
+        return MsgState.unpackAny(proto);
+      case '/feemarket.feemarket.v1.MsgParams':
+        return MsgParams.unpackAny(proto);
 
       default:
         throw Error(`not supported msg ${proto.typeUrl}`);

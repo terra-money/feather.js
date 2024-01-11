@@ -1,5 +1,6 @@
 import { JSONSerializable } from '../../../util/json';
 import { AccAddress } from '../../bech32';
+import { Any } from '@terra-money/terra.proto/google/protobuf/any';
 import { MsgState as MsgState_pb } from '@terra-money/terra.proto/feemarket/feemarket/v1/tx';
 import { State } from '../state';
 import { State as State_pb } from '@terra-money/terra.proto/feemarket/feemarket/v1/genesis';
@@ -58,6 +59,17 @@ export class MsgState extends JSONSerializable<
       state: state.toProto(),
       authority,
     });
+  }
+
+  public packAny(): Any {
+    return Any.fromPartial({
+      typeUrl: '/feemarket.feemarket.v1.MsgState',
+      value: MsgState_pb.encode(this.toProto()).finish(),
+    });
+  }
+
+  public static unpackAny(msgAny: Any): MsgState {
+    return MsgState.fromProto(MsgState_pb.decode(msgAny.value));
   }
 }
 
