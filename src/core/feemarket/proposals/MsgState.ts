@@ -15,21 +15,12 @@ export class MsgState extends JSONSerializable<
   }
 
   public static fromAmino(data: MsgState.Amino): MsgState {
-    const {
-      value: { state, authority },
-    } = data;
-    return new MsgState(State.fromAmino(state), authority);
+    data;
+    throw new Error('not implemented');
   }
 
   public toAmino(): MsgState.Amino {
-    const { state, authority } = this;
-    return {
-      type: 'feemarket/MsgState',
-      value: {
-        state: state.toAmino(),
-        authority: authority,
-      },
-    };
+    throw new Error('not implemented');
   }
 
   public static fromData(proto: MsgState.Data): MsgState {

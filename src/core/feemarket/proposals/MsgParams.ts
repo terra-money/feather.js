@@ -15,21 +15,12 @@ export class MsgParams extends JSONSerializable<
   }
 
   public static fromAmino(data: MsgParams.Amino): MsgParams {
-    const {
-      value: { params, authority },
-    } = data;
-    return new MsgParams(Params.fromAmino(params), authority);
+    data;
+    throw new Error('not implemented');
   }
 
   public toAmino(): MsgParams.Amino {
-    const { params, authority } = this;
-    return {
-      type: 'feemarket/MsgParams',
-      value: {
-        params: params.toAmino(),
-        authority: authority,
-      },
-    };
+    throw new Error('not implemented');
   }
 
   public static fromData(proto: MsgParams.Data): MsgParams {
