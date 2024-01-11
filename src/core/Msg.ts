@@ -77,7 +77,6 @@ import {
   MsgSetBeforeSendHook,
   TokenFactoryMsg,
 } from './tokenfactory';
-import { JAXMsgExecuteContract, JAXMsgStoreCode, JaxMsg } from './jax/msgs';
 import { MsgTransfer, IbcTransferMsg } from './ibc/applications/transfer';
 import {
   MsgCreateClient,
@@ -144,7 +143,6 @@ export type Msg =
   | AllianceMsg
   | CustomMsg
   | CrisisMsg
-  | JaxMsg
   | MsgAuctionBid
   | FeeshareMsg
   | FeemarketMsg
@@ -166,7 +164,6 @@ export namespace Msg {
     | AllianceMsg.Amino
     | CustomMsg.Amino
     | CrisisMsg.Amino
-    | JaxMsg.Amino
     | MsgAuctionBid.Amino
     | FeeshareMsg.Amino
     | FeemarketMsg.Amino
@@ -191,7 +188,6 @@ export namespace Msg {
     | AllianceMsg.Data
     | CustomMsg.Data
     | CrisisMsg.Data
-    | JaxMsg.Data
     | MsgAuctionBid.Data
     | FeeshareMsg.Data
     | FeemarketMsg.Data
@@ -215,7 +211,6 @@ export namespace Msg {
     | IbcChannelMsg.Proto
     | AllianceMsg.Proto
     | CrisisMsg.Proto
-    | JaxMsg.Proto
     | MsgAuctionBid.Proto
     | FeeshareMsg.Proto
     | FeemarketMsg.Proto
@@ -490,17 +485,6 @@ export namespace Msg {
           data as MsgVerifyInvariant.Amino,
           isClassic
         );
-      // jax
-      case 'jax/MsgExecuteContract':
-        return JAXMsgExecuteContract.fromAmino(
-          data as JAXMsgExecuteContract.Amino,
-          isClassic
-        );
-      case 'jax/MsgStoreCode':
-        return JAXMsgStoreCode.fromAmino(
-          data as JAXMsgStoreCode.Amino,
-          isClassic
-        );
 
       // Pob module
       case 'pob/MsgAuctionBid':
@@ -719,12 +703,6 @@ export namespace Msg {
       case '/cosmos.crisis.v1beta1.MsgVerifyInvariant':
         return MsgVerifyInvariant.fromData(data, isClassic);
 
-      // jax
-      case '/jax.MsgExecuteContract':
-        return JAXMsgExecuteContract.fromData(data, isClassic);
-      case '/jax.MsgStoreCode':
-        return JAXMsgStoreCode.fromData(data, isClassic);
-
       // pob module
       case '/pob.builder.v1.MsgAuctionBid':
         return MsgAuctionBid.fromData(data, isClassic);
@@ -936,12 +914,6 @@ export namespace Msg {
       // crisis
       case '/cosmos.crisis.v1beta1.MsgVerifyInvariant':
         return MsgVerifyInvariant.unpackAny(proto, isClassic);
-
-      // jax
-      case '/jax.MsgExecuteContract':
-        return JAXMsgExecuteContract.unpackAny(proto, isClassic);
-      case '/jax.MsgStoreCode':
-        return JAXMsgStoreCode.unpackAny(proto, isClassic);
 
       case '/pob.builder.v1.MsgAuctionBid':
         return MsgAuctionBid.unpackAny(proto, isClassic);
