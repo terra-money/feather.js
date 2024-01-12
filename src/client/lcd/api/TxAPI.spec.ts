@@ -1,6 +1,14 @@
 import { LCDClient } from '../LCDClient';
 import { APIRequester } from '../APIRequester';
-import { MsgSend } from '../../../core';
+import {
+  AuthInfo,
+  Coin,
+  Fee,
+  MsgSend,
+  MsgUndelegate,
+  Tx,
+  TxBody,
+} from '../../../core';
 import { TxAPI } from './TxAPI';
 import { MnemonicKey } from '../../../key';
 import { isTxError } from './TxAPI';
@@ -145,6 +153,67 @@ describe('TxAPI', () => {
         const res = await txAPI.broadcast(tx, 'pisco-1', 1);
         console.log(res);
       }).rejects.toThrow('Transaction was not included in a block');
+    });
+  });
+});
+
+describe('simulateTx', () => {
+  it('should simulate a transaction', async () => {
+    // Given the transaction that needs to be simulated
+    const mockTx = new Tx(
+      new TxBody([
+        new MsgUndelegate(
+          'mockDelegatorAddress',
+          'mockValidatorAddress',
+          new Coin('uluna', '1000000')
+        ),
+      ]),
+      new AuthInfo([], new Fee(50000000, [new Coin('uluna', '1000000')])),
+      ['']
+    );
+    // We mock the data that will be returned from the blockchain API and set it up as a function that returns a promise
+    const mockResponseData = {
+      gas_info: {
+        gas_wanted: '2000',
+        gas_used: '1000',
+      },
+      result: {
+        data: 'data_mocked',
+        log: '[{"type":"message","attributes":[{"key":"action","value":"undelegate"}]}]',
+        events: [
+          {
+            type: 'message',
+            attributes: [{ key: 'action', value: 'undelegate' }],
+          },
+        ],
+      },
+    };
+    lcd.apiRequesters['pisco-1'].post = jest.fn(
+      async () => Promise.resolve(mockResponseData) as any
+    );
+
+    // When simulating the transaction
+    const res = await lcd.tx.simulateTx(mockTx, 'pisco-1');
+
+    // Expect that the simulate endpoint have been executed,
+    // and assert the responses from the API.
+    expect(lcd.apiRequesters['pisco-1'].post).toHaveBeenCalledWith(
+      `/cosmos/tx/v1beta1/simulate`,
+      expect.any(Object)
+    );
+    expect(res.gas_info).toEqual({
+      gas_wanted: 2000,
+      gas_used: 1750,
+    });
+    expect(res.result).toEqual({
+      data: 'data_mocked',
+      log: '[{"type":"message","attributes":[{"key":"action","value":"undelegate"}]}]',
+      events: [
+        {
+          type: 'message',
+          attributes: [{ key: 'action', value: 'undelegate' }],
+        },
+      ],
     });
   });
 });
