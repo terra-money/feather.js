@@ -17,7 +17,8 @@ export class Params extends JSONSerializable<
     public targetBlockUtilization: string,
     public maxBlockUtilization: string,
     public window: string,
-    public enabled: boolean
+    public enabled: boolean,
+    public defaultFeeDenom: string
   ) {
     super();
   }
@@ -35,6 +36,7 @@ export class Params extends JSONSerializable<
         maxBlockUtilization,
         window,
         enabled,
+        defaultFeeDenom,
       },
     } = data;
 
@@ -48,7 +50,8 @@ export class Params extends JSONSerializable<
       targetBlockUtilization,
       maxBlockUtilization,
       window,
-      enabled || false
+      enabled || false,
+      defaultFeeDenom
     );
   }
 
@@ -64,6 +67,7 @@ export class Params extends JSONSerializable<
       maxBlockUtilization,
       window,
       enabled,
+      defaultFeeDenom,
     } = this;
     return {
       type: 'feemarket/Params',
@@ -78,6 +82,7 @@ export class Params extends JSONSerializable<
         maxBlockUtilization,
         window,
         enabled: enabled || false,
+        defaultFeeDenom,
       },
     };
   }
@@ -95,6 +100,7 @@ export class Params extends JSONSerializable<
       maxBlockUtilization,
       window,
       enabled,
+      defaultFeeDenom,
     } = proto;
     return new Params(
       alpha,
@@ -106,7 +112,8 @@ export class Params extends JSONSerializable<
       targetBlockUtilization,
       maxBlockUtilization,
       window,
-      enabled || false
+      enabled || false,
+      defaultFeeDenom
     );
   }
 
@@ -123,6 +130,7 @@ export class Params extends JSONSerializable<
       maxBlockUtilization,
       window,
       enabled,
+      defaultFeeDenom,
     } = this;
     return {
       '@type': '/feemarket.feemarket.v1.Params',
@@ -136,6 +144,7 @@ export class Params extends JSONSerializable<
       maxBlockUtilization,
       window,
       enabled: enabled || false,
+      defaultFeeDenom,
     };
   }
 
@@ -150,7 +159,8 @@ export class Params extends JSONSerializable<
       proto.targetBlockUtilization.toString(),
       proto.maxBlockUtilization.toString(),
       proto.window.toString(),
-      proto.enabled
+      proto.enabled,
+      proto.defaultFeeDenom
     );
   }
 
@@ -166,6 +176,7 @@ export class Params extends JSONSerializable<
       maxBlockUtilization,
       window,
       enabled,
+      defaultFeeDenom,
     } = this;
     return Params_pb.fromPartial({
       alpha,
@@ -178,6 +189,7 @@ export class Params extends JSONSerializable<
       maxBlockUtilization: Long.fromString(maxBlockUtilization),
       window: Long.fromString(window),
       enabled,
+      defaultFeeDenom,
     });
   }
 }
@@ -196,6 +208,7 @@ export namespace Params {
       maxBlockUtilization: string;
       window: string;
       enabled: boolean;
+      defaultFeeDenom: string;
     };
   }
 
@@ -211,6 +224,7 @@ export namespace Params {
     maxBlockUtilization: string;
     window: string;
     enabled: boolean;
+    defaultFeeDenom: string;
   }
   export type Proto = Params_pb;
 }
