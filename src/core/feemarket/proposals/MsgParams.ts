@@ -54,7 +54,7 @@ export class MsgParams extends JSONSerializable<
 
   public packAny(): Any {
     return Any.fromPartial({
-      typeUrl: '/feemarket.feemarket.v1.MsgState',
+      typeUrl: '/feemarket.feemarket.v1.MsgParams',
       value: MsgParams_pb.encode(this.toProto()).finish(),
     });
   }
