@@ -21,6 +21,10 @@ export class TxInfo {
    * @param tx transaction content
    * @param timestamp time of inclusion
    * @param code error code
+   * @param info additional tx information that can be indeterminisitc
+   * @param events events emitted during tx execution including ANTE and POST
+   * @param codespace 0 if succeeded or non-zero error code
+   * @param data proto encoded data to HEX type of the Msg
    */
   constructor(
     public height: number,
@@ -31,8 +35,11 @@ export class TxInfo {
     public gas_used: number,
     public tx: Tx,
     public timestamp: string,
-    public code?: number,
-    public codespace?: string
+    public code: number,
+    public info: string,
+    public events: Event[],
+    public codespace?: string,
+    public data?: string
   ) {}
 
   public static fromProto(proto: TxInfo.Proto): TxInfo {
@@ -46,7 +53,10 @@ export class TxInfo {
       Tx.unpackAny(proto.tx as Any),
       proto.timestamp,
       proto.code,
-      proto.codespace
+      proto.info,
+      proto.events,
+      proto.codespace,
+      proto.data
     );
   }
 
@@ -61,7 +71,10 @@ export class TxInfo {
       Tx.fromData(data.tx, isClassic),
       data.timestamp,
       data.code,
-      data.codespace
+      data.info,
+      data.events,
+      data.codespace,
+      data.data
     );
   }
 }
@@ -191,6 +204,7 @@ export namespace TxInfo {
     gas_used: string;
     tx: Tx.Data;
     timestamp: string;
+    events: Event[];
   }
   export type Proto = TxResponse_pb;
 }
