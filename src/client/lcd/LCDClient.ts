@@ -27,6 +27,7 @@ import { FeeshareAPI } from './api/FeeshareAPI';
 import { GovV1API } from './api/GovV1API';
 import { ICAv1API } from './api/ICAv1API';
 import { ICQv1API } from './api/ICQv1API';
+import { FeemarketAPI } from './api/FeemarketAPI';
 
 export type AxiosConfig = {
   /**
@@ -135,6 +136,7 @@ export class LCDClient {
   public ibcTransfer: IbcTransferAPI;
   public pob: PobAPI;
   public feeshare: FeeshareAPI;
+  public feemarket: FeemarketAPI;
   public utils: LCDUtils;
 
   /**
@@ -185,6 +187,7 @@ export class LCDClient {
     this.tx = new TxAPI(this);
     this.pob = new PobAPI(this);
     this.feeshare = new FeeshareAPI(this);
+    this.feemarket = new FeemarketAPI(this);
     this.utils = new LCDUtils(this);
   }
 
