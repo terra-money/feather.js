@@ -374,6 +374,41 @@ export class TxAPI extends BaseAPI {
     return new Dec(gasAdjustment).mul(simulateRes.gas_info.gas_used).toNumber();
   }
 
+  public async simulateTx(
+    tx: Tx,
+    chainID: string,
+    options?: {
+      gasAdjustment?: Numeric.Input;
+      signers?: SignerData[];
+    }
+  ): Promise<SimulateResponse> {
+    const gasAdjustment =
+      options?.gasAdjustment || this.lcd.config[chainID].gasAdjustment;
+
+    // append empty signatures if there's no signatures in tx
+    let simTx: Tx = tx;
+    if (tx.signatures.length <= 0) {
+      if (!(options && options.signers && options.signers.length > 0)) {
+        throw Error('cannot append signature');
+      }
+      const authInfo = new AuthInfo([], new Fee(0, new Coins()));
+      simTx = new Tx(tx.body, authInfo, []);
+      simTx.appendEmptySignatures(options.signers);
+    }
+
+    const simulateRes = await this.getReqFromChainID(chainID)
+      .post<SimulateResponse.Data>(`/cosmos/tx/v1beta1/simulate`, {
+        tx_bytes: this.encode(simTx, this.lcd.config[chainID].isClassic),
+      })
+      .then(d => SimulateResponse.fromData(d));
+
+    simulateRes.gas_info.gas_used = new Dec(gasAdjustment)
+      .mul(simulateRes.gas_info.gas_used)
+      .toNumber();
+
+    return simulateRes;
+  }
+
   public async computeTax(): Promise<Coins> {
     throw new Error('Tax was removed from network');
   }
