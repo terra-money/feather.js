@@ -24,10 +24,6 @@ export { MsgRedelegate as MsgAllianceRedelegate } from './alliance/msgs/MsgRedel
 export { MsgClaimDelegationRewards as MsgClaimDelegationRewards } from './alliance/msgs/MsgClaimDelegationRewards';
 export * from './alliance/proposals';
 
-// JAX
-export { MsgExecuteContract as JAXMsgExecuteContract } from './jax/msgs/MsgExecuteContract';
-export { MsgStoreCode as JAXMsgStoreCode } from './jax/msgs/MsgStoreCode';
-
 // Auth
 export * from './auth/Account';
 export * from './auth/BaseAccount';
