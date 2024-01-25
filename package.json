@@ -1,6 +1,6 @@
 {
   "name": "@terra-money/feather.js",
-  "version": "2.0.0-beta.16",
+  "version": "2.0.1",
   "description": "The JavaScript SDK for Terra and Feather chains",
   "license": "MIT",
   "author": "Terraform Labs, PTE.",
@@ -85,7 +85,6 @@
     "webpack-cli": "^4.3.0"
   },
   "dependencies": {
-    "@ethersproject/bytes": "^5.7.0",
     "@terra-money/legacy.proto": "npm:@terra-money/terra.proto@^0.1.7",
     "@terra-money/terra.proto": "^4.0.4",
     "assert": "^2.0.0",
@@ -96,7 +95,6 @@
     "bufferutil": "^4.0.3",
     "crypto-browserify": "^3.12.0",
     "decimal.js": "^10.2.1",
-    "ethers": "^5.7.2",
     "jscrypto": "^1.0.1",
     "keccak256": "^1.0.6",
     "long": "^5.2.3",

@@ -1,8 +1,6 @@
 import { SHA256, Word32Array } from 'jscrypto';
 import * as secp256k1 from 'secp256k1';
 import keccak256 from 'keccak256';
-import { Wallet } from 'ethers';
-import * as BytesUtils from '@ethersproject/bytes';
 import { Key } from './Key';
 import { InjectivePubKey, SimplePublicKey } from '../core/PublicKey';
 
@@ -42,15 +40,10 @@ export class RawKey extends Key {
   public etherSign(payload: Buffer): { signature: Uint8Array } {
     const hash = keccak256(payload);
 
-    const wallet = new Wallet(this.privateKey);
-
-    const signature = wallet._signingKey().signDigest(hash);
-
-    return {
-      signature: BytesUtils.arrayify(
-        BytesUtils.concat([signature.r, signature.s])
-      ),
-    };
+    return secp256k1.ecdsaSign(
+      Uint8Array.from(hash),
+      Uint8Array.from(this.privateKey)
+    );
   }
 
   public async sign(payload: Buffer): Promise<Buffer> {

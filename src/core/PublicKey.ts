@@ -6,7 +6,7 @@ import { PubKey as PubKey_pb } from '@terra-money/terra.proto/cosmos/crypto/secp
 import { PubKey as ValConsPubKey_pb } from '@terra-money/terra.proto/cosmos/crypto/ed25519/keys';
 import { bech32 } from 'bech32';
 import { publicKeyConvert } from 'secp256k1';
-import { keccak256 } from 'ethers/lib/utils';
+import keccak256 from 'keccak256';
 
 // As discussed in https://github.com/binance-chain/javascript-sdk/issues/163
 // Prefixes listed here: https://github.com/tendermint/tendermint/blob/d419fffe18531317c28c29a292ad7d253f6cafdf/docs/spec/blockchain/encoding.md#public-key-cryptography
@@ -257,12 +257,8 @@ export class InjectivePubKey extends JSONSerializable<
       publicKeyConvert(fixedPubKey, false)
     ).toString('hex');
 
-    const addressBuffer = Buffer.from(
-      keccak256(Buffer.from(decompressedPublicKey.substring(2), 'hex')).replace(
-        '0x',
-        ''
-      ),
-      'hex'
+    const addressBuffer = keccak256(
+      Buffer.from(decompressedPublicKey.substring(2), 'hex')
     ).subarray(-20);
 
     return addressBuffer;
