@@ -51,7 +51,7 @@ describe('AuthAPI', () => {
 
   describe('module accounts', () => {
     it('account exists', async () => {
-      const accts = await auth.moduleAccountInfo('pisco-1');
+      const accts = await auth.moduleAccountsInfo('pisco-1');
 
       expect(accts.length).toBeGreaterThan(0);
 
