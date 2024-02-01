@@ -1,3 +1,4 @@
+import exp from 'constants';
 import { LCDClient } from '../LCDClient';
 import { BankAPI } from './BankAPI';
 
@@ -27,9 +28,18 @@ describe('BankAPI', () => {
 
   describe('parameters', () => {
     it('parameters', async () => {
-      const param = await bank.parameters('pisco-1');
+      const param = await bank.params('pisco-1');
 
       expect(param.default_send_enabled).toBeDefined();
+    });
+  });
+
+  describe('supplyByDenom', () => {
+    it('query uluna supplyByDenom', async () => {
+      const res = await bank.supplyByDenom('pisco-1', 'uluna');
+
+      expect(res.denom).toBe('uluna');
+      expect(res.amount.toNumber()).toBeGreaterThan(0);
     });
   });
 });
