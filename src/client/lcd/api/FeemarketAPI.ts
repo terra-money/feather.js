@@ -36,7 +36,7 @@ export class FeemarketAPI extends BaseAPI {
    * @tags Query
    * @name state
    * @summary Query all paginated states of feemarket fee_denoms.
-   * @request GET:/feemarket/v1/state or GET:/feemarket/v1/state?fee_denom=${feeDenom}
+   * @request GET:/feemarket/v1/state/ or GET:/feemarket/v1/state/${feeDenom}
    */
   public async state(
     chainId: string,
@@ -44,8 +44,8 @@ export class FeemarketAPI extends BaseAPI {
     params?: Partial<PaginationOptions & APIParams>
   ) {
     const url = feeDenom
-      ? `/feemarket/v1/state?fee_denom=${feeDenom}`
-      : `/feemarket/v1/state`;
+      ? `/feemarket/v1/state/${feeDenom}`
+      : `/feemarket/v1/state/`;
 
     return this.getReqFromChainID(chainId).get<StateResponse>(url, params);
   }
@@ -56,14 +56,14 @@ export class FeemarketAPI extends BaseAPI {
    * @tags Query
    * @name baseFee
    * @summary Query the current basefee for fee_denom.
-   * @request GET:/feemarket/v1/base_fee?fee_denom=${feeDenom}
+   * @request GET:/feemarket/v1/base_fee/${feeDenom}
    */
   public async baseFee(
     chainId: string,
     feeDenom: string,
     params?: Partial<PaginationOptions & APIParams>
   ) {
-    const url = `/feemarket/v1/base_fee?fee_denom=${feeDenom}`;
+    const url = `/feemarket/v1/base_fee/${feeDenom}`;
 
     return this.getReqFromChainID(chainId).get<BaseFeeResponse>(url, params);
   }
