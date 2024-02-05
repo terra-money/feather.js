@@ -11,12 +11,8 @@ import {
 } from '../../upgrade/proposals';
 import {
   ClearAdminProposal,
-  ExecuteContractProposal,
-  InstantiateContractProposal,
-  MigrateContractProposal,
   PinCodesProposal,
   StoreCodeProposal,
-  SudoContractProposal,
   UnpinCodesProposal,
   UpdateAdminProposal,
   UpdateInstantiateConfigProposal,
@@ -39,6 +35,12 @@ import {
   MsgDeleteAlliance,
 } from '../../../core/alliance/proposals';
 import { AccAddress } from 'core/bech32';
+import {
+  MsgExecuteContract,
+  MsgInstantiateContract,
+  MsgMigrateContract,
+  MsgSudoContract,
+} from '../../wasm/msgs';
 
 /**
  * Stores information pertaining to a submitted proposal, such as its status and time of
@@ -318,12 +320,12 @@ export namespace Proposal {
     | MsgDeleteAlliance
     | ClientUpdateProposal
     | ClearAdminProposal
-    | ExecuteContractProposal
-    | InstantiateContractProposal
-    | MigrateContractProposal
+    | MsgExecuteContract
+    | MsgInstantiateContract
+    | MsgMigrateContract
     | PinCodesProposal
     | StoreCodeProposal
-    | SudoContractProposal
+    | MsgSudoContract
     | UnpinCodesProposal
     | UpdateAdminProposal
     | UpdateInstantiateConfigProposal;
@@ -343,12 +345,12 @@ export namespace Proposal {
       | MsgDeleteAlliance.Amino
       | ClientUpdateProposal.Amino
       | ClearAdminProposal.Amino
-      | ExecuteContractProposal.Amino
-      | InstantiateContractProposal.Amino
-      | MigrateContractProposal.Amino
+      | MsgExecuteContract.Amino
+      | MsgInstantiateContract.Amino
+      | MsgMigrateContract.Amino
       | PinCodesProposal.Amino
       | StoreCodeProposal.Amino
-      | SudoContractProposal.Amino
+      | MsgSudoContract.Amino
       | UnpinCodesProposal.Amino
       | UpdateAdminProposal.Amino
       | UpdateInstantiateConfigProposal.Amino
@@ -368,12 +370,12 @@ export namespace Proposal {
       | MsgDeleteAlliance.Data
       | ClientUpdateProposal.Data
       | ClearAdminProposal.Data
-      | ExecuteContractProposal.Data
-      | InstantiateContractProposal.Data
-      | MigrateContractProposal.Data
+      | MsgExecuteContract.Data
+      | MsgInstantiateContract.Data
+      | MsgMigrateContract.Data
       | PinCodesProposal.Data
       | StoreCodeProposal.Data
-      | SudoContractProposal.Data
+      | MsgSudoContract.Data
       | UnpinCodesProposal.Data
       | UpdateAdminProposal.Data
       | UpdateInstantiateConfigProposal.Data
@@ -393,12 +395,12 @@ export namespace Proposal {
       | MsgDeleteAlliance.Proto
       | ClientUpdateProposal.Proto
       | ClearAdminProposal.Proto
-      | ExecuteContractProposal.Proto
-      | InstantiateContractProposal.Proto
-      | MigrateContractProposal.Proto
+      | MsgExecuteContract.Proto
+      | MsgInstantiateContract.Proto
+      | MsgMigrateContract.Proto
       | PinCodesProposal.Proto
       | StoreCodeProposal.Proto
-      | SudoContractProposal.Proto
+      | MsgSudoContract.Proto
       | UnpinCodesProposal.Proto
       | UpdateAdminProposal.Proto
       | UpdateInstantiateConfigProposal.Proto
@@ -428,18 +430,18 @@ export namespace Proposal {
           return ClientUpdateProposal.fromAmino(amino, isClassic);
         case 'wasm/ClearAdminProposal':
           return ClearAdminProposal.fromAmino(amino, isClassic);
-        case 'wasm/ExecuteContractProposal':
-          return ExecuteContractProposal.fromAmino(amino, isClassic);
-        case 'wasm/InstantiateContractProposal':
-          return InstantiateContractProposal.fromAmino(amino, isClassic);
-        case 'wasm/MigrateContractProposal':
-          return MigrateContractProposal.fromAmino(amino, isClassic);
+        case 'wasm/MsgExecuteContract':
+          return MsgExecuteContract.fromAmino(amino, isClassic);
+        case 'wasm/MsgInstantiateContract':
+          return MsgInstantiateContract.fromAmino(amino, isClassic);
+        case 'wasm/MsgMigrateContract':
+          return MsgMigrateContract.fromAmino(amino, isClassic);
         case 'wasm/PinCodesProposal':
           return PinCodesProposal.fromAmino(amino, isClassic);
         case 'wasm/StoreCodeProposal':
           return StoreCodeProposal.fromAmino(amino, isClassic);
-        case 'wasm/SudoContractProposal':
-          return SudoContractProposal.fromAmino(amino, isClassic);
+        case 'wasm/MsgSudoContract':
+          return MsgSudoContract.fromAmino(amino, isClassic);
         case 'wasm/UnpinCodesProposal':
           return UnpinCodesProposal.fromAmino(amino, isClassic);
         case 'wasm/UpdateAdminProposal':
@@ -479,18 +481,18 @@ export namespace Proposal {
           return ClientUpdateProposal.fromData(data, isClassic);
         case '/cosmwasm.wasm.v1.ClearAdminProposal':
           return ClearAdminProposal.fromData(data, isClassic);
-        case '/cosmwasm.wasm.v1.ExecuteContractProposal':
-          return ExecuteContractProposal.fromData(data, isClassic);
-        case '/cosmwasm.wasm.v1.InstantiateContractProposal':
-          return InstantiateContractProposal.fromData(data, isClassic);
-        case '/cosmwasm.wasm.v1.MigrateContractProposal':
-          return MigrateContractProposal.fromData(data, isClassic);
+        case '/cosmwasm.wasm.v1.MsgExecuteContract':
+          return MsgExecuteContract.fromData(data, isClassic);
+        case '/cosmwasm.wasm.v1.MsgInstantiateContract':
+          return MsgInstantiateContract.fromData(data, isClassic);
+        case '/cosmwasm.wasm.v1.MsgMigrateContract':
+          return MsgMigrateContract.fromData(data, isClassic);
         case '/cosmwasm.wasm.v1.PinCodesProposal':
           return PinCodesProposal.fromData(data, isClassic);
         case '/cosmwasm.wasm.v1.StoreCodeProposal':
           return StoreCodeProposal.fromData(data, isClassic);
-        case '/cosmwasm.wasm.v1.SudoContractProposal':
-          return SudoContractProposal.fromData(data, isClassic);
+        case '/cosmwasm.wasm.v1.MsgSudoContract':
+          return MsgSudoContract.fromData(data, isClassic);
         case '/cosmwasm.wasm.v1.UnpinCodesProposal':
           return UnpinCodesProposal.fromData(data, isClassic);
         case '/cosmwasm.wasm.v1.UpdateAdminProposal':
@@ -534,18 +536,18 @@ export namespace Proposal {
           return ClientUpdateProposal.unpackAny(anyProto, isClassic);
         case '/cosmwasm.wasm.v1.ClearAdminProposal':
           return ClearAdminProposal.unpackAny(anyProto, isClassic);
-        case '/cosmwasm.wasm.v1.ExecuteContractProposal':
-          return ExecuteContractProposal.unpackAny(anyProto, isClassic);
-        case '/cosmwasm.wasm.v1.InstantiateContractProposal':
-          return InstantiateContractProposal.unpackAny(anyProto, isClassic);
-        case '/cosmwasm.wasm.v1.MigrateContractProposal':
-          return MigrateContractProposal.unpackAny(anyProto, isClassic);
+        case '/cosmwasm.wasm.v1.MsgExecuteContract':
+          return MsgExecuteContract.unpackAny(anyProto, isClassic);
+        case '/cosmwasm.wasm.v1.MsgInstantiateContract':
+          return MsgInstantiateContract.unpackAny(anyProto, isClassic);
+        case '/cosmwasm.wasm.v1.MsgMigrateContract':
+          return MsgMigrateContract.unpackAny(anyProto, isClassic);
         case '/cosmwasm.wasm.v1.PinCodesProposal':
           return PinCodesProposal.unpackAny(anyProto, isClassic);
         case '/cosmwasm.wasm.v1.StoreCodeProposal':
           return StoreCodeProposal.unpackAny(anyProto, isClassic);
-        case '/cosmwasm.wasm.v1.SudoContractProposal':
-          return SudoContractProposal.unpackAny(anyProto, isClassic);
+        case '/cosmwasm.wasm.v1.MsgSudoContract':
+          return MsgSudoContract.unpackAny(anyProto, isClassic);
         case '/cosmwasm.wasm.v1.UnpinCodesProposal':
           return UnpinCodesProposal.unpackAny(anyProto, isClassic);
         case '/cosmwasm.wasm.v1.UpdateAdminProposal':
