@@ -1,5 +1,5 @@
 import { BaseAPI } from './BaseAPI';
-import { Coins, AccAddress } from '../../../core';
+import { Coins, Coin, AccAddress } from '../../../core';
 import { APIParams, Pagination, PaginationOptions } from '../APIRequester';
 import { LCDClient } from '../LCDClient';
 
@@ -32,6 +32,23 @@ export class BankAPI extends BaseAPI {
   }
 
   /**
+   * Query parameters of the bank module,
+   * @param chainID chain id
+   * @returns params of the bank module
+   */
+  public async params(
+    chainID: string,
+    params: APIParams = {}
+  ): Promise<BankParams> {
+    return this.getReqFromChainID(chainID)
+      .get<{ params: BankParams.Data }>(`/cosmos/bank/v1beta1/params`, params)
+      .then(({ params: d }) => ({
+        send_enabled: d.send_enabled,
+        default_send_enabled: d.default_send_enabled,
+      }));
+  }
+
+  /**
    * Look up the balance of an account by its address.
    * @param address address of account to look up.
    */
@@ -44,6 +61,22 @@ export class BankAPI extends BaseAPI {
         balances: Coins.Data;
         pagination: Pagination;
       }>(`/cosmos/bank/v1beta1/balances/${address}`, params)
+      .then(d => [Coins.fromData(d.balances), d.pagination]);
+  }
+
+  /**
+   * Lqueries the spenable balance of all coins for a single account.
+   * @param address address of account to look up.
+   */
+  public async spendableBalances(
+    address: AccAddress,
+    params: Partial<PaginationOptions & APIParams> = {}
+  ): Promise<[Coins, Pagination]> {
+    return this.getReqFromAddress(address)
+      .get<{
+        balances: Coins.Data;
+        pagination: Pagination;
+      }>(`/cosmos/bank/v1beta1/spendable_balances/${address}`, params)
       .then(d => [Coins.fromData(d.balances), d.pagination]);
   }
 
@@ -64,31 +97,16 @@ export class BankAPI extends BaseAPI {
   }
 
   /**
-   * Lqueries the spenable balance of all coins for a single account.
-   * @param address address of account to look up.
+   * Get the total supply of tokens in circulation for all denom.
+   * @param chainID chain id
+   * @param denom denom of the coin
    */
-  public async spendableBalances(
-    address: AccAddress,
-    params: Partial<PaginationOptions & APIParams> = {}
-  ): Promise<[Coins, Pagination]> {
-    return this.getReqFromAddress(address)
-      .get<{
-        balances: Coins.Data;
-        pagination: Pagination;
-      }>(`/cosmos/bank/v1beta1/spendable_balances/${address}`, params)
-      .then(d => [Coins.fromData(d.balances), d.pagination]);
-  }
-
-  public async parameters(
-    chainID: string,
-    params: APIParams = {}
-  ): Promise<BankParams> {
+  public async supplyByDenom(chainID: string, denom: string): Promise<Coin> {
     return this.getReqFromChainID(chainID)
-      .get<{ params: BankParams.Data }>(`/cosmos/bank/v1beta1/params`, params)
-      .then(({ params: d }) => ({
-        send_enabled: d.send_enabled,
-        default_send_enabled: d.default_send_enabled,
-      }));
+      .get<{ amount: Coin.Data }>(`/cosmos/bank/v1beta1/supply/by_denom`, {
+        denom: denom,
+      })
+      .then(d => Coin.fromData(d.amount));
   }
 
   // TODO: TBD: implement denoms_medata?
