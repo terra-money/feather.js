@@ -1,2 +1,2 @@
 export * from './MsgParams';
-export * from './MsgState';
+export * from './MsgFeeDenomParam';

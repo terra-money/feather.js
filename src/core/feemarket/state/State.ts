@@ -8,9 +8,6 @@ export class State extends JSONSerializable<
   State.Proto
 > {
   constructor(
-    public feeDenom: string,
-    public minBaseFee: string,
-    public baseFee: string,
     public learningRate: string,
     public window: string[],
     public index: string
@@ -20,27 +17,17 @@ export class State extends JSONSerializable<
 
   public static fromAmino(data: State.Amino): State {
     const {
-      value: { feeDenom, minBaseFee, baseFee, learningRate, window, index },
+      value: { learningRate, window, index },
     } = data;
 
-    return new State(
-      feeDenom,
-      minBaseFee,
-      baseFee,
-      learningRate,
-      window,
-      index
-    );
+    return new State(learningRate, window, index);
   }
 
   public toAmino(): State.Amino {
-    const { feeDenom, minBaseFee, baseFee, learningRate, window, index } = this;
+    const { learningRate, window, index } = this;
     return {
       type: 'feemarket/State',
       value: {
-        feeDenom,
-        minBaseFee,
-        baseFee,
         learningRate,
         window,
         index,
@@ -50,26 +37,15 @@ export class State extends JSONSerializable<
 
   public static fromData(proto: State.Data, _?: boolean): State {
     _;
-    const { feeDenom, minBaseFee, baseFee, learningRate, window, index } =
-      proto;
-    return new State(
-      feeDenom,
-      minBaseFee,
-      baseFee,
-      learningRate,
-      window,
-      index
-    );
+    const { learningRate, window, index } = proto;
+    return new State(learningRate, window, index);
   }
 
   public toData(_?: boolean): State.Data {
     _;
-    const { feeDenom, minBaseFee, baseFee, learningRate, window, index } = this;
+    const { learningRate, window, index } = this;
     return {
       '@type': '/feemarket.feemarket.v1.State',
-      feeDenom,
-      minBaseFee,
-      baseFee,
       learningRate,
       window,
       index,
@@ -78,9 +54,6 @@ export class State extends JSONSerializable<
 
   public static fromProto(proto: State.Proto): State {
     return new State(
-      proto.feeDenom,
-      proto.minBaseFee,
-      proto.baseFee,
       proto.learningRate,
       proto.window.map(x => x.toString()),
       proto.index.toString()
@@ -88,11 +61,8 @@ export class State extends JSONSerializable<
   }
 
   public toProto(): State.Proto {
-    const { feeDenom, minBaseFee, baseFee, learningRate, window, index } = this;
+    const { learningRate, window, index } = this;
     return State_pb.fromPartial({
-      feeDenom,
-      minBaseFee,
-      baseFee,
       learningRate,
       window: window.map(x => Long.fromString(x)),
       index: Long.fromString(index),
@@ -104,9 +74,6 @@ export namespace State {
   export interface Amino {
     type: 'feemarket/State';
     value: {
-      feeDenom: string;
-      minBaseFee: string;
-      baseFee: string;
       learningRate: string;
       window: string[];
       index: string;
@@ -115,9 +82,6 @@ export namespace State {
 
   export interface Data {
     '@type': '/feemarket.feemarket.v1.State';
-    feeDenom: string;
-    minBaseFee: string;
-    baseFee: string;
     learningRate: string;
     window: string[];
     index: string;

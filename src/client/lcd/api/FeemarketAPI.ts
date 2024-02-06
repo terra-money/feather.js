@@ -1,6 +1,7 @@
-import { Params } from '@terra-money/terra.proto/feemarket/feemarket/v1/params';
 import {
   BaseFeeResponse,
+  FeeDenomParamResponse,
+  ParamsResponse,
   StateResponse,
 } from '@terra-money/terra.proto/feemarket/feemarket/v1/query';
 import { APIParams, PaginationOptions } from '../APIRequester';
@@ -23,31 +24,28 @@ export class FeemarketAPI extends BaseAPI {
     chainId: string,
     params: Partial<PaginationOptions & APIParams> = {}
   ) {
-    return this.getReqFromChainID(chainId).get<{ params: Params }>(
+    return this.getReqFromChainID(chainId).get<ParamsResponse>(
       `/feemarket/v1/params`,
       params
     );
   }
 
   /**
-   * Query all paginated feemarket states. When fee_denom is not specified, it returns all states,
-   * otherwise it returns the state of the specific fee_denom.
+   * Query feemarket state.
    *
    * @tags Query
    * @name state
    * @summary Query all paginated states of feemarket fee_denoms.
-   * @request GET:/feemarket/v1/state/ or GET:/feemarket/v1/state/${feeDenom}
+   * @request GET:/feemarket/v1/state
    */
   public async state(
     chainId: string,
-    feeDenom?: string,
-    params?: Partial<PaginationOptions & APIParams>
+    params: Partial<PaginationOptions & APIParams> = {}
   ) {
-    const url = feeDenom
-      ? `/feemarket/v1/state/${feeDenom}`
-      : `/feemarket/v1/state/`;
-
-    return this.getReqFromChainID(chainId).get<StateResponse>(url, params);
+    return this.getReqFromChainID(chainId).get<StateResponse>(
+      `/feemarket/v1/state`,
+      params
+    );
   }
 
   /**
@@ -66,5 +64,28 @@ export class FeemarketAPI extends BaseAPI {
     const url = `/feemarket/v1/base_fee/${feeDenom}`;
 
     return this.getReqFromChainID(chainId).get<BaseFeeResponse>(url, params);
+  }
+
+  /**
+   * Query the current feeDenomParam for fee_denom.
+   *
+   * @tags Query
+   * @name feeDenomParam
+   * @summary Query the current feeDenomParam for fee_denom.
+   * @request GET:/feemarket/v1/fee_denom_param/${feeDenom} or GET:/feemarket/v1/fee_denom_param/
+   */
+  public async feeDenomParam(
+    chainId: string,
+    feeDenom: string,
+    params?: Partial<PaginationOptions & APIParams>
+  ) {
+    const url = feeDenom
+      ? `/feemarket/v1/fee_denom_param/${feeDenom}`
+      : `/feemarket/v1/fee_denom_param/`;
+
+    return this.getReqFromChainID(chainId).get<FeeDenomParamResponse>(
+      url,
+      params
+    );
   }
 }

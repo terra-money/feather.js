@@ -121,7 +121,6 @@ import {
 } from './ica/controller/v1/msgs';
 import { MsgForceTransfer } from './tokenfactory/MsgForceTransfer';
 import { MsgSetDenomMetadata } from './tokenfactory/MsgSetDenomMetadata';
-import { MsgParams, MsgState } from './feemarket/proposals';
 
 export type Msg =
   | BankMsg

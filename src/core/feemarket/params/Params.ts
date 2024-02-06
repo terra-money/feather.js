@@ -11,7 +11,6 @@ export class Params extends JSONSerializable<
     public alpha: string,
     public beta: string,
     public theta: string,
-    public delta: string,
     public minLearningRate: string,
     public maxLearningRate: string,
     public targetBlockUtilization: string,
@@ -29,7 +28,6 @@ export class Params extends JSONSerializable<
         alpha,
         beta,
         theta,
-        delta,
         minLearningRate,
         maxLearningRate,
         targetBlockUtilization,
@@ -44,7 +42,6 @@ export class Params extends JSONSerializable<
       alpha,
       beta,
       theta,
-      delta,
       minLearningRate,
       maxLearningRate,
       targetBlockUtilization,
@@ -60,7 +57,6 @@ export class Params extends JSONSerializable<
       alpha,
       beta,
       theta,
-      delta,
       minLearningRate,
       maxLearningRate,
       targetBlockUtilization,
@@ -75,7 +71,6 @@ export class Params extends JSONSerializable<
         alpha,
         beta,
         theta,
-        delta,
         minLearningRate,
         maxLearningRate,
         targetBlockUtilization,
@@ -93,7 +88,6 @@ export class Params extends JSONSerializable<
       alpha,
       beta,
       theta,
-      delta,
       minLearningRate,
       maxLearningRate,
       targetBlockUtilization,
@@ -106,7 +100,6 @@ export class Params extends JSONSerializable<
       alpha,
       beta,
       theta,
-      delta,
       minLearningRate,
       maxLearningRate,
       targetBlockUtilization,
@@ -123,7 +116,6 @@ export class Params extends JSONSerializable<
       alpha,
       beta,
       theta,
-      delta,
       minLearningRate,
       maxLearningRate,
       targetBlockUtilization,
@@ -137,7 +129,6 @@ export class Params extends JSONSerializable<
       alpha,
       beta,
       theta,
-      delta,
       minLearningRate,
       maxLearningRate,
       targetBlockUtilization,
@@ -153,7 +144,6 @@ export class Params extends JSONSerializable<
       proto.alpha,
       proto.beta,
       proto.theta,
-      proto.delta,
       proto.minLearningRate,
       proto.maxLearningRate,
       proto.targetBlockUtilization.toString(),
@@ -169,7 +159,6 @@ export class Params extends JSONSerializable<
       alpha,
       beta,
       theta,
-      delta,
       minLearningRate,
       maxLearningRate,
       targetBlockUtilization,
@@ -182,7 +171,6 @@ export class Params extends JSONSerializable<
       alpha,
       beta,
       theta,
-      delta,
       minLearningRate,
       maxLearningRate,
       targetBlockUtilization: Long.fromString(targetBlockUtilization),
@@ -201,7 +189,6 @@ export namespace Params {
       alpha: string;
       beta: string;
       theta: string;
-      delta: string;
       minLearningRate: string;
       maxLearningRate: string;
       targetBlockUtilization: string;
@@ -217,7 +204,6 @@ export namespace Params {
     alpha: string;
     beta: string;
     theta: string;
-    delta: string;
     minLearningRate: string;
     maxLearningRate: string;
     targetBlockUtilization: string;
