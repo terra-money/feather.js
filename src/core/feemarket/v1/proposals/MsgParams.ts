@@ -1,8 +1,8 @@
-import { JSONSerializable } from '../../../util/json';
-import { AccAddress } from '../../bech32';
+import { JSONSerializable } from '../../../../util/json';
+import { AccAddress } from '../../../bech32';
 import { Any } from '@terra-money/terra.proto/google/protobuf/any';
 import { MsgParams as MsgParams_pb } from '@terra-money/terra.proto/feemarket/feemarket/v1/tx';
-import { Params } from '../params';
+import { FeemarketParams } from '../models/FeemarketParams';
 import { Params as Params_pb } from '@terra-money/terra.proto/feemarket/feemarket/v1/params';
 
 export class MsgParams extends JSONSerializable<
@@ -10,7 +10,7 @@ export class MsgParams extends JSONSerializable<
   MsgParams.Data,
   MsgParams.Proto
 > {
-  constructor(public params: Params, public authority: AccAddress) {
+  constructor(public params: FeemarketParams, public authority: AccAddress) {
     super();
   }
 
@@ -25,7 +25,7 @@ export class MsgParams extends JSONSerializable<
 
   public static fromData(proto: MsgParams.Data): MsgParams {
     const { params, authority } = proto;
-    return new MsgParams(Params.fromData(params), authority);
+    return new MsgParams(FeemarketParams.fromData(params), authority);
   }
 
   public toData(): MsgParams.Data {
@@ -39,7 +39,7 @@ export class MsgParams extends JSONSerializable<
 
   public static fromProto(proto: MsgParams.Proto): MsgParams {
     return new MsgParams(
-      Params.fromProto(proto.params as Params_pb),
+      FeemarketParams.fromProto(proto.params as Params_pb),
       proto.authority
     );
   }
@@ -68,14 +68,14 @@ export namespace MsgParams {
   export interface Amino {
     type: 'feemarket/MsgParams';
     value: {
-      params: Params.Amino;
+      params: FeemarketParams.Amino;
       authority: AccAddress;
     };
   }
 
   export interface Data {
     '@type': '/feemarket.feemarket.v1.MsgParams';
-    params: Params.Data;
+    params: FeemarketParams.Data;
     authority: AccAddress;
   }
   export type Proto = MsgParams_pb;

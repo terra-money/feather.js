@@ -1,12 +1,12 @@
-import {
-  BaseFeeResponse,
-  FeeDenomParamResponse,
-  ParamsResponse,
-  StateResponse,
-} from '@terra-money/terra.proto/feemarket/feemarket/v1/query';
 import { APIParams, PaginationOptions } from '../APIRequester';
 import { LCDClient } from '../LCDClient';
 import { BaseAPI } from './BaseAPI';
+import {
+  FeemarketParams,
+  FeemarketState,
+  BaseFee,
+  FeemarketDenomParams,
+} from '../../../core/feemarket';
 
 export class FeemarketAPI extends BaseAPI {
   constructor(public lcd: LCDClient) {
@@ -14,7 +14,7 @@ export class FeemarketAPI extends BaseAPI {
   }
 
   /**
-   * Query the feemarket module params
+   * Query the feemarket module params.
    *
    * @tags Query
    * @name params
@@ -22,12 +22,13 @@ export class FeemarketAPI extends BaseAPI {
    */
   public async params(
     chainId: string,
-    params: Partial<PaginationOptions & APIParams> = {}
-  ) {
-    return this.getReqFromChainID(chainId).get<ParamsResponse>(
-      `/feemarket/v1/params`,
-      params
-    );
+    params: Partial<APIParams> = {}
+  ): Promise<FeemarketParams> {
+    const res = await this.getReqFromChainID(chainId).get<{
+      params: FeemarketParams.Data;
+    }>(`/feemarket/v1/params`, params);
+
+    return FeemarketParams.fromData(res.params);
   }
 
   /**
@@ -35,17 +36,14 @@ export class FeemarketAPI extends BaseAPI {
    *
    * @tags Query
    * @name state
-   * @summary Query all paginated states of feemarket fee_denoms.
    * @request GET:/feemarket/v1/state
    */
-  public async state(
-    chainId: string,
-    params: Partial<PaginationOptions & APIParams> = {}
-  ) {
-    return this.getReqFromChainID(chainId).get<StateResponse>(
-      `/feemarket/v1/state`,
-      params
-    );
+  public async state(chainId: string, params: Partial<APIParams> = {}) {
+    const res = await this.getReqFromChainID(chainId).get<{
+      state: FeemarketState.Data;
+    }>(`/feemarket/v1/state`, params);
+
+    return FeemarketState.fromData(res.state);
   }
 
   /**
@@ -61,9 +59,12 @@ export class FeemarketAPI extends BaseAPI {
     feeDenom: string,
     params?: Partial<PaginationOptions & APIParams>
   ) {
-    const url = `/feemarket/v1/base_fee/${feeDenom}`;
+    const res = await this.getReqFromChainID(chainId).get<BaseFee.Data>(
+      `/feemarket/v1/base_fee/${feeDenom}`,
+      params
+    );
 
-    return this.getReqFromChainID(chainId).get<BaseFeeResponse>(url, params);
+    return BaseFee.fromData(res);
   }
 
   /**
@@ -78,14 +79,11 @@ export class FeemarketAPI extends BaseAPI {
     chainId: string,
     feeDenom: string,
     params?: Partial<PaginationOptions & APIParams>
-  ) {
-    const url = feeDenom
-      ? `/feemarket/v1/fee_denom_param/${feeDenom}`
-      : `/feemarket/v1/fee_denom_param/`;
+  ): Promise<Array<FeemarketDenomParams>> {
+    const res = await this.getReqFromChainID(chainId).get<{
+      fee_denom_params: Array<FeemarketDenomParams.Data>;
+    }>(`/feemarket/v1/fee_denom_param/${feeDenom}`, params);
 
-    return this.getReqFromChainID(chainId).get<FeeDenomParamResponse>(
-      url,
-      params
-    );
+    return res.fee_denom_params.map(x => FeemarketDenomParams.fromData(x));
   }
 }

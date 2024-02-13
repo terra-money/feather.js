@@ -1,5 +1,5 @@
-import { JSONSerializable } from '../../../util/json';
-import { AccAddress } from '../../bech32';
+import { JSONSerializable } from '../../../../util/json';
+import { AccAddress } from '../../../bech32';
 import { Any } from '@terra-money/terra.proto/google/protobuf/any';
 import { MsgFeeDenomParam as MsgFeeDenomParam_pb } from '@terra-money/terra.proto/feemarket/feemarket/v1/tx';
 
@@ -26,16 +26,16 @@ export class MsgFeeDenomParam extends JSONSerializable<
   }
 
   public static fromData(proto: MsgFeeDenomParam.Data): MsgFeeDenomParam {
-    const { feeDenom, minBaseFee, authority } = proto;
-    return new MsgFeeDenomParam(feeDenom, minBaseFee, authority);
+    const { fee_denom, min_base_fee, authority } = proto;
+    return new MsgFeeDenomParam(fee_denom, min_base_fee, authority);
   }
 
   public toData(): MsgFeeDenomParam.Data {
     const { feeDenom, minBaseFee, authority } = this;
     return {
       '@type': '/feemarket.feemarket.v1.MsgFeeDenomParam',
-      feeDenom: feeDenom,
-      minBaseFee: minBaseFee,
+      fee_denom: feeDenom,
+      min_base_fee: minBaseFee,
       authority: authority,
     };
   }
@@ -73,16 +73,16 @@ export namespace MsgFeeDenomParam {
   export interface Amino {
     type: 'feemarket/MsgFeeDenomParam';
     value: {
-      feeDenom: string;
-      minBaseFee: string;
+      fee_denom: string;
+      min_base_fee: string;
       authority: AccAddress;
     };
   }
 
   export interface Data {
     '@type': '/feemarket.feemarket.v1.MsgFeeDenomParam';
-    feeDenom: string;
-    minBaseFee: string;
+    fee_denom: string;
+    min_base_fee: string;
     authority: AccAddress;
   }
   export type Proto = MsgFeeDenomParam_pb;

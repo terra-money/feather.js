@@ -38,7 +38,7 @@ import {
   MsgCreateAlliance,
   MsgDeleteAlliance,
 } from '../../../core/alliance/proposals';
-import { MsgParams, MsgFeeDenomParam } from '../../../core/feemarket/proposals';
+import { MsgParams, MsgFeeDenomParam } from '../../../core/feemarket';
 import { AccAddress } from 'core/bech32';
 
 /**
