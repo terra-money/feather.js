@@ -38,7 +38,11 @@ import {
   MsgCreateAlliance,
   MsgDeleteAlliance,
 } from '../../../core/alliance/proposals';
-import { MsgParams, MsgFeeDenomParam } from '../../../core/feemarket';
+import {
+  MsgParams,
+  MsgFeeDenomParam,
+  MsgRemoveFeeDenomParam,
+} from '../../../core/feemarket';
 import { AccAddress } from 'core/bech32';
 
 /**
@@ -329,7 +333,8 @@ export namespace Proposal {
     | UpdateAdminProposal
     | UpdateInstantiateConfigProposal
     | MsgParams
-    | MsgFeeDenomParam;
+    | MsgFeeDenomParam
+    | MsgRemoveFeeDenomParam;
 
   export namespace Message {
     export type Amino =
@@ -357,6 +362,7 @@ export namespace Proposal {
       | UpdateInstantiateConfigProposal.Amino
       | MsgParams.Amino
       | MsgFeeDenomParam.Amino
+      | MsgRemoveFeeDenomParam.Amino
       | any;
 
     export type Data =
@@ -384,6 +390,7 @@ export namespace Proposal {
       | UpdateInstantiateConfigProposal.Data
       | MsgParams.Data
       | MsgFeeDenomParam.Data
+      | MsgRemoveFeeDenomParam.Data
       | any;
 
     export type Proto =
@@ -411,6 +418,7 @@ export namespace Proposal {
       | UpdateInstantiateConfigProposal.Proto
       | MsgParams.Proto
       | MsgFeeDenomParam.Proto
+      | MsgRemoveFeeDenomParam.Proto
       | undefined;
 
     export function fromAmino(
@@ -471,6 +479,8 @@ export namespace Proposal {
           return MsgParams.fromAmino(amino);
         case 'feemarket/MsgFeeDenomParam':
           return MsgFeeDenomParam.fromAmino(amino);
+        case 'feemarket/MsgRemoveFeeDenomParam':
+          return MsgFeeDenomParam.fromAmino(amino);
         default:
           return amino;
       }
@@ -526,6 +536,8 @@ export namespace Proposal {
           return MsgParams.fromData(data);
         case '/feemarket.feemarket.v1.MsgFeeDenomParam':
           return MsgFeeDenomParam.fromData(data);
+        case '/feemarket.feemarket.v1.MsgRemoveFeeDenomParam':
+          return MsgRemoveFeeDenomParam.fromData(data);
         default:
           return data;
       }
@@ -585,6 +597,8 @@ export namespace Proposal {
           return MsgParams.unpackAny(anyProto);
         case '/feemarket.feemarket.v1.MsgFeeDenomParam':
           return MsgFeeDenomParam.unpackAny(anyProto);
+        case '/feemarket.feemarket.v1.MsgRemoveFeeDenomParam':
+          return MsgRemoveFeeDenomParam.unpackAny(anyProto);
         default:
           return undefined;
       }
