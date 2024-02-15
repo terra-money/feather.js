@@ -1,12 +1,11 @@
+import {
+  FeemarketDenomParams,
+  FeemarketParams,
+  FeemarketState,
+} from '../../../core/feemarket';
 import { APIParams, PaginationOptions } from '../APIRequester';
 import { LCDClient } from '../LCDClient';
 import { BaseAPI } from './BaseAPI';
-import {
-  FeemarketParams,
-  FeemarketState,
-  BaseFee,
-  FeemarketDenomParams,
-} from '../../../core/feemarket';
 
 export class FeemarketAPI extends BaseAPI {
   constructor(public lcd: LCDClient) {

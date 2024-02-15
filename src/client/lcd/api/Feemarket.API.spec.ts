@@ -1,13 +1,11 @@
 import Decimal from 'decimal.js';
 import {
-  BaseFee,
   FeemarketDenomParams,
   FeemarketParams,
   FeemarketState,
 } from '../../../core/feemarket';
 import { LCDClient } from '../LCDClient';
 import { FeemarketAPI } from './FeemarketAPI';
-import { Coin } from '../../../core';
 
 const lcd = new LCDClient({
   'pisco-1': {
