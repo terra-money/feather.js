@@ -47,27 +47,6 @@ export class FeemarketAPI extends BaseAPI {
   }
 
   /**
-   * Query the current basefee for fee_denom.
-   *
-   * @tags Query
-   * @name baseFee
-   * @summary Query the current basefee for fee_denom.
-   * @request GET:/feemarket/v1/base_fee/${feeDenom}
-   */
-  public async baseFee(
-    chainId: string,
-    feeDenom: string,
-    params?: Partial<PaginationOptions & APIParams>
-  ) {
-    const res = await this.getReqFromChainID(chainId).get<BaseFee.Data>(
-      `/feemarket/v1/base_fee/${feeDenom}`,
-      params
-    );
-
-    return BaseFee.fromData(res);
-  }
-
-  /**
    * Query the current feeDenomParam for fee_denom.
    *
    * @tags Query
