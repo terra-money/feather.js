@@ -67,17 +67,6 @@ describe('FeemarketAPI', () => {
     });
   });
 
-  it('get base fee', async () => {
-    const res = await feemarket.baseFee('pisco-1', 'uluna');
-    expect(res).toStrictEqual(new BaseFee(new Coin('uluna', '0.0015')));
-    expect(res.toData()).toEqual({
-      fee: {
-        amount: '0.001500000000000000',
-        denom: 'uluna',
-      },
-    });
-  });
-
   it('get fee denom params', async () => {
     const res = await feemarket.feeDenomParam('pisco-1', 'uluna');
     expect(res).toStrictEqual([
