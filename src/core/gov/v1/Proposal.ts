@@ -480,7 +480,7 @@ export namespace Proposal {
         case 'feemarket/MsgFeeDenomParam':
           return MsgFeeDenomParam.fromAmino(amino);
         case 'feemarket/MsgRemoveFeeDenomParam':
-          return MsgFeeDenomParam.fromAmino(amino);
+          return MsgRemoveFeeDenomParam.fromAmino(amino);
         default:
           return amino;
       }
