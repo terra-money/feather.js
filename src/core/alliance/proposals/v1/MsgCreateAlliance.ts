@@ -124,6 +124,7 @@ export class MsgCreateAlliance extends JSONSerializable<
       rewardChangeInterval,
       rewardWeightRange,
     } = this;
+
     return MsgCreateAlliance_pb.fromPartial({
       authority,
       denom,

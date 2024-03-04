@@ -1,0 +1,82 @@
+import { JSONSerializable } from '../../../../util/json';
+import { AccAddress } from '../../../bech32';
+import { Any } from '@terra-money/terra.proto/google/protobuf/any';
+import { MsgParams as MsgParams_pb } from '@terra-money/terra.proto/feemarket/feemarket/v1/tx';
+import { FeemarketParams } from '../models/FeemarketParams';
+import { Params as Params_pb } from '@terra-money/terra.proto/feemarket/feemarket/v1/params';
+
+export class MsgParams extends JSONSerializable<
+  MsgParams.Amino,
+  MsgParams.Data,
+  MsgParams.Proto
+> {
+  constructor(public params: FeemarketParams, public authority: AccAddress) {
+    super();
+  }
+
+  public static fromAmino(data: MsgParams.Amino): MsgParams {
+    data;
+    throw new Error('not implemented');
+  }
+
+  public toAmino(): MsgParams.Amino {
+    throw new Error('not implemented');
+  }
+
+  public static fromData(proto: MsgParams.Data): MsgParams {
+    const { params, authority } = proto;
+    return new MsgParams(FeemarketParams.fromData(params), authority);
+  }
+
+  public toData(): MsgParams.Data {
+    const { params, authority } = this;
+    return {
+      '@type': '/feemarket.feemarket.v1.MsgParams',
+      params: params.toData(),
+      authority: authority,
+    };
+  }
+
+  public static fromProto(proto: MsgParams.Proto): MsgParams {
+    return new MsgParams(
+      FeemarketParams.fromProto(proto.params as Params_pb),
+      proto.authority
+    );
+  }
+
+  public toProto(): MsgParams.Proto {
+    const { params, authority } = this;
+    return MsgParams_pb.fromPartial({
+      params: params.toProto(),
+      authority,
+    });
+  }
+
+  public packAny(): Any {
+    return Any.fromPartial({
+      typeUrl: '/feemarket.feemarket.v1.MsgParams',
+      value: MsgParams_pb.encode(this.toProto()).finish(),
+    });
+  }
+
+  public static unpackAny(msgAny: Any): MsgParams {
+    return MsgParams.fromProto(MsgParams_pb.decode(msgAny.value));
+  }
+}
+
+export namespace MsgParams {
+  export interface Amino {
+    type: 'feemarket/MsgParams';
+    value: {
+      params: FeemarketParams.Amino;
+      authority: AccAddress;
+    };
+  }
+
+  export interface Data {
+    '@type': '/feemarket.feemarket.v1.MsgParams';
+    params: FeemarketParams.Data;
+    authority: AccAddress;
+  }
+  export type Proto = MsgParams_pb;
+}
