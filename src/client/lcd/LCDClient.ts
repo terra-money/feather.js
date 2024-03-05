@@ -28,7 +28,7 @@ import { GovV1API } from './api/GovV1API';
 import { ICAv1API } from './api/ICAv1API';
 import { ICQv1API } from './api/ICQv1API';
 import { FeemarketAPI } from './api/FeemarketAPI';
-import { SmartaccountAPI } from './api/SmartAccountAPI';
+import { SmartaccountAPI } from './api/SmartaccountAPI';
 
 export type AxiosConfig = {
   /**
