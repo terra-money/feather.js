@@ -1,3 +1,4 @@
+import { Setting } from '../../../core/smartaccount/v1/models/Setting';
 import { SmartaccountParams } from '../../../core/smartaccount/v1/models/SmartaccountParams';
 import { LCDClient } from '../LCDClient';
 import { SmartaccountAPI } from './SmartaccountAPI';
@@ -24,12 +25,17 @@ describe('SmartaccountAPI', () => {
     expect(res.toData()).toEqual({});
   });
 
-  // TODO: there must be a smart account created to test this
-  // it('assert the account setting', async () => {
-  //   const res = await smartaccount.setting('a');
-  //   // TODO: call
-  //   const setting = new Setting('a', [], [], [], true);
-  //   expect(res).toStrictEqual(setting);
-  //   expect(res.toData()).toEqual(setting);
-  // });
+  // test with wallet15 terra1tck9vx8vwu6l83zy76ssdkhnhw8dfcrt80hc6x
+  it('assert the account setting', async () => {
+    const res = await smartaccount.setting(
+      'terra1tck9vx8vwu6l83zy76ssdkhnhw8dfcrt80hc6x'
+    );
+    expect(res.toData()).toEqual({
+      owner: 'terra1tck9vx8vwu6l83zy76ssdkhnhw8dfcrt80hc6x',
+      authorization: [],
+      post_transaction: [],
+      pre_transaction: [],
+      fallback: true,
+    });
+  });
 });

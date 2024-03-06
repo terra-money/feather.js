@@ -1,8 +1,8 @@
-import { Setting } from 'core/smartaccount/v1/models/Setting';
+import { Setting } from '../../../core/smartaccount';
 import { AccAddress } from '../../../core';
 import { LCDClient } from '../LCDClient';
 import { BaseAPI } from './BaseAPI';
-import { SmartaccountParams } from 'core/smartaccount';
+import { SmartaccountParams } from '../../../core/smartaccount';
 
 export class SmartaccountAPI extends BaseAPI {
   constructor(public lcd: LCDClient) {
