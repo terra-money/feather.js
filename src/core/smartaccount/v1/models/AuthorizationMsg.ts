@@ -1,6 +1,7 @@
 import { Any } from '@terra-money/terra.proto/google/protobuf/any';
 import { AuthorizationMsg as AuthorizationMsg_pb } from '@terra-money/terra.proto/terra/smartaccount/v1/setting';
 import { JSONSerializable } from '../../../../util/json';
+import { Initialization } from './Initialization';
 
 /**
  * AuthorizationMsg holds the contract address and initial message
@@ -16,7 +17,7 @@ export class AuthorizationMsg extends JSONSerializable<
    * @param contractAddress contract address of authorization logic
    * @param initMsg initial message to be passed to the contract
    */
-  constructor(public contractAddress: string, public initMsg: string) {
+  constructor(public contractAddress: string, public initMsg: Initialization) {
     super();
   }
 
@@ -51,7 +52,10 @@ export class AuthorizationMsg extends JSONSerializable<
   }
 
   public static fromProto(proto: AuthorizationMsg.Proto): AuthorizationMsg {
-    return new AuthorizationMsg(proto.contractAddress, proto.initMsg);
+    return new AuthorizationMsg(
+      proto.contractAddress,
+      proto.initMsg as Initialization
+    );
   }
 
   public toProto(): AuthorizationMsg.Proto {
@@ -77,13 +81,13 @@ export namespace AuthorizationMsg {
   export interface Amino {
     value: {
       contractAddress: string;
-      initMsg: string;
+      initMsg: Initialization;
     };
   }
 
   export interface Data {
     contractAddress: string;
-    initMsg: string;
+    initMsg: Initialization;
   }
 
   export type Proto = AuthorizationMsg_pb;
