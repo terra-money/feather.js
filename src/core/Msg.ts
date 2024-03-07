@@ -121,6 +121,13 @@ import {
 } from './ica/controller/v1/msgs';
 import { MsgForceTransfer } from './tokenfactory/MsgForceTransfer';
 import { MsgSetDenomMetadata } from './tokenfactory/MsgSetDenomMetadata';
+import {
+  MsgCreateSmartAccount,
+  MsgDisableSmartAccount,
+  MsgUpdateAuthorization,
+  MsgUpdateTransactionHooks,
+  SmartAccountMsg,
+} from './smartaccount';
 
 export type Msg =
   | BankMsg
@@ -143,7 +150,8 @@ export type Msg =
   | CrisisMsg
   | MsgAuctionBid
   | FeeshareMsg
-  | TokenFactoryMsg;
+  | TokenFactoryMsg
+  | SmartAccountMsg;
 
 export namespace Msg {
   export type Amino =
@@ -163,7 +171,8 @@ export namespace Msg {
     | CrisisMsg.Amino
     | MsgAuctionBid.Amino
     | FeeshareMsg.Amino
-    | TokenFactoryMsg.Amino;
+    | TokenFactoryMsg.Amino
+    | SmartAccountMsg.Amino;
 
   export type Data =
     | BankMsg.Data
@@ -186,7 +195,8 @@ export namespace Msg {
     | CrisisMsg.Data
     | MsgAuctionBid.Data
     | FeeshareMsg.Data
-    | TokenFactoryMsg.Data;
+    | TokenFactoryMsg.Data
+    | SmartAccountMsg.Data;
 
   export type Proto =
     | BankMsg.Proto
@@ -208,7 +218,8 @@ export namespace Msg {
     | CrisisMsg.Proto
     | MsgAuctionBid.Proto
     | FeeshareMsg.Proto
-    | TokenFactoryMsg.Proto;
+    | TokenFactoryMsg.Proto
+    | SmartAccountMsg.Proto;
 
   export function fromAmino(data: Msg.Amino, isClassic?: boolean): Msg {
     switch (data.type) {
@@ -501,6 +512,24 @@ export namespace Msg {
           isClassic
         );
 
+      // SmartAccount module
+      case 'terra/MsgCreateSmartAccount':
+        return MsgCreateSmartAccount.fromAmino(
+          data as MsgCreateSmartAccount.Amino
+        );
+      case 'terra/MsgDisableSmartAccount':
+        return MsgDisableSmartAccount.fromAmino(
+          data as MsgDisableSmartAccount.Amino
+        );
+      case 'terra/MsgUpdateAuthorization':
+        return MsgUpdateAuthorization.fromAmino(
+          data as MsgUpdateAuthorization.Amino
+        );
+      case 'terra/MsgUpdateTransactionHooks':
+        return MsgUpdateTransactionHooks.fromAmino(
+          data as MsgUpdateTransactionHooks.Amino
+        );
+
       // custom
       default:
         return MsgAminoCustom.fromAmino(data as any, isClassic);
@@ -702,6 +731,16 @@ export namespace Msg {
         return MsgUpdateFeeShare.fromData(data, isClassic);
       case '/juno.feeshare.v1.MsgCancelFeeShare':
         return MsgCancelFeeShare.fromData(data, isClassic);
+
+      // SmartAccount
+      case '/terra.smartaccount.v1.MsgCreateSmartAccount':
+        return MsgCreateSmartAccount.fromData(data);
+      case '/terra.smartaccount.v1.MsgDisableSmartAccount':
+        return MsgDisableSmartAccount.fromData(data);
+      case '/terra.smartaccount.v1.MsgUpdateAuthorization':
+        return MsgUpdateAuthorization.fromData(data);
+      case '/terra.smartaccount.v1.MsgUpdateTransactionHooks':
+        return MsgUpdateTransactionHooks.fromData(data);
 
       // custom
       default:
@@ -907,6 +946,16 @@ export namespace Msg {
         return MsgUpdateFeeShare.unpackAny(proto, isClassic);
       case '/juno.feeshare.v1.MsgCancelFeeShare':
         return MsgCancelFeeShare.unpackAny(proto, isClassic);
+
+      // SmartAccount
+      case '/terra.smartaccount.v1.MsgCreateSmartAccount':
+        return MsgCreateSmartAccount.unpackAny(proto);
+      case '/terra.smartaccount.v1.MsgDisableSmartAccount':
+        return MsgDisableSmartAccount.unpackAny(proto);
+      case '/terra.smartaccount.v1.MsgUpdateAuthorization':
+        return MsgUpdateAuthorization.unpackAny(proto);
+      case '/terra.smartaccount.v1.MsgUpdateTransactionHooks':
+        return MsgUpdateTransactionHooks.unpackAny(proto);
 
       default:
         throw Error(`not supported msg ${proto.typeUrl}`);
