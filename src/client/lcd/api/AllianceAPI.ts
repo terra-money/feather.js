@@ -17,7 +17,7 @@ export class AllianceAPI extends BaseAPI {
   }
 
   /**
-   * Query the alliance module params
+   * Query the alliance module params.
    *
    * @tags Query
    * @name params
@@ -36,7 +36,7 @@ export class AllianceAPI extends BaseAPI {
   }
 
   /**
-   * Query all available alliances with pagination
+   * Query all available alliances with pagination.
    *
    * @tags Query
    * @name alliances
@@ -84,14 +84,14 @@ export class AllianceAPI extends BaseAPI {
   /**
    * Query all paginated alliance delegations with **OPTIONAL**  delAddr, valAddr and denom parameters
    * **BUT** dependent on each previous value. Which means that you cannot use this method to query
-   * the validator delegations without providing the delegator address. The denom in the query will be
+   * the validator's delegations without providing the delegator's address. The denom in the query will be
    * URL encoded to allow querying for alliance assets with "/" or other special characters in their denom.
    *
-   * - When no values are provided returns all delegations.
-   * - When **delAddr** is provided return the delegations for that specific address.
-   * - When **delAddr**, **valAddr** are provided return the delegations for that specific address and validator.
-   * - When **delAddr**, **valAddr** and **denom** are provided return the delegations for that specific address, validator and denom.
-   * ¡WARNING!: for efficiency reasons provide all specified parameters, if not the query will be slower.
+   * - When no values are provided, this query returns all delegations.
+   * - When **delAddr** is provided, this query returns the delegations for the provided address.
+   * - When **delAddr** and **valAddr** are provided, this query returns the delegations for the specified address and validator.
+   * - When **delAddr**, **valAddr** and **denom** are provided, this query returns the delegations for the specified address, validator and denom.
+   * ¡WARNING!: for efficiency reasons, provide all specified parameters, otherwise the query will be slower.
    * @tags Query
    * @name queryAllianceDelegations
    * @summary Query all paginated alliance delegations
@@ -118,7 +118,7 @@ export class AllianceAPI extends BaseAPI {
     if (valAddr) {
       if (!delAddr) {
         throw new Error(
-          'DELEGATOR ADDRESS must be provided when VALIDATOR ADDRESS is provided!!'
+          'A DELEGATOR ADDRESS must be provided if a VALIDATOR ADDRESS is provided!!'
         );
       }
 
@@ -127,14 +127,14 @@ export class AllianceAPI extends BaseAPI {
     if (denom) {
       if (!valAddr) {
         throw new Error(
-          'VALIDATOR ADDRESS must be provided when ALLIANCE DENOM is provided!!'
+          'A VALIDATOR ADDRESS must be provided if an ALLIANCE DENOM is provided!!'
         );
       }
       url += `/${encodeURIComponent(encodeURIComponent(denom))}`;
     }
 
-    // If all parameters are provided, the response will be a single delegation
-    // but in order to fit the return type, we will return an array of delegations
+    // If all parameters are provided, the response will be a single delegation.
+    // In order to fit the return type, an array of delegations is returned. 
     if (delAddr && valAddr && denom) {
       const res = await this.getReqFromChainID(chainID).get<{
         delegation: AllianceDelegation.Data;
@@ -165,8 +165,8 @@ export class AllianceAPI extends BaseAPI {
   }
 
   /**
-   * Query paginated redelegations by delAddr and optionally you can also provide
-   * the denom parameter that will improve the query response time. The denom in
+   * Query paginated redelegations by delAddr. Optionally, you can also provide
+   * the denom parameter which will improve the query response time. The denom in
    * the query will be URL encoded to allow querying for alliance assets with "/"
    * or other special characters in their denom.
    *
@@ -174,7 +174,7 @@ export class AllianceAPI extends BaseAPI {
    * @name queryAllianceRedelegations
    * @summary Query for redelegations by delegator addr and denom
    * @request GET:/terra/alliances/redelegations/{delAddr} or
-   *          GET:/terra/alliances/redelegations/{denm}/{delAddr}
+   *          GET:/terra/alliances/redelegations/{denom}/{delAddr}
    */
   public async queryAllianceRedelegations(
     delAddr: string,
@@ -230,12 +230,18 @@ export class AllianceAPI extends BaseAPI {
   /**
    * Query alliances unbondings by delAddr where denom and valAddr are optional parameters,
    * that valAddr depend on the denom. When all values are provided the query will be faster,
-   * Any denom send to this query will be URL encoded to allow querying for alliance assets
+   * Any denom specified in this query will be URL encoded to allow querying for alliance assets
    * with "/" or other special characters in their denom.
+   * 
+   * - When **delAddr** is provided, this query returns the unbondings for the provided address.
+   * - When **denom** and **delAddr** are provided, this query returns the unbondings for the 
+   * specified address and denom.
+   * - When **delAddr**, **valAddr** and **denom** are provided, this query returns the unbondings
+   *  for the specified address, validator and denom.
    *
    * @tags Query
    * @name queryAllianceUnbondings
-   * @summary Query alliance rewards by delegator addr, validator_addr and denom
+   * @summary Query alliance unbondings by delegator addr, validator_addr and denom
    * @request GET:/terra/alliances/unbondings/{delAddr}
    *          GET:/terra/alliances/unbondings/{denom}/{delAddr}
    *          GET:/terra/alliances/unbondings/{denom}/{delAddr}/{valAddr}
@@ -248,7 +254,7 @@ export class AllianceAPI extends BaseAPI {
   ) {
     let url = '/terra/alliances/unbondings';
 
-    // Since the url is different when denom is provided, we will build the url
+    // Since the url is different when denom is provided, the url will be built
     // based on the parameters provided
     if (denom && valAddr) {
       url += `/${encodeURIComponent(
@@ -268,10 +274,10 @@ export class AllianceAPI extends BaseAPI {
   }
 
   /**
-   * Query the validators where at least one user delegated to it with an optional parameter
-   * being valAddr taht will query a single validator. When providing the validatorAddr the
-   * response is delivered faster. This query return data about the delegations shares, validator
-   * shares and total staked tokens.
+   * Query all validators that have at least one user delegation. You can optionally provide valAddr 
+   * to query a single validator. Providing the validatorAddr will deliver a faster response. 
+   * This query returns data about the delegations shares, validator shares,
+   *  and total staked tokens.
    *
    * @tags Query
    * @name queryAllianceValidators
