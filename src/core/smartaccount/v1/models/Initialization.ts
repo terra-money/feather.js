@@ -28,31 +28,37 @@ export class Initialization extends JSONSerializable<
     const {
       value: { senders, account, msg },
     } = data;
-    return new Initialization(senders, account, msg);
+    const buf = Buffer.from(msg, 'ascii');
+    const msgBs = new Uint8Array(buf);
+    return new Initialization(senders, account, msgBs);
   }
 
   public toAmino(): Initialization.Amino {
     const { senders, account, msg } = this;
+    const base64Str = Buffer.from(msg).toString('ascii');
     return {
       value: {
         senders,
         account,
-        msg,
+        msg: base64Str,
       },
     };
   }
 
   public static fromData(data: Initialization.Data): Initialization {
     const { senders, account, msg } = data;
-    return new Initialization(senders, account, msg);
+    const buf = Buffer.from(msg, 'ascii');
+    const msgBs = new Uint8Array(buf);
+    return new Initialization(senders, account, msgBs);
   }
 
   public toData(): Initialization.Data {
     const { senders, account, msg } = this;
+    const base64Str = Buffer.from(msg).toString('ascii');
     return {
       senders,
       account,
-      msg,
+      msg: base64Str,
     };
   }
 
@@ -85,14 +91,14 @@ export namespace Initialization {
     value: {
       senders: string[];
       account: string;
-      msg: Uint8Array;
+      msg: string;
     };
   }
 
   export interface Data {
     senders: string[];
     account: string;
-    msg: Uint8Array;
+    msg: string;
   }
 
   export type Proto = Initialization_pb;

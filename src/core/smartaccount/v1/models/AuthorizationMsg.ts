@@ -25,7 +25,10 @@ export class AuthorizationMsg extends JSONSerializable<
     const {
       value: { contractAddress, initMsg },
     } = data;
-    return new AuthorizationMsg(contractAddress, initMsg);
+    return new AuthorizationMsg(
+      contractAddress,
+      Initialization.fromAmino(initMsg)
+    );
   }
 
   public toAmino(): AuthorizationMsg.Amino {
@@ -33,21 +36,24 @@ export class AuthorizationMsg extends JSONSerializable<
     return {
       value: {
         contractAddress,
-        initMsg,
+        initMsg: initMsg.toAmino(),
       },
     };
   }
 
   public static fromData(data: AuthorizationMsg.Data): AuthorizationMsg {
-    const { contractAddress, initMsg } = data;
-    return new AuthorizationMsg(contractAddress, initMsg);
+    const { contract_address, init_msg } = data;
+    return new AuthorizationMsg(
+      contract_address,
+      Initialization.fromData(init_msg)
+    );
   }
 
   public toData(): AuthorizationMsg.Data {
     const { contractAddress, initMsg } = this;
     return {
-      contractAddress,
-      initMsg,
+      contract_address: contractAddress,
+      init_msg: initMsg.toData(),
     };
   }
 
@@ -81,13 +87,13 @@ export namespace AuthorizationMsg {
   export interface Amino {
     value: {
       contractAddress: string;
-      initMsg: Initialization;
+      initMsg: Initialization.Amino;
     };
   }
 
   export interface Data {
-    contractAddress: string;
-    initMsg: Initialization;
+    contract_address: string;
+    init_msg: Initialization.Data;
   }
 
   export type Proto = AuthorizationMsg_pb;
