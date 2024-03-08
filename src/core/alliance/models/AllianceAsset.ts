@@ -6,9 +6,9 @@ export class AllianceAsset {
     /** Denom of the asset. It could either be a native token or an IBC token */
     public denom: string,
     /** The reward weight specifies the ratio of rewards that will be given to each alliance asset
-        It does not need to sum to 1. rate = weight / total_weight Native asset is always assumed to have a weight of 1.s */
+        It does not need to sum to 1. rate = weight / total_weight. Native staking asset is always assumed to have a weight of 1. */
     public rewardWeight: Dec,
-    /** A positive take rate is used for liquid staking derivatives. It defines an rate that is 
+    /** A positive take rate is a "tax" used for liquid staking derivatives. It defines a rate that is 
          applied per take_rate_interval that will be redirected to the distribution rewards pool  */
     public takeRate: Dec,
     // The total amount of tokens that are bonded to the alliance
