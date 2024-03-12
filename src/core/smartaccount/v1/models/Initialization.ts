@@ -16,29 +16,24 @@ export class Initialization extends JSONSerializable<
    * @param contractAddress contract address of authorization logic
    * @param initMsg initial message to be passed to the contract
    */
-  constructor(
-    public senders: string[],
-    public account: string,
-    public msg: Uint8Array
-  ) {
+  constructor(public account: string, public msg: Uint8Array) {
     super();
   }
 
   public static fromAmino(data: Initialization.Amino): Initialization {
     const {
-      value: { senders, account, msg },
+      value: { account, msg },
     } = data;
     const buf = Buffer.from(msg, 'ascii');
     const msgBs = new Uint8Array(buf);
-    return new Initialization(senders, account, msgBs);
+    return new Initialization(account, msgBs);
   }
 
   public toAmino(): Initialization.Amino {
-    const { senders, account, msg } = this;
+    const { account, msg } = this;
     const base64Str = Buffer.from(msg).toString('ascii');
     return {
       value: {
-        senders,
         account,
         msg: base64Str,
       },
@@ -46,30 +41,28 @@ export class Initialization extends JSONSerializable<
   }
 
   public static fromData(data: Initialization.Data): Initialization {
-    const { senders, account, msg } = data;
+    const { account, msg } = data;
     const buf = Buffer.from(msg, 'ascii');
     const msgBs = new Uint8Array(buf);
-    return new Initialization(senders, account, msgBs);
+    return new Initialization(account, msgBs);
   }
 
   public toData(): Initialization.Data {
-    const { senders, account, msg } = this;
+    const { account, msg } = this;
     const base64Str = Buffer.from(msg).toString('ascii');
     return {
-      senders,
       account,
       msg: base64Str,
     };
   }
 
   public static fromProto(proto: Initialization.Proto): Initialization {
-    return new Initialization(proto.senders, proto.account, proto.msg);
+    return new Initialization(proto.account, proto.msg);
   }
 
   public toProto(): Initialization.Proto {
-    const { senders, account, msg } = this;
+    const { account, msg } = this;
     return Initialization_pb.fromPartial({
-      senders,
       account,
       msg,
     });
@@ -89,14 +82,12 @@ export class Initialization extends JSONSerializable<
 export namespace Initialization {
   export interface Amino {
     value: {
-      senders: string[];
       account: string;
       msg: string;
     };
   }
 
   export interface Data {
-    senders: string[];
     account: string;
     msg: string;
   }
