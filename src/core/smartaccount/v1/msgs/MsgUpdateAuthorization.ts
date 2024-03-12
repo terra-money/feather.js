@@ -33,7 +33,11 @@ export class MsgUpdateAuthorization extends JSONSerializable<
     const {
       value: { account, fallback, authorizationMsgs },
     } = data;
-    return new MsgUpdateAuthorization(account, fallback, authorizationMsgs);
+    return new MsgUpdateAuthorization(
+      account,
+      fallback,
+      authorizationMsgs.map(msg => AuthorizationMsg.fromAmino(msg))
+    );
   }
 
   public toAmino(): MsgUpdateAuthorization.Amino {
@@ -43,7 +47,7 @@ export class MsgUpdateAuthorization extends JSONSerializable<
       value: {
         account,
         fallback,
-        authorizationMsgs,
+        authorizationMsgs: authorizationMsgs.map(msg => msg.toAmino()),
       },
     };
   }
@@ -52,7 +56,10 @@ export class MsgUpdateAuthorization extends JSONSerializable<
     data: MsgUpdateAuthorization.Data
   ): MsgUpdateAuthorization {
     const { account, fallback, authorizationMsgs } = data;
-    return new MsgUpdateAuthorization(account, fallback, authorizationMsgs);
+    const authMsgs = authorizationMsgs.map(msg =>
+      AuthorizationMsg.fromData(msg)
+    );
+    return new MsgUpdateAuthorization(account, fallback, authMsgs);
   }
 
   public toData(): MsgUpdateAuthorization.Data {
@@ -61,7 +68,7 @@ export class MsgUpdateAuthorization extends JSONSerializable<
       '@type': '/terra.smartaccount.v1.MsgUpdateAuthorization',
       account,
       fallback,
-      authorizationMsgs,
+      authorizationMsgs: authorizationMsgs.map(msg => msg.toData()),
     };
   }
 
@@ -104,7 +111,7 @@ export namespace MsgUpdateAuthorization {
     value: {
       account: AccAddress;
       fallback: boolean;
-      authorizationMsgs: AuthorizationMsg[];
+      authorizationMsgs: AuthorizationMsg.Amino[];
     };
   }
 
@@ -112,7 +119,7 @@ export namespace MsgUpdateAuthorization {
     '@type': '/terra.smartaccount.v1.MsgUpdateAuthorization';
     account: AccAddress;
     fallback: boolean;
-    authorizationMsgs: AuthorizationMsg[];
+    authorizationMsgs: AuthorizationMsg.Data[];
   }
 
   export type Proto = MsgUpdateAuthorization_pb;
