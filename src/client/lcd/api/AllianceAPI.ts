@@ -1,109 +1,15 @@
 import { BaseAPI } from './BaseAPI';
-import { Coins } from '../../../core';
+import {
+  AllianceParams,
+  AllianceAsset,
+  AllianceDelegation,
+  AllianceRedelegation,
+  AllianceUnbonding,
+  AllianceValidator,
+} from '../../../core/alliance';
+import { AccAddress, Coins, ValAddress } from '../../../core';
 import { APIParams, Pagination, PaginationOptions } from '../APIRequester';
 import { LCDClient } from '../LCDClient';
-
-export interface AllianceParams {
-  reward_delay_time?: string;
-
-  /** Time interval between consecutive applications of `take_rate` */
-  take_rate_claim_interval?: string;
-
-  /**
-   * Last application of `take_rate` on assets
-   * @format date-time from golang
-   */
-  last_take_rate_claim_time?: string;
-}
-
-export interface AllianceValidator {
-  validator_addr?: string;
-  total_delegation_shares?: V1Beta1DecCoin[];
-  validator_shares?: V1Beta1DecCoin[];
-  total_staked?: V1Beta1DecCoin[];
-}
-
-export interface V1Beta1DecCoin {
-  denom?: string;
-  amount?: string;
-}
-
-/**
-* DelegationResponse is equivalent to Delegation except that it contains a
-balance in addition to shares which is more suitable for client responses.
-*/
-export interface AllianceDelegationResponse {
-  delegation: AllianceDelegation;
-
-  /**
-   * Coin defines a token with a denomination and an amount.
-   *
-   * NOTE: The amount field is an Int which implements the custom method
-   * signatures required by gogoproto.
-   */
-  balance: {
-    denom: string;
-    amount: string;
-  };
-}
-
-export interface AllianceRewardHistory {
-  denom: string;
-  index: string;
-}
-
-export interface AllianceDelegation {
-  /** delegator_address is the bech32-encoded address of the delegator. */
-  delegator_address: string;
-
-  /** validator_address is the bech32-encoded address of the validator. */
-  validator_address: string;
-
-  /** denom of token staked */
-  denom: string;
-
-  /** shares define the delegation shares received. */
-  shares: string;
-  reward_history: AllianceRewardHistory[];
-
-  /** @format uint64 */
-  last_reward_claim_height: string;
-}
-export interface RewardWeightRange {
-  min: string;
-  max: string;
-}
-export interface AllianceAsset {
-  /** Denom of the asset. It could either be a native token or an IBC token */
-  denom: string;
-
-  /**
-   * The reward weight specifies the ratio of rewards that will be given to each alliance asset
-   * It does not need to sum to 1. rate = weight / total_weight
-   * Native asset is always assumed to have a weight of 1.s
-   */
-  reward_weight: string;
-
-  /**
-   * A positive take rate is used for liquid staking derivatives. It defines an rate that is applied per take_rate_interval
-   * that will be redirected to the distribution rewards pool
-   */
-  take_rate: string;
-  total_tokens: string;
-  total_validator_shares: string;
-
-  /** @format date-time */
-  reward_start_time: string;
-  reward_change_rate: string;
-  reward_change_interval: string;
-
-  /** @format date-time */
-  last_reward_change_time: string;
-  /** set a bound of weight range to limit how much reward weights can scale. */
-  reward_weight_range?: RewardWeightRange;
-  /** flag to check if an asset has completed the initialization process after the reward delay */
-  is_initialized: boolean;
-}
 
 export class AllianceAPI extends BaseAPI {
   constructor(public lcd: LCDClient) {
@@ -111,7 +17,7 @@ export class AllianceAPI extends BaseAPI {
   }
 
   /**
-   * Query the alliance module params
+   * Query the alliance module params.
    *
    * @tags Query
    * @name params
@@ -121,187 +27,291 @@ export class AllianceAPI extends BaseAPI {
   public async params(
     chainId: string,
     params: Partial<PaginationOptions & APIParams> = {}
-  ) {
-    return this.getReqFromChainID(chainId).get<{ params: AllianceParams }>(
-      `/terra/alliances/params`,
-      params
-    );
+  ): Promise<AllianceParams> {
+    const res = await this.getReqFromChainID(chainId).get<{
+      params: AllianceParams.Data;
+    }>(`/terra/alliances/params`, params);
+
+    return AllianceParams.fromData(res.params);
   }
 
   /**
-   * Query all available alliances with pagination
+   * Query all available alliances with pagination.
    *
    * @tags Query
    * @name alliances
    * @summary Query paginated alliances
    * @request GET:/terra/alliances
    */
-  public async alliances(
+  public async queryAlliances(
     chainID: string,
     params: Partial<PaginationOptions & APIParams> = {}
-  ) {
-    return this.getReqFromChainID(chainID).get<{
+  ): Promise<{ pagination: Pagination; alliances: AllianceAsset[] }> {
+    const res = await this.getReqFromChainID(chainID).get<{
       pagination: Pagination;
-      alliances: AllianceAsset[];
+      alliances: AllianceAsset.Data[];
     }>(`/terra/alliances`, params);
+
+    return {
+      pagination: res.pagination,
+      alliances: res.alliances.map(a => AllianceAsset.fromData(a)),
+    };
   }
 
   /**
-   * Query the alliance by denom where denom can be either the
-   * ibc prefixed hash or any other native asset alliance denom
+   * Query the alliance by denom where denom will be encoded to URI component
+   * where "/" will be replaced by "%2F" and will allow querying for alliance
+   * assets with "/" or other special characters in their denom.
    *
    * @tags Query
-   * @name alliance
+   * @name queryAlliance
    * @summary Query the alliance by denom
    * @request GET:/terra/alliances/{denom}
    */
-  public async alliance(
+  public async queryAlliance(
     chainId: string,
     denom: string,
     params: Partial<PaginationOptions & APIParams> = {}
-  ) {
-    return this.getReqFromChainID(chainId).get<{
-      alliance: AllianceAsset;
-      pagination: Pagination;
-    }>(`/terra/alliances/${denom}`, params);
+  ): Promise<AllianceAsset> {
+    const encodedDenom = encodeURIComponent(encodeURIComponent(denom));
+    const res = await this.getReqFromChainID(chainId).get<{
+      alliance: AllianceAsset.Data;
+    }>(`/terra/alliances/${encodedDenom}`, params);
+
+    return AllianceAsset.fromData(res.alliance);
   }
 
   /**
-   * Query all paginated alliance delegations
+   * Query all paginated alliance delegations with **OPTIONAL**  delAddr, valAddr and denom parameters
+   * **BUT** dependent on each previous value. Which means that you cannot use this method to query
+   * the validator's delegations without providing the delegator's address. The denom in the query will be
+   * URL encoded to allow querying for alliance assets with "/" or other special characters in their denom.
    *
+   * - When no values are provided, this query returns all delegations.
+   * - When **delAddr** is provided, this query returns the delegations for the provided address.
+   * - When **delAddr** and **valAddr** are provided, this query returns the delegations for the specified address and validator.
+   * - When **delAddr**, **valAddr** and **denom** are provided, this query returns the delegations for the specified address, validator and denom.
+   * ¡WARNING!: for efficiency reasons, provide all specified parameters, otherwise the query will be slower.
    * @tags Query
-   * @name alliancesDelegations
+   * @name queryAllianceDelegations
    * @summary Query all paginated alliance delegations
-   * @request GET:/terra/alliances/delegations
+   * @request GET:/terra/alliances/delegations or
+   *          GET:/terra/alliances/delegations/{delAddr} or
+   *          GET:/terra/alliances/delegations/{delAddr}/{valAddr} or
+   *          GET:/terra/alliances/delegations/{delAddr}/{valAddr}/{denom}
    */
-  public async alliancesDelegations(
+  public async queryAllianceDelegations(
     chainID: string,
+    delAddr?: AccAddress,
+    valAddr?: ValAddress,
+    denom?: string,
     params: Partial<PaginationOptions & APIParams> = {}
-  ) {
-    return this.getReqFromChainID(chainID).get<{
-      delegations: AllianceDelegationResponse[];
-      pagination: Pagination;
-    }>(`/terra/alliances/delegations`, params);
+  ): Promise<{
+    delegations: AllianceDelegation[];
+    balance: Coins;
+    pagination: Pagination;
+  }> {
+    let url = `/terra/alliances/delegations`;
+    if (delAddr) {
+      url += `/${delAddr}`;
+    }
+    if (valAddr) {
+      if (!delAddr) {
+        throw new Error(
+          'A DELEGATOR ADDRESS must be provided if a VALIDATOR ADDRESS is provided!!'
+        );
+      }
+
+      url += `/${valAddr}`;
+    }
+    if (denom) {
+      if (!valAddr) {
+        throw new Error(
+          'A VALIDATOR ADDRESS must be provided if an ALLIANCE DENOM is provided!!'
+        );
+      }
+      url += `/${encodeURIComponent(encodeURIComponent(denom))}`;
+    }
+
+    // If all parameters are provided, the response will be a single delegation.
+    // In order to fit the return type, an array of delegations is returned. 
+    if (delAddr && valAddr && denom) {
+      const res = await this.getReqFromChainID(chainID).get<{
+        delegation: AllianceDelegation.Data;
+        balance: Coins.Data;
+      }>(url, params);
+
+      return {
+        pagination: {
+          next_key: null,
+          total: 1,
+        },
+        delegations: [AllianceDelegation.fromData(res.delegation)],
+        balance: Coins.fromData(res.balance),
+      };
+    } else {
+      const res = await this.getReqFromChainID(chainID).get<{
+        delegations: AllianceDelegation.Data[];
+        balance: Coins.Data;
+        pagination: Pagination;
+      }>(url, params);
+
+      return {
+        pagination: res.pagination,
+        delegations: res.delegations.map(d => AllianceDelegation.fromData(d)),
+        balance: Coins.fromData(res.balance),
+      };
+    }
   }
 
   /**
-   * Query all paginated alliance delegations for a specific delegator address
+   * Query paginated redelegations by delAddr. Optionally, you can also provide
+   * the denom parameter which will improve the query response time. The denom in
+   * the query will be URL encoded to allow querying for alliance assets with "/"
+   * or other special characters in their denom.
    *
    * @tags Query
-   * @name alliancesDelegation
-   * @summary Query all paginated alliance delegations
-   * @request GET:/terra/alliances/delegations/{delegatorAddr}
+   * @name queryAllianceRedelegations
+   * @summary Query for redelegations by delegator addr and denom
+   * @request GET:/terra/alliances/redelegations/{delAddr} or
+   *          GET:/terra/alliances/redelegations/{denom}/{delAddr}
    */
-  public async alliancesDelegation(
-    delegatorAddr: string,
-    params: Partial<PaginationOptions & APIParams> = {}
-  ) {
-    return this.getReqFromAddress(delegatorAddr).get<{
-      delegations: AllianceDelegationResponse[];
-      pagination: Pagination;
-    }>(`/terra/alliances/delegations/${delegatorAddr}`, params);
-  }
-
-  /**
-   * Query all paginated alliance delegations for a delegator addr and validator_addr
-   *
-   * @tags Query
-   * @name alliancesDelegationByValidator
-   * @summary Query all paginated alliance delegations for a delegator addr and validator_addr
-   * @request GET:/terra/alliances/delegations/{delegator_addr}/{validator_addr}
-   */
-  public async alliancesDelegationByValidator(
-    delegatorAddr: string,
-    validatorAddr: string,
-    params: Partial<PaginationOptions & APIParams> = {}
-  ) {
-    return this.getReqFromAddress(delegatorAddr).get<{
-      delegations: AllianceDelegationResponse[];
-      pagination: Pagination;
-    }>(
-      `/terra/alliances/delegations/${delegatorAddr}/${validatorAddr}`,
-      params
-    );
-  }
-
-  /**
-   * Query a delegation to an alliance by delegator addr, validator_addr and denom
-   * the denom can be both the ibc prefixed denom or any other alliance denom.
-   *
-   * @tags Query
-   * @name allianceDelegation
-   * @summary Query a delegation to an alliance by delegator addr, validator_addr and denom
-   * @request GET:/terra/alliances/delegations/{delegator_addr}/{validator_addr}/{denom}
-   */
-  public async allianceDelegation(
-    delegatorAddr: string,
-    validatorAddr: string,
+  public async queryAllianceRedelegations(
+    delAddr: string,
     denom: string,
     params: Partial<PaginationOptions & APIParams> = {}
   ) {
-    return this.getReqFromAddress(delegatorAddr).get<{
-      delegation: AllianceDelegationResponse[];
+    const url = denom
+      ? `/terra/alliances/redelegations/${encodeURIComponent(
+          encodeURIComponent(denom)
+        )}/${delAddr}`
+      : `/terra/alliances/redelegations/${delAddr}`;
+
+    const res = await this.getReqFromAddress(delAddr).get<{
+      redelegations: AllianceRedelegation.Data[];
       pagination: Pagination;
-    }>(
-      `/terra/alliances/delegations/${delegatorAddr}/${validatorAddr}/${denom}`,
-      params
-    );
+    }>(url, params);
+
+    return {
+      redelegations: res.redelegations.map(r =>
+        AllianceRedelegation.fromData(r)
+      ),
+      pagination: res.pagination,
+    };
   }
 
   /**
-   * Query for rewards by delegator addr, validator_addr and denom
-   * where denom can be either the ibc prefixed hash or any other native asset alliance denom
+   * Query paginated rewards by delAddr, valAddr and alliance denom. The denom in
+   * the query will be URL encoded to allow querying for alliance assets with "/"
+   * or other special characters in their denom.
    *
    * @tags Query
-   * @name delegatorRewards
-   * @summary Query for rewards by delegator addr, validator_addr and denom
-   * @request GET:/terra/alliances/params
+   * @name queryAllianceRewards
+   * @summary Query alliance rewards by delegator addr, validator_addr and denom
+   * @request GET:/terra/alliances/rewards/{delAddr}/{valAddr}/{denom}
    */
-  public async delegatorRewards(
-    delegatorAddr: string,
-    validatorAddr: string,
+  public async queryAllianceRewards(
+    delAddr: string,
+    valAddr: string,
     denom: string,
     params: Partial<PaginationOptions & APIParams> = {}
   ) {
-    return this.getReqFromAddress(delegatorAddr).get<{ rewards: Coins }>(
-      `/terra/alliances/rewards/${delegatorAddr}/${validatorAddr}/${denom}`,
-      params
-    );
+    const url = `/terra/alliances/rewards/${encodeURIComponent(
+      encodeURIComponent(denom)
+    )}/${valAddr}/${delAddr}`;
+
+    const res = await this.getReqFromAddress(delAddr).get<{
+      rewards: Coins.Data;
+    }>(url, params);
+
+    return Coins.fromData(res.rewards);
   }
 
   /**
-   * Query all validators that has alliance assets delegated to them
+   * Query alliances unbondings by delAddr where denom and valAddr are optional parameters,
+   * that valAddr depend on the denom. When all values are provided the query will be faster,
+   * Any denom specified in this query will be URL encoded to allow querying for alliance assets
+   * with "/" or other special characters in their denom.
+   * 
+   * - When **delAddr** is provided, this query returns the unbondings for the provided address.
+   * - When **denom** and **delAddr** are provided, this query returns the unbondings for the 
+   * specified address and denom.
+   * - When **delAddr**, **valAddr** and **denom** are provided, this query returns the unbondings
+   *  for the specified address, validator and denom.
    *
    * @tags Query
-   * @name allianceValidators
+   * @name queryAllianceUnbondings
+   * @summary Query alliance unbondings by delegator addr, validator_addr and denom
+   * @request GET:/terra/alliances/unbondings/{delAddr}
+   *          GET:/terra/alliances/unbondings/{denom}/{delAddr}
+   *          GET:/terra/alliances/unbondings/{denom}/{delAddr}/{valAddr}
+   */
+  public async queryAllianceUnbondings(
+    delAddr: string,
+    denom?: string,
+    valAddr?: string,
+    params: Partial<PaginationOptions & APIParams> = {}
+  ) {
+    let url = '/terra/alliances/unbondings';
+
+    // Since the url is different when denom is provided, the url will be built
+    // based on the parameters provided
+    if (denom && valAddr) {
+      url += `/${encodeURIComponent(
+        encodeURIComponent(denom)
+      )}/${delAddr}/${valAddr}`;
+    } else if (denom) {
+      url += `/${encodeURIComponent(encodeURIComponent(denom))}/${delAddr}`;
+    } else {
+      url += `/${delAddr}`;
+    }
+
+    const res = await this.getReqFromAddress(delAddr).get<{
+      unbondings: AllianceUnbonding.Data[];
+    }>(url, params);
+
+    return res.unbondings.map(e => AllianceUnbonding.fromData(e));
+  }
+
+  /**
+   * Query all validators that have at least one user delegation. You can optionally provide valAddr 
+   * to query a single validator. Providing the validatorAddr will deliver a faster response. 
+   * This query returns data about the delegations shares, validator shares,
+   *  and total staked tokens.
+   *
+   * @tags Query
+   * @name queryAllianceValidators
    * @summary Query all paginated alliance validators
-   * @request GET:/terra/alliances/validators
+   * @request GET:/terra/alliances/validators or
+   *        GET:/terra/alliances/validators/{valAddr}
    */
-  public async alliancesByValidators(
+  public async queryAllianceValidators(
     chainID: string,
+    valAddr?: ValAddress,
     params: Partial<PaginationOptions & APIParams> = {}
   ) {
-    return this.getReqFromChainID(chainID).get<{
-      validators: AllianceValidator;
-      pagination: Pagination;
-    }>(`/terra/alliances/validators`, params);
-  }
+    if (valAddr) {
+      const res = await this.getReqFromChainID(
+        chainID
+      ).get<AllianceValidator.Data>(`/terra/alliances/validators/${valAddr}`);
 
-  /**
-   * Query an alliance validator that has alliance assets delegated to it
-   *
-   * @tags Query
-   * @name allianceValidators
-   * @summary Query alliance validator
-   * @request GET:/terra/alliances/validators/{validatorAddr}
-   */
-  public async alliancesByValidator(
-    validatorAddr: string,
-    params: Partial<PaginationOptions & APIParams> = {}
-  ) {
-    return this.getReqFromAddress(validatorAddr).get<AllianceValidator>(
-      `/terra/alliances/validators/${validatorAddr}`,
-      params
-    );
+      return {
+        validators: [AllianceValidator.fromData(res)],
+        pagination: {
+          next_key: null,
+          total: 1,
+        },
+      };
+    } else {
+      const res = await this.getReqFromChainID(chainID).get<{
+        validators: AllianceValidator.Data[];
+        pagination: Pagination;
+      }>(`/terra/alliances/validators`, params);
+
+      return {
+        validators: res.validators.map(v => AllianceValidator.fromData(v)),
+        pagination: res.pagination,
+      };
+    }
   }
 }

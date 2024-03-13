@@ -10,6 +10,7 @@ import {
   MsgUpdateAlliance,
 } from './proposals';
 
+export * from './models';
 export * from './msgs';
 export * from './proposals';
 
