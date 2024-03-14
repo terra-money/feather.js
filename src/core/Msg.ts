@@ -68,6 +68,7 @@ import {
   MsgUpdateContractAdmin,
   MsgClearContractAdmin,
   WasmMsg,
+  MsgSudoContract,
 } from './wasm/msgs';
 import {
   MsgBurn,
@@ -443,6 +444,11 @@ export namespace Msg {
           data as MsgExecuteContract.Amino,
           isClassic
         );
+      case 'wasm/MsgSudoContract':
+        return MsgSudoContract.fromAmino(
+          data as MsgSudoContract.Amino,
+          isClassic
+        );
       case 'wasm/MsgMigrateContract':
         return MsgMigrateContract.fromAmino(
           data as MsgMigrateContract.Amino,
@@ -638,6 +644,8 @@ export namespace Msg {
       case '/terra.wasm.v1beta1.MsgExecuteContract':
       case '/cosmwasm.wasm.v1.MsgExecuteContract':
         return MsgExecuteContract.fromData(data, isClassic);
+      case '/cosmwasm.wasm.v1.MsgSudoContract':
+        return MsgSudoContract.fromData(data, isClassic);
       case '/terra.wasm.v1beta1.MsgMigrateContract':
       case '/cosmwasm.wasm.v1.MsgMigrateContract':
         return MsgMigrateContract.fromData(data, isClassic);
@@ -854,6 +862,9 @@ export namespace Msg {
       case '/terra.wasm.v1beta1.MsgExecuteContract':
       case '/cosmwasm.wasm.v1.MsgExecuteContract':
         return MsgExecuteContract.unpackAny(proto, isClassic);
+      case '/terra.wasm.v1beta1.MsgSudoContract':
+      case '/cosmwasm.wasm.v1.MsgSudoContract':
+        return MsgSudoContract.unpackAny(proto, isClassic);
       case '/terra.wasm.v1beta1.MsgMigrateContract':
       case '/cosmwasm.wasm.v1beta1.MsgMigrateContract':
         return MsgMigrateContract.unpackAny(proto, isClassic);

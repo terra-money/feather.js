@@ -5,7 +5,9 @@ import { MsgExecuteContract } from './MsgExecuteContract';
 import { MsgMigrateContract } from './MsgMigrateContract';
 import { MsgUpdateContractAdmin } from './MsgUpdateContractAdmin';
 import { MsgClearContractAdmin } from './MsgClearContractAdmin';
+import { MsgSudoContract } from './MsgSudoContract';
 
+export * from './MsgSudoContract';
 export * from './MsgStoreCode';
 export * from './MsgMigrateCode';
 export * from './MsgInstantiateContract';
@@ -19,6 +21,7 @@ export type WasmMsg =
   | MsgMigrateCode
   | MsgInstantiateContract
   | MsgExecuteContract
+  | MsgSudoContract
   | MsgMigrateContract
   | MsgUpdateContractAdmin
   | MsgClearContractAdmin;
@@ -29,6 +32,7 @@ export namespace WasmMsg {
     | MsgMigrateCode.Amino
     | MsgInstantiateContract.Amino
     | MsgExecuteContract.Amino
+    | MsgSudoContract.Amino
     | MsgMigrateContract.Amino
     | MsgUpdateContractAdmin.Amino
     | MsgClearContractAdmin.Amino;
@@ -37,6 +41,7 @@ export namespace WasmMsg {
     | MsgMigrateCode.Data
     | MsgInstantiateContract.Data
     | MsgExecuteContract.Data
+    | MsgSudoContract.Data
     | MsgMigrateContract.Data
     | MsgUpdateContractAdmin.Data
     | MsgClearContractAdmin.Data;
@@ -45,6 +50,7 @@ export namespace WasmMsg {
     | MsgMigrateCode.Proto
     | MsgInstantiateContract.Proto
     | MsgExecuteContract.Proto
+    | MsgSudoContract.Proto
     | MsgMigrateContract.Proto
     | MsgUpdateContractAdmin.Proto
     | MsgClearContractAdmin.Proto;

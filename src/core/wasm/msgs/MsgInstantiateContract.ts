@@ -27,7 +27,7 @@ export class MsgInstantiateContract extends JSONSerializable<
     public code_id: number,
     public init_msg: object | string,
     init_coins: Coins.Input = {},
-    public label?: string
+    public label: string = '-'
   ) {
     super();
     this.init_coins = new Coins(init_coins);
