@@ -134,7 +134,7 @@ export class AllianceAPI extends BaseAPI {
     }
 
     // If all parameters are provided, the response will be a single delegation.
-    // In order to fit the return type, an array of delegations is returned. 
+    // In order to fit the return type, an array of delegations is returned.
     if (delAddr && valAddr && denom) {
       const res = await this.getReqFromChainID(chainID).get<{
         delegation: AllianceDelegation.Data;
@@ -232,9 +232,9 @@ export class AllianceAPI extends BaseAPI {
    * that valAddr depend on the denom. When all values are provided the query will be faster,
    * Any denom specified in this query will be URL encoded to allow querying for alliance assets
    * with "/" or other special characters in their denom.
-   * 
+   *
    * - When **delAddr** is provided, this query returns the unbondings for the provided address.
-   * - When **denom** and **delAddr** are provided, this query returns the unbondings for the 
+   * - When **denom** and **delAddr** are provided, this query returns the unbondings for the
    * specified address and denom.
    * - When **delAddr**, **valAddr** and **denom** are provided, this query returns the unbondings
    *  for the specified address, validator and denom.
@@ -274,8 +274,8 @@ export class AllianceAPI extends BaseAPI {
   }
 
   /**
-   * Query all validators that have at least one user delegation. You can optionally provide valAddr 
-   * to query a single validator. Providing the validatorAddr will deliver a faster response. 
+   * Query all validators that have at least one user delegation. You can optionally provide valAddr
+   * to query a single validator. Providing the validatorAddr will deliver a faster response.
    * This query returns data about the delegations shares, validator shares,
    *  and total staked tokens.
    *

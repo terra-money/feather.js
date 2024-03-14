@@ -15,6 +15,8 @@ import {
   IbcTransferAPI,
   IbcAPI,
   TokenFactory,
+  FeemarketAPI,
+  SmartaccountAPI,
 } from './api';
 import { LCDUtils } from './LCDUtils';
 import { Wallet } from './Wallet';
@@ -27,7 +29,6 @@ import { FeeshareAPI } from './api/FeeshareAPI';
 import { GovV1API } from './api/GovV1API';
 import { ICAv1API } from './api/ICAv1API';
 import { ICQv1API } from './api/ICQv1API';
-import { FeemarketAPI } from './api/FeemarketAPI';
 
 export type AxiosConfig = {
   /**
@@ -138,6 +139,7 @@ export class LCDClient {
   public feeshare: FeeshareAPI;
   public feemarket: FeemarketAPI;
   public utils: LCDUtils;
+  public smartaccount: SmartaccountAPI;
 
   /**
    * Creates a new LCD client with the specified configuration.
@@ -189,6 +191,7 @@ export class LCDClient {
     this.feeshare = new FeeshareAPI(this);
     this.feemarket = new FeemarketAPI(this);
     this.utils = new LCDUtils(this);
+    this.smartaccount = new SmartaccountAPI(this);
   }
 
   public static fromDefaultConfig(network: 'mainnet' | 'testnet') {

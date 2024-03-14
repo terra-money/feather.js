@@ -13,3 +13,5 @@ export * from './MintAPI';
 export * from './TokenFactoryAPI';
 export * from './IbcAPI';
 export * from './IbcTransferAPI';
+export * from './FeemarketAPI';
+export * from './SmartaccountAPI';
