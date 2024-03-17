@@ -108,7 +108,6 @@ export class AllianceAPI extends BaseAPI {
     params: Partial<PaginationOptions & APIParams> = {}
   ): Promise<{
     delegations: AllianceDelegation[];
-    balance: Coin;
     pagination: Pagination;
   }> {
     let url = `/terra/alliances/delegations`;
@@ -138,7 +137,6 @@ export class AllianceAPI extends BaseAPI {
     if (delAddr && valAddr && denom) {
       const res = await this.getReqFromChainID(chainID).get<{
         delegation: AllianceDelegation.Data;
-        balance: Coin.Data;
       }>(url, params);
 
       return {
@@ -147,7 +145,6 @@ export class AllianceAPI extends BaseAPI {
           total: 1,
         },
         delegations: [AllianceDelegation.fromData(res.delegation)],
-        balance: Coin.fromData(res.balance),
       };
     } else {
       const res = await this.getReqFromChainID(chainID).get<{
@@ -159,7 +156,6 @@ export class AllianceAPI extends BaseAPI {
       return {
         pagination: res.pagination,
         delegations: res.delegations.map(d => AllianceDelegation.fromData(d)),
-        balance: Coin.fromData(res.balance),
       };
     }
   }
