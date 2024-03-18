@@ -43,7 +43,7 @@ import {
   MsgFeeDenomParam,
   MsgRemoveFeeDenomParam,
 } from '../../../core/feemarket';
-import { AccAddress } from 'core/bech32';
+import { AccAddress } from '../../../core/bech32';
 
 /**
  * Stores information pertaining to a submitted proposal, such as its status and time of
