@@ -1,5 +1,5 @@
 import { FeeDenomParam as FeeDenomParam_pb } from '@terra-money/terra.proto/feemarket/feemarket/v1/genesis';
-import { Denom } from 'core/Denom';
+import { Denom } from '../../../../core/Denom';
 import Decimal from 'decimal.js';
 import { JSONSerializable } from '../../../../util/json';
 

@@ -1,4 +1,4 @@
-import { ValAddress } from 'core/bech32';
+import { ValAddress } from '../../../core/bech32';
 
 export class AllianceUnbonding {
   constructor(

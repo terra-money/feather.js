@@ -4,7 +4,7 @@ import { QueryInterchainAccountResponse } from '@terra-money/terra.proto/ibc/app
 import { APIParams } from '../APIRequester';
 import { LCDClient } from '../LCDClient';
 import { BaseAPI } from './BaseAPI';
-import { AccAddress } from 'core';
+import { AccAddress } from '../../../core';
 
 export class ICAv1API extends BaseAPI {
   constructor(public lcd: LCDClient) {

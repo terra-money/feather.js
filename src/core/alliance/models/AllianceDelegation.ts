@@ -1,5 +1,5 @@
 import { Dec } from '../../../core/numeric';
-import { AccAddress, ValAddress } from 'core/bech32';
+import { AccAddress, ValAddress } from '../../../core/bech32';
 import { RewardHistory } from './RewardHistory';
 import Long from 'long';
 import { Coin } from '../../../core/Coin';

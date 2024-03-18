@@ -1,5 +1,4 @@
-import { ValAddress } from 'core/bech32';
-import { Coin } from '../../../core/Coin';
+import { ValAddress } from '../../../core/bech32';
 import { AllianceValidatorAmount } from './AllianceValidatorAmount';
 
 export class AllianceValidator {

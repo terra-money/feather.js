@@ -1,4 +1,4 @@
-import { AccAddress, ValAddress } from 'core/bech32';
+import { AccAddress, ValAddress } from '../../../core/bech32';
 import { Coin } from '../../../core/Coin';
 
 export class AllianceRedelegation {
