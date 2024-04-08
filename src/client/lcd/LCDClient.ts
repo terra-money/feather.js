@@ -148,11 +148,11 @@ export class LCDClient {
    *
    */
   constructor(chains: Record<string, LCDClientConfig>) {
-    // check for duplicate prefixes
-    const prefixes = Object.values(chains).map(c => c.prefix);
-    if (new Set(prefixes).size !== prefixes.length) {
-      throw new Error('Every chain must have an unique bech32 prefix');
-    }
+    // // check for duplicate prefixes
+    // const prefixes = Object.values(chains).map(c => c.prefix);
+    // if (new Set(prefixes).size !== prefixes.length) {
+    //   throw new Error('Every chain must have an unique bech32 prefix');
+    // }
 
     this.config = chains;
 

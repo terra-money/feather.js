@@ -73,9 +73,10 @@ export class AuthAPI extends BaseAPI {
    */
   public async accountInfo(
     address: AccAddress,
+    chainID: string,
     params: APIParams = {}
   ): Promise<Account> {
-    const { account } = await this.getReqFromAddress(address).get<{
+    const { account } = await this.getReqFromChainID(chainID).get<{
       account:
         | BaseAccount.Data
         | LazyGradedVestingAccount.Data

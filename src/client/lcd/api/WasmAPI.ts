@@ -114,13 +114,14 @@ export class WasmAPI extends BaseAPI {
 
   public async contractInfo(
     contractAddress: AccAddress,
+    chainID: string,
     params: APIParams = {}
   ): Promise<ContractInfo> {
     // new endpoint doesn't return init_msg so have to retrieve it from history
     const [historyEntry] = await this.contractHistory(contractAddress);
 
     const endpoint = `/cosmwasm/wasm/v1/contract/${contractAddress}`;
-    return this.getReqFromAddress(contractAddress)
+    return this.getReqFromChainID(chainID)
       .get<{ contract_info: ContractInfo.DataV2 }>(endpoint, params)
       .then(({ contract_info: d }) => ({
         code_id: Number.parseInt(d.code_id),

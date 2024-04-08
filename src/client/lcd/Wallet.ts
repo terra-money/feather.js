@@ -14,7 +14,10 @@ export class Wallet {
     sequence: number;
   }> {
     return this.lcd.auth
-      .accountInfo(this.key.accAddress(this.lcd.config[chainID].prefix))
+      .accountInfo(
+        this.key.accAddress(this.lcd.config[chainID].prefix),
+        chainID
+      )
       .then(d => {
         return {
           account_number: d.getAccountNumber(),
@@ -25,7 +28,10 @@ export class Wallet {
 
   public accountNumber(chainID: string): Promise<number> {
     return this.lcd.auth
-      .accountInfo(this.key.accAddress(this.lcd.config[chainID].prefix))
+      .accountInfo(
+        this.key.accAddress(this.lcd.config[chainID].prefix),
+        chainID
+      )
       .then(d => {
         return d.getAccountNumber();
       });
@@ -33,7 +39,10 @@ export class Wallet {
 
   public sequence(chainID: string): Promise<number> {
     return this.lcd.auth
-      .accountInfo(this.key.accAddress(this.lcd.config[chainID].prefix))
+      .accountInfo(
+        this.key.accAddress(this.lcd.config[chainID].prefix),
+        chainID
+      )
       .then(d => {
         return d.getSequenceNumber();
       });

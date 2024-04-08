@@ -54,9 +54,10 @@ export class BankAPI extends BaseAPI {
    */
   public async balance(
     address: AccAddress,
+    chainID: string,
     params: Partial<PaginationOptions & APIParams> = {}
   ): Promise<[Coins, Pagination]> {
-    return this.getReqFromAddress(address)
+    return this.getReqFromChainID(chainID)
       .get<{
         balances: Coins.Data;
         pagination: Pagination;
@@ -70,9 +71,10 @@ export class BankAPI extends BaseAPI {
    */
   public async spendableBalances(
     address: AccAddress,
+    chainID: string,
     params: Partial<PaginationOptions & APIParams> = {}
   ): Promise<[Coins, Pagination]> {
-    return this.getReqFromAddress(address)
+    return this.getReqFromChainID(chainID)
       .get<{
         balances: Coins.Data;
         pagination: Pagination;
