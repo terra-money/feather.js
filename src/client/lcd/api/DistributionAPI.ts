@@ -72,9 +72,10 @@ export class DistributionAPI extends BaseAPI {
    */
   public async rewards(
     delegator: AccAddress,
+    chainID: string,
     params: APIParams = {}
   ): Promise<Rewards> {
-    const rewardsData = await this.getReqFromAddress(delegator)
+    const rewardsData = await this.getReqFromChainID(chainID)
       .get<Rewards.Data>(
         `/cosmos/distribution/v1beta1/delegators/${delegator}/rewards`,
         params
@@ -97,9 +98,10 @@ export class DistributionAPI extends BaseAPI {
    */
   public async validatorCommission(
     validator: ValAddress,
+    chainID: string,
     params: APIParams = {}
   ): Promise<Coins> {
-    return this.getReqFromAddress(validator)
+    return this.getReqFromChainID(chainID)
       .get<{
         commission: {
           commission: Coins.Data;
@@ -118,10 +120,11 @@ export class DistributionAPI extends BaseAPI {
    */
   public async validatorSlashingEvents(
     validator: ValAddress,
+    chainID: string,
     params: APIParams = {}
     // TODO: slashes type
   ): Promise<[any[], Pagination]> {
-    return this.getReqFromAddress(validator)
+    return this.getReqFromChainID(chainID)
       .get<{
         slashes: [];
         pagination: Pagination;
@@ -135,9 +138,10 @@ export class DistributionAPI extends BaseAPI {
    */
   public async withdrawAddress(
     delegator: AccAddress,
+    chainID: string,
     params: APIParams = {}
   ): Promise<AccAddress> {
-    return this.getReqFromAddress(delegator)
+    return this.getReqFromChainID(chainID)
       .get<{ withdraw_address: AccAddress }>(
         `/cosmos/distribution/v1beta1/delegators/${delegator}/withdraw_address`,
         params

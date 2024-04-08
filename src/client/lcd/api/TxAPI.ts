@@ -237,7 +237,10 @@ export class TxAPI extends BaseAPI {
       let publicKey = signer.publicKey;
 
       if (sequenceNumber === undefined || !publicKey) {
-        const account = await this.lcd.auth.accountInfo(signer.address);
+        const account = await this.lcd.auth.accountInfo(
+          signer.address,
+          options?.chainID
+        );
         if (sequenceNumber === undefined) {
           sequenceNumber = account.getSequenceNumber();
         }
